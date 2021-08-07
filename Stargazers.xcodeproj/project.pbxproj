@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7301227726BF258F0007B086 /* Stargazers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7301226D26BF258F0007B086 /* Stargazers.framework */; };
 		7301227C26BF258F0007B086 /* StargazersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7301227B26BF258F0007B086 /* StargazersTests.swift */; };
-		7301227E26BF258F0007B086 /* Stargazers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7301227026BF258F0007B086 /* Stargazers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		730122A426BF3EB20007B086 /* StargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A326BF3EB20007B086 /* StargazersLoader.swift */; };
 		730122A626BF3F0B0007B086 /* Stargazer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A526BF3F0B0007B086 /* Stargazer.swift */; };
 /* End PBXBuildFile section */
@@ -26,7 +25,6 @@
 
 /* Begin PBXFileReference section */
 		7301226D26BF258F0007B086 /* Stargazers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stargazers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7301227026BF258F0007B086 /* Stargazers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stargazers.h; sourceTree = "<group>"; };
 		7301227126BF258F0007B086 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7301227626BF258F0007B086 /* StargazersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StargazersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7301227B26BF258F0007B086 /* StargazersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersTests.swift; sourceTree = "<group>"; };
@@ -75,7 +73,6 @@
 		7301226F26BF258F0007B086 /* Stargazers */ = {
 			isa = PBXGroup;
 			children = (
-				7301227026BF258F0007B086 /* Stargazers.h */,
 				7301227126BF258F0007B086 /* Info.plist */,
 				730122A326BF3EB20007B086 /* StargazersLoader.swift */,
 				730122A526BF3F0B0007B086 /* Stargazer.swift */,
@@ -99,7 +96,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7301227E26BF258F0007B086 /* Stargazers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
