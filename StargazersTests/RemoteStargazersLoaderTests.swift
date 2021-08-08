@@ -9,13 +9,15 @@ import XCTest
 
 final class RemoteStargazersLoader {
     private let client: HTTPClient
+    private let url: URL
     
-    init(client: HTTPClient) {
+    init(client: HTTPClient, url: URL = URL(string: "http://a-default-url.com")!) {
         self.client = client
+        self.url = url
     }
     
     func load() {
-        client.get(from: URL(string: "http://a-url.com")!)
+        client.get(from: url)
     }
 }
 
@@ -41,8 +43,8 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     func test_load_doesRequestDataFromURL() {
         let client = HTTPClientSpy()
-        let url = URL(string: "http://a-url.com")!
-        let sut = RemoteStargazersLoader(client: client)
+        let url = URL(string: "http://any-url.com")!
+        let sut = RemoteStargazersLoader(client: client, url: url)
         
         sut.load()
         
