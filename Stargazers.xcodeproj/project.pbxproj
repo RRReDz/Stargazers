@@ -13,6 +13,7 @@
 		730122A826BF4FB30007B086 /* RemoteStargazersLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */; };
 		73D7631026C0133C005CCEC2 /* RemoteStargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */; };
 		73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631126C0135A005CCEC2 /* HTTPClient.swift */; };
+		73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersLoaderTests.swift; sourceTree = "<group>"; };
 		73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersLoader.swift; sourceTree = "<group>"; };
 		73D7631126C0135A005CCEC2 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			children = (
 				73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */,
 				73D7631126C0135A005CCEC2 /* HTTPClient.swift */,
+				73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */,
 			);
 			path = "Stargazers API";
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */,
 				730122A426BF3EB20007B086 /* StargazersLoader.swift in Sources */,
 				730122A626BF3F0B0007B086 /* Stargazer.swift in Sources */,
 				73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */,
