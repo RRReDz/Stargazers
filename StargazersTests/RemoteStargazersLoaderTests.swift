@@ -104,20 +104,19 @@ class RemoteStargazersLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-    private typealias StargazerJSON = [String: Any]
     private func makeStargazer(
         id: Int,
         username: String,
         avatarStringURL: String,
         userDetailStringURL: String
-    ) -> (Stargazer, StargazerJSON) {
+    ) -> (Stargazer, [String: Any]) {
         let stargazer = Stargazer(
             id: id,
             username: username,
             avatarURL: URL(string: avatarStringURL)!,
             detailURL: URL(string: userDetailStringURL)!
         )
-        let stargazerJSON: StargazerJSON = [
+        let stargazerJSON: [String: Any] = [
             "id": id,
             "login": username,
             "avatar_url": avatarStringURL,
