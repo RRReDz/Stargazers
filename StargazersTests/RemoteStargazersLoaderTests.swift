@@ -9,6 +9,7 @@ import XCTest
 import Stargazers
 
 class RemoteStargazersLoaderTests: XCTestCase {
+    
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT(for: anyURL())
         
@@ -37,15 +38,9 @@ class RemoteStargazersLoaderTests: XCTestCase {
     func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT(for: anyURL())
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load { error in
-            XCTAssertEqual(error, .connectivity)
-            exp.fulfill()
-        }
-        
-        client.complete(with: NSError(domain: "any", code: -1))
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesWith: .connectivity, on: {
+            client.complete(with: NSError(domain: "any", code: -1))
+        })
     }
     
     func test_load_deliversInvalidDataErrorOnClientNon200Response() {
@@ -54,21 +49,15 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let httpCodes = [199, 201, 250, 300, 400, 404, 500]
         
         httpCodes.enumerated().forEach { index, httpCode in
-            let exp = expectation(description: "Wait for load completion")
-            sut.load { error in
-                XCTAssertEqual(error, .invalidData)
-                exp.fulfill()
-            }
-            
-            client.complete(
-                with: HTTPURLResponse(
-                    url: url,
-                    statusCode: httpCode,
-                    httpVersion: nil,
-                    headerFields: nil)!,
-                at: index)
-            
-            wait(for: [exp], timeout: 1.0)
+            assert(that: sut, completesWith: .invalidData, on: {
+                client.complete(
+                    with: HTTPURLResponse(
+                        url: url,
+                        statusCode: httpCode,
+                        httpVersion: nil,
+                        headerFields: nil)!,
+                    at: index)
+            })
         }
     }
     
@@ -76,6 +65,21 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
         return (sut, client)
+    }
+    
+    private func assert(
+        that sut: RemoteStargazersLoader,
+        completesWith expectedError: RemoteStargazersLoader.Error,
+        on action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        var capturedErrors = [RemoteStargazersLoader.Error]()
+        sut.load { receivedError in
+            capturedErrors.append(receivedError)
+        }
+        action()
+        XCTAssertEqual(capturedErrors, [expectedError], file: file, line: line)
     }
     
     private func anyURL() -> URL {
@@ -100,4 +104,5 @@ class RemoteStargazersLoaderTests: XCTestCase {
             messages[index].completion(.success(httpResponse))
         }
     }
+    
 }
