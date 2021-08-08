@@ -11,7 +11,7 @@ final class RemoteStargazersLoader {
     private let client: HTTPClient
     private let url: URL
     
-    init(client: HTTPClient, url: URL = URL(string: "http://a-default-url.com")!) {
+    init(client: HTTPClient, url: URL) {
         self.client = client
         self.url = url
     }
@@ -35,19 +35,23 @@ class HTTPClientSpy: HTTPClient {
 
 class RemoteStargazersLoaderTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
-        let client = HTTPClientSpy()
-        _ = RemoteStargazersLoader(client: client)
+        let (_, client) = makeSUT()
         
         XCTAssertEqual(client.requestedURLs, [])
     }
     
     func test_load_doesRequestDataFromURL() {
-        let client = HTTPClientSpy()
         let url = URL(string: "http://any-url.com")!
-        let sut = RemoteStargazersLoader(client: client, url: url)
+        let (sut, client) = makeSUT(for: url)
         
         sut.load()
         
         XCTAssertEqual(client.requestedURLs, [url])
+    }
+    
+    private func makeSUT(for url: URL = URL(string: "http://a-default-url.com")!) -> (RemoteStargazersLoader, HTTPClientSpy) {
+        let client = HTTPClientSpy()
+        let sut = RemoteStargazersLoader(client: client, url: url)
+        return (sut, client)
     }
 }
