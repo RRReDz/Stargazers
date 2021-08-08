@@ -10,7 +10,7 @@ import Stargazers
 
 class RemoteStargazersLoaderTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
-        let (_, client) = makeSUT()
+        let (_, client) = makeSUT(for: anyURL())
         
         XCTAssertEqual(client.requestedURLs, [])
     }
@@ -48,7 +48,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func makeSUT(for url: URL = URL(string: "http://a-default-url.com")!) -> (RemoteStargazersLoader, HTTPClientSpy) {
+    private func makeSUT(for url: URL) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
         return (sut, client)
