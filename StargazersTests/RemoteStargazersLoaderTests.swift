@@ -34,12 +34,12 @@ class RemoteStargazersLoaderTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
     
-    func test_load_deliversInvalidDataErrorOnClientError() {
+    func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT(for: anyURL())
         
         let exp = expectation(description: "Wait for load completion")
         sut.load { error in
-            XCTAssertEqual(error as? RemoteStargazersLoader.Error, .invalidData)
+            XCTAssertEqual(error, .connectivity)
             exp.fulfill()
         }
         
