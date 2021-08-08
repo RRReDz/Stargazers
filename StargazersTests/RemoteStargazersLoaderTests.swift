@@ -9,33 +9,41 @@ import XCTest
 
 final class RemoteStargazersLoader {
     func load() {
-        HTTPClient.shared.requestedURL = [URL(string: "http://a-url.com")!]
+        HTTPClient.shared.get(from: URL(string: "http://a-url.com")!)
     }
 }
 
 class HTTPClient {
-    private init() {}
+    static var shared = HTTPClient()
     
-    static let shared = HTTPClient()
+    func get(from url: URL) {}
+}
+
+class HTTPClientSpy: HTTPClient {
+    var requestedURLs = [URL]()
     
-    var requestedURL = [URL]()
+    override func get(from url: URL) {
+        requestedURLs.append(url)
+    }
 }
 
 class RemoteStargazersLoaderTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
-        let client = HTTPClient.shared
+        let spy = HTTPClientSpy()
+        HTTPClient.shared = spy
         _ = RemoteStargazersLoader()
         
-        XCTAssertEqual(client.requestedURL, [])
+        XCTAssertEqual(spy.requestedURLs, [])
     }
     
     func test_load_doesRequestDataFromURL() {
-        let client = HTTPClient.shared
+        let spy = HTTPClientSpy()
+        HTTPClient.shared = spy
         let url = URL(string: "http://a-url.com")!
         let sut = RemoteStargazersLoader()
         
         sut.load()
         
-        XCTAssertEqual(client.requestedURL, [url])
+        XCTAssertEqual(spy.requestedURLs, [url])
     }
 }
