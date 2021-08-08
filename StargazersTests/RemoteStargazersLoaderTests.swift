@@ -48,6 +48,30 @@ class RemoteStargazersLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_load_deliversInvalidDataErrorOnClientNon200Response() {
+        let url = anyURL()
+        let (sut, client) = makeSUT(for: url)
+        let httpCodes = [199, 201, 250, 300, 400, 404, 500]
+        
+        httpCodes.enumerated().forEach { index, httpCode in
+            let exp = expectation(description: "Wait for load completion")
+            sut.load { error in
+                XCTAssertEqual(error, .invalidData)
+                exp.fulfill()
+            }
+            
+            client.complete(
+                with: HTTPURLResponse(
+                    url: url,
+                    statusCode: httpCode,
+                    httpVersion: nil,
+                    headerFields: nil)!,
+                at: index)
+            
+            wait(for: [exp], timeout: 1.0)
+        }
+    }
+    
     private func makeSUT(for url: URL) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
@@ -59,17 +83,21 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     class HTTPClientSpy: HTTPClient {
-        private var messages = [(url: URL, completion: (Error) -> Void)]()
+        private var messages = [(url: URL, completion: (Result<HTTPURLResponse, Error>) -> Void)]()
         var requestedURLs: [URL] {
             messages.map { $0.url }
         }
         
-        func get(from url: URL, completion: @escaping (Error) -> Void) {
+        func get(from url: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void) {
             messages.append((url, completion))
         }
         
         func complete(with error: Error, at index: Int = 0) {
-            messages[index].completion(error)
+            messages[index].completion(.failure(error))
+        }
+        
+        func complete(with httpResponse: HTTPURLResponse, at index: Int = 0) {
+            messages[index].completion(.success(httpResponse))
         }
     }
 }
