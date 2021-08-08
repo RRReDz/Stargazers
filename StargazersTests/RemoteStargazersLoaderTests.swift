@@ -8,30 +8,6 @@
 import XCTest
 import Stargazers
 
-final class RemoteStargazersLoader {
-    private let client: HTTPClient
-    private let url: URL
-    
-    enum Error: Swift.Error {
-        case invalidData
-    }
-    
-    init(client: HTTPClient, url: URL) {
-        self.client = client
-        self.url = url
-    }
-    
-    func load(completion: @escaping (Swift.Error) -> Void) {
-        client.get(from: url) { _ in
-            completion(Error.invalidData)
-        }
-    }
-}
-
-protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (Error) -> Void)
-}
-
 class RemoteStargazersLoaderTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT()
