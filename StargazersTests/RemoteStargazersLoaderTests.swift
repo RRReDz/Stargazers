@@ -16,7 +16,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     func test_load_doesRequestDataFromURL() {
-        let url = URL(string: "http://any-url.com")!
+        let url = anyURL()
         let (sut, client) = makeSUT(for: url)
         
         sut.load() { _ in }
@@ -25,7 +25,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     func test_loadTwice_doesRequestDataFromURLTwice() {
-        let url = URL(string: "http://any-url.com")!
+        let url = anyURL()
         let (sut, client) = makeSUT(for: url)
         
         sut.load() { _ in }
@@ -35,7 +35,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     func test_load_deliversInvalidDataErrorOnClientError() {
-        let (sut, client) = makeSUT(for: URL(string: "http://any-url.com")!)
+        let (sut, client) = makeSUT(for: anyURL())
         
         let exp = expectation(description: "Wait for load completion")
         sut.load { error in
@@ -52,6 +52,10 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
         return (sut, client)
+    }
+    
+    private func anyURL() -> URL {
+        URL(string: "http://any-url.com")!
     }
     
     class HTTPClientSpy: HTTPClient {
