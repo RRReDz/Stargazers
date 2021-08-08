@@ -24,6 +24,16 @@ class RemoteStargazersLoaderTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url])
     }
     
+    func test_loadTwice_doesRequestDataFromURLTwice() {
+        let url = URL(string: "http://any-url.com")!
+        let (sut, client) = makeSUT(for: url)
+        
+        sut.load() { _ in }
+        sut.load() { _ in }
+        
+        XCTAssertEqual(client.requestedURLs, [url, url])
+    }
+    
     func test_load_deliversInvalidDataErrorOnClientError() {
         let (sut, client) = makeSUT(for: URL(string: "http://any-url.com")!)
         
