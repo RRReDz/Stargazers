@@ -11,6 +11,8 @@
 		730122A426BF3EB20007B086 /* StargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A326BF3EB20007B086 /* StargazersLoader.swift */; };
 		730122A626BF3F0B0007B086 /* Stargazer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A526BF3F0B0007B086 /* Stargazer.swift */; };
 		730122A826BF4FB30007B086 /* RemoteStargazersLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */; };
+		73D7631026C0133C005CCEC2 /* RemoteStargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */; };
+		73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631126C0135A005CCEC2 /* HTTPClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +33,8 @@
 		730122A326BF3EB20007B086 /* StargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersLoader.swift; sourceTree = "<group>"; };
 		730122A526BF3F0B0007B086 /* Stargazer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stargazer.swift; sourceTree = "<group>"; };
 		730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersLoaderTests.swift; sourceTree = "<group>"; };
+		73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersLoader.swift; sourceTree = "<group>"; };
+		73D7631126C0135A005CCEC2 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +77,10 @@
 		7301226F26BF258F0007B086 /* Stargazers */ = {
 			isa = PBXGroup;
 			children = (
-				7301227126BF258F0007B086 /* Info.plist */,
+				73D7630E26C01301005CCEC2 /* API */,
 				730122A326BF3EB20007B086 /* StargazersLoader.swift */,
 				730122A526BF3F0B0007B086 /* Stargazer.swift */,
+				7301227126BF258F0007B086 /* Info.plist */,
 			);
 			path = Stargazers;
 			sourceTree = "<group>";
@@ -87,6 +92,15 @@
 				7301227D26BF258F0007B086 /* Info.plist */,
 			);
 			path = StargazersTests;
+			sourceTree = "<group>";
+		};
+		73D7630E26C01301005CCEC2 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */,
+				73D7631126C0135A005CCEC2 /* HTTPClient.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -200,6 +214,8 @@
 			files = (
 				730122A426BF3EB20007B086 /* StargazersLoader.swift in Sources */,
 				730122A626BF3F0B0007B086 /* Stargazer.swift in Sources */,
+				73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */,
+				73D7631026C0133C005CCEC2 /* RemoteStargazersLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
