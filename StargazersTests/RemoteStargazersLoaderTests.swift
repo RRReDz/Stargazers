@@ -75,9 +75,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         line: UInt = #line
     ) {
         var capturedErrors = [RemoteStargazersLoader.Error]()
-        sut.load { receivedError in
-            capturedErrors.append(receivedError)
-        }
+        sut.load { capturedErrors.append($0) }
         action()
         XCTAssertEqual(capturedErrors, [expectedError], file: file, line: line)
     }
