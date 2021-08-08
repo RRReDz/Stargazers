@@ -25,14 +25,6 @@ protocol HTTPClient {
     func get(from url: URL)
 }
 
-class HTTPClientSpy: HTTPClient {
-    var requestedURLs = [URL]()
-    
-    func get(from url: URL) {
-        requestedURLs.append(url)
-    }
-}
-
 class RemoteStargazersLoaderTests: XCTestCase {
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT()
@@ -53,5 +45,13 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
         return (sut, client)
+    }
+    
+    class HTTPClientSpy: HTTPClient {
+        var requestedURLs = [URL]()
+        
+        func get(from url: URL) {
+            requestedURLs.append(url)
+        }
     }
 }
