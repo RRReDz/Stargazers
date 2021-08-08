@@ -43,16 +43,14 @@ class RemoteStargazersLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_deliversInvalidDataErrorOnClientNon200Response() {
+    func test_load_deliversInvalidDataErrorOnClientNon200HTTPResponse() {
         let url = anyURL()
         let (sut, client) = makeSUT(for: url)
         let samples = [199, 201, 250, 300, 400, 404, 500]
         
         samples.enumerated().forEach { index, code in
             assert(that: sut, completesWith: .invalidData, on: {
-                client.complete(
-                    with: httpResponse(for: url, statusCode: code),
-                    at: index)
+                client.complete(with: code, at: index)
             })
         }
     }
@@ -80,14 +78,6 @@ class RemoteStargazersLoaderTests: XCTestCase {
         URL(string: "http://any-url.com")!
     }
     
-    private func httpResponse(for url: URL, statusCode: Int) -> HTTPURLResponse {
-        HTTPURLResponse(
-            url: url,
-            statusCode: statusCode,
-            httpVersion: nil,
-            headerFields: nil)!
-    }
-    
     class HTTPClientSpy: HTTPClient {
         private var messages = [(url: URL, completion: (HTTPClient.CompletionResult) -> Void)]()
         var requestedURLs: [URL] {
@@ -102,7 +92,12 @@ class RemoteStargazersLoaderTests: XCTestCase {
             messages[index].completion(.failure(error))
         }
         
-        func complete(with httpResponse: HTTPURLResponse, at index: Int = 0) {
+        func complete(with statusCode: Int, at index: Int = 0) {
+            let httpResponse = HTTPURLResponse(
+                url: requestedURLs[index],
+                statusCode: statusCode,
+                httpVersion: nil,
+                headerFields: nil)!
             messages[index].completion(.success(httpResponse))
         }
     }
