@@ -27,7 +27,8 @@ public final class RemoteStargazersLoader {
                 response
                 .mapError { _ in Error.connectivity }
                 .flatMap { (data, httpResponse)  in
-                    if httpResponse.statusCode == 200, let remoteStargazers = try? JSONDecoder().decode([RemoteStargazer].self, from: data) {
+                    if httpResponse.statusCode == 200,
+                       let remoteStargazers = try? JSONDecoder().decode([RemoteStargazer].self, from: data) {
                         return .success(remoteStargazers.map { $0.toModel })
                     } else {
                         return .failure(.invalidData)

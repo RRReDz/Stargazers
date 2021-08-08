@@ -63,6 +63,15 @@ class RemoteStargazersLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_deliversNoItemsOnClient200HTTPResponseWithEmtpyListData() throws {
+        let validEmptyData: Data = try JSONSerialization.data(withJSONObject: [] as [[String: Any]])
+        let (sut, client) = makeSUT(for: anyURL())
+        
+        assert(that: sut, completesWith: .success([]), on: {
+            client.complete(statusCode: 200, data: validEmptyData)
+        })
+    }
+    
     func test_load_deliversStargazersOnClient200HTTPResponseAndValidData() throws {
         let (stargazer0, stargazer0JSON) = makeStargazer(
             id: 5946912,
