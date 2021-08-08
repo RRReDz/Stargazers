@@ -12,7 +12,7 @@ public final class RemoteStargazersLoader {
     private let url: URL
     
     public enum Error: Swift.Error {
-        case invalidData
+        case connectivity
     }
     
     public init(client: HTTPClient, url: URL) {
@@ -20,9 +20,9 @@ public final class RemoteStargazersLoader {
         self.url = url
     }
     
-    public func load(completion: @escaping (Swift.Error) -> Void) {
+    public func load(completion: @escaping (Error) -> Void) {
         client.get(from: url) { _ in
-            completion(Error.invalidData)
+            completion(.connectivity)
         }
     }
 }
