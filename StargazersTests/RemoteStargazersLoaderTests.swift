@@ -46,16 +46,12 @@ class RemoteStargazersLoaderTests: XCTestCase {
     func test_load_deliversInvalidDataErrorOnClientNon200Response() {
         let url = anyURL()
         let (sut, client) = makeSUT(for: url)
-        let httpCodes = [199, 201, 250, 300, 400, 404, 500]
+        let samples = [199, 201, 250, 300, 400, 404, 500]
         
-        httpCodes.enumerated().forEach { index, httpCode in
+        samples.enumerated().forEach { index, code in
             assert(that: sut, completesWith: .invalidData, on: {
                 client.complete(
-                    with: HTTPURLResponse(
-                        url: url,
-                        statusCode: httpCode,
-                        httpVersion: nil,
-                        headerFields: nil)!,
+                    with: httpResponse(for: url, statusCode: code),
                     at: index)
             })
         }
@@ -82,6 +78,14 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
+    }
+    
+    private func httpResponse(for url: URL, statusCode: Int) -> HTTPURLResponse {
+        HTTPURLResponse(
+            url: url,
+            statusCode: statusCode,
+            httpVersion: nil,
+            headerFields: nil)!
     }
     
     class HTTPClientSpy: HTTPClient {
