@@ -38,7 +38,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT(for: anyURL())
         
-        assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.connectivity), on: {
+        assert(that: sut, completesWith: failure(.connectivity), on: {
             client.complete(with: anyNSError())
         })
     }
@@ -48,7 +48,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let samples = [199, 201, 250, 300, 400, 404, 500]
         
         samples.enumerated().forEach { index, code in
-            assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.invalidData), on: {
+            assert(that: sut, completesWith: failure(.invalidData), on: {
                 client.complete(statusCode: code, at: index)
             })
         }
@@ -58,7 +58,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let invalidData = "any invalid data".data(using: .utf8)!
         let (sut, client) = makeSUT(for: anyURL())
         
-        assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.invalidData), on: {
+        assert(that: sut, completesWith: failure(.invalidData), on: {
             client.complete(statusCode: 200, data: invalidData)
         })
     }
@@ -102,12 +102,8 @@ class RemoteStargazersLoaderTests: XCTestCase {
         assert(
             that: sut,
             completesWith: .success([stargazer0, stargazer1, stargazer2]),
-            on: {
-                client.complete(
-                    statusCode: 200,
-                    data: validData)
-            })
-    }
+            on: { client.complete(statusCode: 200, data: validData) })
+      }
     
     func test_load_doesNotDeliverResultWhenInstanceHasBeenDeallocated() {
         let url = anyURL()
@@ -194,6 +190,10 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     private func anyNSError() -> NSError {
         NSError(domain: "any", code: -1)
+    }
+    
+    private func failure(_ error: RemoteStargazersLoader.Error) -> RemoteStargazersLoader.Result {
+        return .failure(error)
     }
     
     class HTTPClientSpy: HTTPClient {
