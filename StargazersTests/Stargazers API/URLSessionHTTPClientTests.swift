@@ -8,18 +8,11 @@
 import XCTest
 import Stargazers
 
-protocol HTTPSession {
-    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HTTPSessionTask
-}
-
-protocol HTTPSessionTask {
-    func resume()
-}
 
 final class URLSessionHTTPClient {
-    private let session: HTTPSession
+    private let session: URLSession
     
-    init(session: HTTPSession) {
+    init(session: URLSession = .shared) {
         self.session = session
     }
     
@@ -31,36 +24,21 @@ final class URLSessionHTTPClient {
 }
 
 class URLSessionHTTPClientTests: XCTestCase {
-
-    func test_init_doesNotRequestDataFromURL() {
-        let (_, session) = makeSUT()
-        
-        XCTAssertEqual(session.requestedURLs, [])
-    }
-    
-    func test_get_resumesDataTaskWithURL() {
-        let url = anyURL()
-        let task = URLSessionDataTaskSpy()
-        let (sut, session) = makeSUT()
-        
-        session.stub(url: url, task: task)
-        
-        sut.get(from: url)
-        
-        XCTAssertEqual(task.resumesCallCount, 1)
-    }
     
     func test_get_deliversFailureOnRequestError() {
-        let (sut, session) = makeSUT()
+        let sut = makeSUT()
         let error = anyNSError()
         let url = anyURL()
-        session.stub(url: url, error: error)
+        
+        URLProtocolStub.registerClass(URLProtocolStub.self)
+        URLProtocolStub.stub(url: url, error: error)
 
         let exp = expectation(description: "Wait for get completion")
         sut.get(from: url) { result in
             switch result {
             case let .failure(receivedError as NSError):
-                XCTAssertEqual(receivedError, error)
+                XCTAssertEqual(receivedError.domain, error.domain)
+                XCTAssertEqual(receivedError.code, error.code)
             default:
                 XCTFail("Expected failure with error \(error), got \(result) instead")
             }
@@ -68,15 +46,54 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
 
         wait(for: [exp], timeout: 1.0)
+        
+        URLProtocolStub.unregisterClass(URLProtocolStub.self)
     }
     
     //MARK: - Utils
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (URLSessionHTTPClient, URLSessionSpy) {
-        let session = URLSessionSpy()
-        let sut = URLSessionHTTPClient(session: session)
+    private class URLProtocolStub: URLProtocol {
+        private struct Stub {
+            let error: Error?
+        }
+        
+        private static var stubs = [URL: Stub]()
+        
+        static func stub(url: URL, error: Error? = nil) {
+            stubs[url] = Stub(error: error)
+        }
+        
+        // Determins if this kind of protocol can handle the request for the given request.
+        override class func canInit(with request: URLRequest) -> Bool {
+            guard let requestURL = request.url else { return false }
+            return stubs[requestURL] != nil
+        }
+        
+        override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+            return request
+        }
+
+        override func startLoading() {
+            guard
+                let requestURL = request.url,
+                let stub = URLProtocolStub.stubs[requestURL]
+            else { return }
+            
+            if let error = stub.error {
+                client?.urlProtocol(self, didFailWithError: error)
+            }
+            
+            client?.urlProtocolDidFinishLoading(self)
+        }
+
+        override func stopLoading() {
+            client?.urlProtocolDidFinishLoading(self)
+        }
+    }
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
+        let sut = URLSessionHTTPClient()
         trackForMemoryLeak(sut, file: file, line: line)
-        trackForMemoryLeak(session, file: file, line: line)
-        return (sut, session)
+        return sut
     }
     
     private func trackForMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
@@ -91,42 +108,6 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     private func anyNSError() -> NSError {
         NSError(domain: "any", code: -1)
-    }
-    
-    final class URLSessionSpy: HTTPSession {
-        private struct Stub {
-            let task: HTTPSessionTask
-            let error: Error?
-        }
-        
-        var requestedURLs = [URL]()
-        private var stubs = [URL: Stub]()
-        
-        private class FakeURLSessionDataTask: HTTPSessionTask {
-            func resume() {}
-        }
-        
-        func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HTTPSessionTask {
-            requestedURLs.append(url)
-            guard let stub = stubs[url] else {
-                fatalError("Couldn't find a stub for url \(url)")
-            }
-        
-            completionHandler(nil, nil, stub.error)
-            return stub.task
-        }
-        
-        func stub(url: URL, task: HTTPSessionTask = FakeURLSessionDataTask(), error: Error? = nil) {
-            stubs[url] = Stub(task: task, error: error)
-        }
-    }
-
-    final class URLSessionDataTaskSpy: HTTPSessionTask {
-        var resumesCallCount: Int = 0
-        
-        func resume() {
-            resumesCallCount += 1
-        }
     }
 
 }
