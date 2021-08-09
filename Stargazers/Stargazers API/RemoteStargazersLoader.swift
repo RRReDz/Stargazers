@@ -8,7 +8,7 @@
 import Foundation
 
 public final class RemoteStargazersLoader {
-    public typealias Result = Swift.Result<[Stargazer], Error>
+    public typealias Result = Swift.Result<[Stargazer], Swift.Error>
     
     private let client: HTTPClient
     private let url: URL
@@ -32,4 +32,3 @@ public final class RemoteStargazersLoader {
         }
     }
 }
-

@@ -174,7 +174,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         
         sut.load { receivedResult in
             switch (expectedResult, receivedResult) {
-            case let (.failure(expectedError), .failure(receivedError)):
+            case let (.failure(expectedError), .failure(receivedError as RemoteStargazersLoader.Error)):
                 XCTAssertEqual(expectedError, receivedError, file: file, line: line)
             case let (.success(expectedStargazers), .success(receivedStargazers)):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)

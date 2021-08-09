@@ -8,5 +8,5 @@
 import Foundation
 
 protocol StargazersLoader {
-    func load(completion: (Result<[Stargazer], Error>) -> Void)
+    func load(completion: @escaping (Result<[Stargazer], Error>) -> Void)
 }
