@@ -28,7 +28,8 @@ public final class RemoteStargazersLoader {
             guard self != nil else { return }
             completion(
                 $0.mapError { _ in Error.connectivity }
-                .flatMap(RemoteStargazersMapper.map))
+                .flatMap { data, response in Result { try RemoteStargazersMapper.map(data, response) } }
+            )
         }
     }
 }
