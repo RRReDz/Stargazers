@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Stargazers
 
 final class URLSessionHTTPClient {
     private let session: URLSession
@@ -14,9 +15,10 @@ final class URLSessionHTTPClient {
         self.session = session
     }
     
-    func get(from url: URL) {
-        let task = session.dataTask(with: url) { _, _, _ in }
-        task.resume()
+    func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void = { _ in }) {
+        session.dataTask(with: url) { _, _, error in
+            error.map { completion(.failure($0)) }
+        }.resume()
     }
 }
 
@@ -33,11 +35,31 @@ class URLSessionHTTPClientTests: XCTestCase {
         let task = URLSessionDataTaskSpy()
         let (sut, session) = makeSUT()
         
-        session.stub(task, for: url)
+        session.stub(url: url, task: task)
         
         sut.get(from: url)
         
         XCTAssertEqual(task.resumesCallCount, 1)
+    }
+    
+    func test_get_deliversFailureOnRequestError() {
+        let (sut, session) = makeSUT()
+        let error = anyNSError()
+        let url = anyURL()
+        session.stub(url: url, error: error)
+
+        let exp = expectation(description: "Wait for get completion")
+        sut.get(from: url) { result in
+            switch result {
+            case let .failure(receivedError as NSError):
+                XCTAssertEqual(receivedError, error)
+            default:
+                XCTFail("Expected failure with error \(error), got \(result) instead")
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
     }
     
     //MARK: - Utils
@@ -64,8 +86,13 @@ class URLSessionHTTPClientTests: XCTestCase {
     }
     
     final class URLSessionSpy: URLSession {
+        private struct Stub {
+            let task: URLSessionDataTask
+            let error: Error?
+        }
+        
         var requestedURLs = [URL]()
-        private var stubs = [URL: URLSessionDataTask]()
+        private var stubs = [URL: Stub]()
         
         override init() {}
         
@@ -74,12 +101,16 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         override func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
             requestedURLs.append(url)
-            
-            return stubs[url] ?? FakeURLSessionDataTask()
+            guard let stub = stubs[url] else {
+                fatalError("Couldn't find a stub for url \(url)")
+            }
+        
+            completionHandler(nil, nil, stub.error)
+            return stub.task
         }
         
-        func stub(_ task: URLSessionDataTask, for url: URL) {
-            stubs[url] = task
+        func stub(url: URL, task: URLSessionDataTask = FakeURLSessionDataTask(), error: Error? = nil) {
+            stubs[url] = Stub(task: task, error: error)
         }
     }
 
