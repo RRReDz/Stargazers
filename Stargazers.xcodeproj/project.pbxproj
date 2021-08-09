@@ -16,6 +16,7 @@
 		73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */; };
 		73D7631726C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */; };
 		73D7631926C14224005CCEC2 /* ItemsArray+ModelMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */; };
+		73D7631C26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersMapper.swift; sourceTree = "<group>"; };
 		73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+StatusCode.swift"; sourceTree = "<group>"; };
 		73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemsArray+ModelMapping.swift"; sourceTree = "<group>"; };
+		73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */,
+				73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */,
 			);
 			path = "Stargazers API";
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				730122A826BF4FB30007B086 /* RemoteStargazersLoaderTests.swift in Sources */,
+				73D7631C26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
