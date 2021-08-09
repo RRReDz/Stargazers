@@ -35,16 +35,47 @@ class URLSessionHTTPClientTests: XCTestCase {
         URLProtocolStub.unregisterClass(URLProtocolStub.self)
     }
     
+    func test_get_deliversSuccessOnRequestDeliveredWithHTTPResponseAndData() {
+        let sut = makeSUT()
+        let error = anyNSError()
+        let url = anyURL()
+        let data = "any data".data(using: .utf8)
+        let response = HTTPURLResponse(url: url, statusCode: 300, httpVersion: nil, headerFields: nil)!
+        
+        URLProtocolStub.registerClass(URLProtocolStub.self)
+        URLProtocolStub.stub(url: url, data: data, response: response)
+
+        let exp = expectation(description: "Wait for get completion")
+        sut.get(from: url) { result in
+            switch result {
+            case let .success((receivedData, receivedResponse)):
+                XCTAssertEqual(receivedData, data)
+                XCTAssertEqual(receivedResponse.url, response.url)
+                XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
+                XCTAssertEqual(receivedResponse.mimeType, response.mimeType)
+            default:
+                XCTFail("Expected failure with error \(error), got \(result) instead")
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
+        
+        URLProtocolStub.unregisterClass(URLProtocolStub.self)
+    }
+    
     //MARK: - Utils
     private class URLProtocolStub: URLProtocol {
         private struct Stub {
+            let data: Data?
+            let response: HTTPURLResponse?
             let error: Error?
         }
         
         private static var stubs = [URL: Stub]()
         
-        static func stub(url: URL, error: Error? = nil) {
-            stubs[url] = Stub(error: error)
+        static func stub(url: URL, data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil) {
+            stubs[url] = Stub(data: data, response: response, error: error)
         }
         
         // Determins if this kind of protocol can handle the request for the given request.
@@ -65,6 +96,14 @@ class URLSessionHTTPClientTests: XCTestCase {
             
             if let error = stub.error {
                 client?.urlProtocol(self, didFailWithError: error)
+            }
+            
+            if let data = stub.data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+            
+            if let response = stub.response {
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
             }
             
             client?.urlProtocolDidFinishLoading(self)
