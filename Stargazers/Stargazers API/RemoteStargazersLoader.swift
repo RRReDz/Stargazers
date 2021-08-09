@@ -22,17 +22,16 @@ public final class RemoteStargazersLoader {
     }
     
     public func load(completion: @escaping (Result<[Stargazer], Error>) -> Void) {
-        client.get(from: url) { response in
+        client.get(from: url) { [weak self] in
+            guard self != nil else { return }
             completion(
-                response
-                .mapError { _ in Error.connectivity }
+                $0.mapError { _ in Error.connectivity }
                 .flatMap { (data, httpResponse) in
                     Result {
                         try RemoteStargazersMapper.map(data, with: httpResponse)
                     }
                     .mapError { _ in Error.invalidData }
-                }
-            )
+                })
         }
     }
 }
