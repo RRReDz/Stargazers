@@ -107,10 +107,18 @@ class RemoteStargazersLoaderTests: XCTestCase {
         })
     }
     
-    private func makeSUT(for url: URL) -> (RemoteStargazersLoader, HTTPClientSpy) {
+    private func makeSUT(for url: URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
+        trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(client, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func trackForMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
+        }
     }
     
     private func makeStargazer(
