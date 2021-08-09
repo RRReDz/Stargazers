@@ -68,10 +68,30 @@ class URLSessionHTTPClientTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_get_deliversSuccessOnRequestDeliveredWithHTTPURLResponseAndNilData() {
+        let httpResponse = anyHTTPURLResponse()
+        URLProtocolStub.stub(data: nil, response: httpResponse, error: nil)
+
+        let exp = expectation(description: "Wait for get completion")
+        makeSUT().get(from: anyURL()) { result in
+            switch result {
+            case let .success((receivedData, receivedResponse)):
+                let emptyData = Data()
+                XCTAssertEqual(receivedData, emptyData, "Expected receivedData to be empty data")
+                XCTAssertEqual(receivedResponse.url, httpResponse.url)
+                XCTAssertEqual(receivedResponse.statusCode, httpResponse.statusCode)
+            default:
+                XCTFail("Expected success, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_get_deliversFailureForAllInvalidRepresentableStates() {
         XCTAssertNotNil(resultErrorFor(data: nil, response: nil, error: nil))
         XCTAssertNotNil(resultErrorFor(data: nil, response: anyURLResponse(), error: nil))
-        XCTAssertNotNil(resultErrorFor(data: nil, response: anyHTTPURLResponse(), error: nil))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nil, error: nil))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nil, error: anyNSError()))
         XCTAssertNotNil(resultErrorFor(data: nil, response: anyURLResponse(), error: anyNSError()))
