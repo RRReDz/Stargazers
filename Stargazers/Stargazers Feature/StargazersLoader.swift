@@ -7,6 +7,8 @@
 
 import Foundation
 
-protocol StargazersLoader {
-    func load(completion: @escaping (Result<[Stargazer], Error>) -> Void)
+public protocol StargazersLoader {
+    typealias Result = Swift.Result<[Stargazer], Error>
+    
+    func load(completion: @escaping (Result) -> Void)
 }
