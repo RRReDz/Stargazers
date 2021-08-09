@@ -197,12 +197,12 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     class HTTPClientSpy: HTTPClient {
-        private var messages = [(url: URL, completion: (HTTPClient.CompletionResult) -> Void)]()
+        private var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
         var requestedURLs: [URL] {
             messages.map { $0.url }
         }
         
-        func get(from url: URL, completion: @escaping (HTTPClient.CompletionResult) -> Void) {
+        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
             messages.append((url, completion))
         }
         
