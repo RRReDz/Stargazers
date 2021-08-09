@@ -38,7 +38,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT(for: anyURL())
         
-        assert(that: sut, completesWith: .failure(.connectivity), on: {
+        assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.connectivity), on: {
             client.complete(with: anyNSError())
         })
     }
@@ -48,7 +48,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let samples = [199, 201, 250, 300, 400, 404, 500]
         
         samples.enumerated().forEach { index, code in
-            assert(that: sut, completesWith: .failure(.invalidData), on: {
+            assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.invalidData), on: {
                 client.complete(statusCode: code, at: index)
             })
         }
@@ -58,7 +58,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let invalidData = "any invalid data".data(using: .utf8)!
         let (sut, client) = makeSUT(for: anyURL())
         
-        assert(that: sut, completesWith: .failure(.invalidData), on: {
+        assert(that: sut, completesWith: .failure(RemoteStargazersLoader.Error.invalidData), on: {
             client.complete(statusCode: 200, data: invalidData)
         })
     }
@@ -165,7 +165,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     private func assert(
         that sut: RemoteStargazersLoader,
-        completesWith expectedResult: Result<[Stargazer], RemoteStargazersLoader.Error>,
+        completesWith expectedResult: RemoteStargazersLoader.Result,
         on action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -174,7 +174,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         
         sut.load { receivedResult in
             switch (expectedResult, receivedResult) {
-            case let (.failure(expectedError), .failure(receivedError as RemoteStargazersLoader.Error)):
+            case let (.failure(expectedError as RemoteStargazersLoader.Error), .failure(receivedError as RemoteStargazersLoader.Error)):
                 XCTAssertEqual(expectedError, receivedError, file: file, line: line)
             case let (.success(expectedStargazers), .success(receivedStargazers)):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
