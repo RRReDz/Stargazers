@@ -29,25 +29,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(session.requestedURLs, [])
     }
     
-    func test_get_doesRequestDataFromURL() {
-        let url = anyURL()
-        let (sut, session) = makeSUT()
-        
-        sut.get(from: url)
-        
-        XCTAssertEqual(session.requestedURLs, [url])
-    }
-    
-    func test_getTwice_doesRequestDataFromURLTwice() {
-        let url = anyURL()
-        let (sut, session) = makeSUT()
-
-        sut.get(from: url)
-        sut.get(from: url)
-
-        XCTAssertEqual(session.requestedURLs, [url, url])
-    }
-    
     func test_get_resumesDataTaskWithURL() {
         let url = anyURL()
         let task = URLSessionDataTaskSpy()
