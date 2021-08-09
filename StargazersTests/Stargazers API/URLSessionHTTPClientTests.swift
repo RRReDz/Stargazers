@@ -8,21 +8,6 @@
 import XCTest
 import Stargazers
 
-
-final class URLSessionHTTPClient {
-    private let session: URLSession
-    
-    init(session: URLSession = .shared) {
-        self.session = session
-    }
-    
-    func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void = { _ in }) {
-        session.dataTask(with: url) { _, _, error in
-            error.map { completion(.failure($0)) }
-        }.resume()
-    }
-}
-
 class URLSessionHTTPClientTests: XCTestCase {
     
     func test_get_deliversFailureOnRequestError() {
