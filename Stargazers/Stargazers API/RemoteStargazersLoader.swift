@@ -22,7 +22,9 @@ public final class RemoteStargazersLoader {
         self.client = client
         self.url = url
     }
-    
+}
+
+extension RemoteStargazersLoader: StargazersLoader {
     public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { [weak self] in
             guard self != nil else { return }
