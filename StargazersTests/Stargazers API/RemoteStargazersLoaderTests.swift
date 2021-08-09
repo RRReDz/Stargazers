@@ -132,12 +132,6 @@ class RemoteStargazersLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-    private func trackForMemoryLeak(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
-        }
-    }
-    
     private func makeStargazer(
         id: Int,
         username: String,
