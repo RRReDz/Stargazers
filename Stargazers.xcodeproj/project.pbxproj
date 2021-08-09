@@ -93,7 +93,7 @@
 		7301227A26BF258F0007B086 /* StargazersTests */ = {
 			isa = PBXGroup;
 			children = (
-				730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */,
+				73D7631A26C1484A005CCEC2 /* Stargazers API */,
 				7301227D26BF258F0007B086 /* Info.plist */,
 			);
 			path = StargazersTests;
@@ -118,6 +118,14 @@
 				730122A526BF3F0B0007B086 /* Stargazer.swift */,
 			);
 			path = "Stargazers Feature";
+			sourceTree = "<group>";
+		};
+		73D7631A26C1484A005CCEC2 /* Stargazers API */ = {
+			isa = PBXGroup;
+			children = (
+				730122A726BF4FB30007B086 /* RemoteStargazersLoaderTests.swift */,
+			);
+			path = "Stargazers API";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
