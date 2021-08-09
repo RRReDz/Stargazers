@@ -23,7 +23,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         let error = anyNSError()
         let url = anyURL()
         
-        URLProtocolStub.stub(url: url, error: error)
+        URLProtocolStub.stub(url: url, data: nil, response: nil, error: error)
 
         let exp = expectation(description: "Wait for get completion")
         sut.get(from: url) { result in
@@ -47,7 +47,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         let data = "any data".data(using: .utf8)
         let response = HTTPURLResponse(url: url, statusCode: 300, httpVersion: nil, headerFields: nil)!
         
-        URLProtocolStub.stub(url: url, data: data, response: response)
+        URLProtocolStub.stub(url: url, data: data, response: response, error: nil)
 
         let exp = expectation(description: "Wait for get completion")
         sut.get(from: url) { result in
@@ -70,7 +70,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     private class URLProtocolStub: URLProtocol {
         private struct Stub {
             let data: Data?
-            let response: HTTPURLResponse?
+            let response: URLResponse?
             let error: Error?
         }
         
