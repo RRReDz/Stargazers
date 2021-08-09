@@ -10,12 +10,19 @@ import Stargazers
 
 class URLSessionHTTPClientTests: XCTestCase {
     
+    override func setUp() {
+        URLProtocolStub.startInterceptingRequests()
+    }
+    
+    override func tearDown() {
+        URLProtocolStub.stopInterceptingRequests()
+    }
+    
     func test_get_deliversFailureOnRequestError() {
         let sut = makeSUT()
         let error = anyNSError()
         let url = anyURL()
         
-        URLProtocolStub.registerClass(URLProtocolStub.self)
         URLProtocolStub.stub(url: url, error: error)
 
         let exp = expectation(description: "Wait for get completion")
@@ -31,8 +38,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
 
         wait(for: [exp], timeout: 1.0)
-        
-        URLProtocolStub.unregisterClass(URLProtocolStub.self)
     }
     
     func test_get_deliversSuccessOnRequestDeliveredWithHTTPResponseAndData() {
@@ -42,7 +47,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         let data = "any data".data(using: .utf8)
         let response = HTTPURLResponse(url: url, statusCode: 300, httpVersion: nil, headerFields: nil)!
         
-        URLProtocolStub.registerClass(URLProtocolStub.self)
         URLProtocolStub.stub(url: url, data: data, response: response)
 
         let exp = expectation(description: "Wait for get completion")
@@ -60,8 +64,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
 
         wait(for: [exp], timeout: 1.0)
-        
-        URLProtocolStub.unregisterClass(URLProtocolStub.self)
     }
     
     //MARK: - Utils
@@ -78,16 +80,27 @@ class URLSessionHTTPClientTests: XCTestCase {
             stubs[url] = Stub(data: data, response: response, error: error)
         }
         
+        static func startInterceptingRequests() {
+            Self.registerClass(Self.self)
+        }
+        
+        static func stopInterceptingRequests() {
+            Self.unregisterClass(Self.self)
+            URLProtocolStub.stubs = [:]
+        }
+        
         // Determins if this kind of protocol can handle the request for the given request.
         override class func canInit(with request: URLRequest) -> Bool {
             guard let requestURL = request.url else { return false }
             return stubs[requestURL] != nil
         }
         
+        // Makes a certain request canonical (sinonym for unique) for the implemented protocol
         override class func canonicalRequest(for request: URLRequest) -> URLRequest {
             return request
         }
-
+        
+        // Starts protocol-specific loading of the request.
         override func startLoading() {
             guard
                 let requestURL = request.url,
@@ -108,9 +121,10 @@ class URLSessionHTTPClientTests: XCTestCase {
             
             client?.urlProtocolDidFinishLoading(self)
         }
-
+        
+        // Stops protocol-specific loading of the request.
         override func stopLoading() {
-            client?.urlProtocolDidFinishLoading(self)
+            URLProtocolStub.stubs = [:]
         }
     }
     
