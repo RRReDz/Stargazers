@@ -23,8 +23,7 @@ final class URLSessionHTTPClient {
 class URLSessionHTTPClientTests: XCTestCase {
 
     func test_init_doesNotRequestDataFromURL() {
-        let session = URLSessionSpy()
-        _ = URLSessionHTTPClient(session: session)
+        let (_, session) = makeSUT()
         
         XCTAssertEqual(session.requestedURLs, [])
     }
