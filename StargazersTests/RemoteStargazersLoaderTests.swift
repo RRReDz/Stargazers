@@ -91,20 +91,22 @@ class RemoteStargazersLoaderTests: XCTestCase {
             avatarStringURL: "https://image.fake.com/u/5946914?v=4",
             userDetailStringURL: "https://api.fake.com/users/last_login")
         
-        let stargazersJSON = [
+        let validData: Data = try [
             stargazer0JSON,
             stargazer1JSON,
             stargazer2JSON
-        ]
+        ].serialize()
         
-        let stargazers = [stargazer0, stargazer1, stargazer2]
-        
-        let validData: Data = try JSONSerialization.data(withJSONObject: stargazersJSON)
         let (sut, client) = makeSUT(for: anyURL())
         
-        assert(that: sut, completesWith: .success(stargazers), on: {
-            client.complete(statusCode: 200, data: validData)
-        })
+        assert(
+            that: sut,
+            completesWith: .success([stargazer0, stargazer1, stargazer2]),
+            on: {
+                client.complete(
+                    statusCode: 200,
+                    data: validData)
+            })
     }
     
     func test_load_doesNotDeliverResultWhenInstanceHasBeenDeallocated() {
@@ -218,4 +220,10 @@ class RemoteStargazersLoaderTests: XCTestCase {
         }
     }
     
+}
+
+private extension Array {
+    func serialize() throws -> Data {
+        try JSONSerialization.data(withJSONObject: self)
+    }
 }
