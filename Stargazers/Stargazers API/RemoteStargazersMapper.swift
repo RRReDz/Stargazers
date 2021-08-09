@@ -8,7 +8,15 @@
 import Foundation
 
 class RemoteStargazersMapper {
-    private struct RemoteStargazer: Decodable {
+    static func map(_ data: Data, with response: HTTPURLResponse) throws -> [Stargazer] {
+        guard response.isOK else {
+            throw RemoteStargazersLoader.Error.invalidData
+        }
+        let remoteStargazers = try JSONDecoder().decode([Item].self, from: data)
+        return remoteStargazers.toModels
+    }
+    
+    struct Item: Decodable {
         private let id: Int
         private let username: String
         private let avatar_url: URL
@@ -29,12 +37,16 @@ class RemoteStargazersMapper {
                 detailURL: user_datail_url)
         }
     }
+}
+
+private extension HTTPURLResponse {
+    private static var OK_200: Int { 200 }
     
-    static func map(_ data: Data, with response: HTTPURLResponse) throws -> [Stargazer] {
-        guard response.statusCode == 200 else {
-            throw RemoteStargazersLoader.Error.invalidData
-        }
-        let remoteStargazers = try JSONDecoder().decode([RemoteStargazer].self, from: data)
-        return remoteStargazers.map { $0.toModel }
+    var isOK: Bool { statusCode == HTTPURLResponse.OK_200 }
+}
+
+private extension Array where Element == RemoteStargazersMapper.Item {
+    var toModels: [Stargazer] {
+        self.map { $0.toModel }
     }
 }
