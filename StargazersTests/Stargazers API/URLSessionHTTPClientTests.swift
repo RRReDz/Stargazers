@@ -69,8 +69,18 @@ class URLSessionHTTPClientTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    func test_get_deliversFailureOnAllNilValues() {
+    func test_get_deliversFailureForAllInvalidRepresentableStates() {
         XCTAssertNotNil(resultErrorFor(data: nil, response: nil, error: nil))
+        XCTAssertNotNil(resultErrorFor(data: nil, response: anyURLResponse(), error: nil))
+        XCTAssertNotNil(resultErrorFor(data: nil, response: anyHTTPURLResponse(), error: nil))
+        XCTAssertNotNil(resultErrorFor(data: anyData(), response: nil, error: nil))
+        XCTAssertNotNil(resultErrorFor(data: anyData(), response: nil, error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: nil, response: anyURLResponse(), error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: nil, response: anyHTTPURLResponse(), error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: nil, response: anyURLResponse(), error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: anyData(), response: anyURLResponse(), error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: anyData(), response: anyHTTPURLResponse(), error: anyNSError()))
+        XCTAssertNotNil(resultErrorFor(data: anyData(), response: anyURLResponse(), error: nil))
     }
     
     //MARK: - Utils
@@ -102,6 +112,26 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
+    }
+    
+    private func anyData() -> Data {
+        return "any data".data(using: .utf8)!
+    }
+    
+    private func anyURLResponse() -> URLResponse {
+        return URLResponse(
+            url: anyURL(),
+            mimeType: nil,
+            expectedContentLength: 10,
+            textEncodingName: nil)
+    }
+    
+    private func anyHTTPURLResponse() -> HTTPURLResponse {
+        return HTTPURLResponse(
+            url: anyURL(),
+            statusCode: 300,
+            httpVersion: nil,
+            headerFields: nil)!
     }
     
     private func anyNSError() -> NSError {
