@@ -8,8 +8,6 @@
 import Foundation
 
 public final class RemoteStargazersLoader {
-    public typealias Result = Swift.Result<[Stargazer], Swift.Error>
-    
     private let client: HTTPClient
     private let url: URL
     
@@ -25,6 +23,8 @@ public final class RemoteStargazersLoader {
 }
 
 extension RemoteStargazersLoader: StargazersLoader {
+    public typealias Result = StargazersLoader.Result
+    
     public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { [weak self] in
             guard self != nil else { return }
