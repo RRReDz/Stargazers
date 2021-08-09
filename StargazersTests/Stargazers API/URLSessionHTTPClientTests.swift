@@ -18,6 +18,22 @@ class URLSessionHTTPClientTests: XCTestCase {
         URLProtocolStub.stopInterceptingRequests()
     }
     
+    func test_getFromURL_requestsCorrectURLAndMethod() {
+        let sut = makeSUT()
+        let url = anyURL()
+        
+        let exp = expectation(description: "Wait for observeRequests gets called")
+        URLProtocolStub.observeRequests = { request in
+            XCTAssertEqual(request.url, url)
+            XCTAssertEqual(request.httpMethod, "GET")
+            exp.fulfill()
+        }
+        
+        sut.get(from: url)
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_get_deliversFailureOnRequestError() {
         let sut = makeSUT()
         let error = anyNSError()
@@ -68,13 +84,14 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     //MARK: - Utils
     private class URLProtocolStub: URLProtocol {
+        private static var stub: Stub?
+        static var observeRequests: ((URLRequest) -> Void)?
+        
         private struct Stub {
             let data: Data?
             let response: URLResponse?
             let error: Error?
         }
-        
-        private static var stub: Stub?
         
         static func stub(data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil) {
             stub = Stub(data: data, response: response, error: error)
@@ -87,10 +104,14 @@ class URLSessionHTTPClientTests: XCTestCase {
         static func stopInterceptingRequests() {
             Self.unregisterClass(Self.self)
             URLProtocolStub.stub = nil
+            URLProtocolStub.observeRequests = nil
         }
         
         // Determins if this kind of protocol can handle the request for the given request.
-        override class func canInit(with request: URLRequest) -> Bool { true }
+        override class func canInit(with request: URLRequest) -> Bool {
+            URLProtocolStub.observeRequests?(request)
+            return true
+        }
         
         // Makes a certain request canonical (sinonym for unique) for the implemented protocol
         override class func canonicalRequest(for request: URLRequest) -> URLRequest {
