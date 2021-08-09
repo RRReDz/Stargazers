@@ -44,7 +44,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(receivedNSError?.code, error.code)
     }
     
-    func test_get_deliversSuccessOnRequestDeliveredWithHTTPResponseAndData() {
+    func test_get_deliversSuccessOnRequestDeliveredWithHTTPURLResponseAndData() {
         let error = anyNSError()
         let url = anyURL()
         let data = anyData()
@@ -59,7 +59,6 @@ class URLSessionHTTPClientTests: XCTestCase {
                 XCTAssertEqual(receivedData, data)
                 XCTAssertEqual(receivedResponse.url, httpResponse.url)
                 XCTAssertEqual(receivedResponse.statusCode, httpResponse.statusCode)
-                XCTAssertEqual(receivedResponse.mimeType, httpResponse.mimeType)
             default:
                 XCTFail("Expected failure with error \(error), got \(result) instead")
             }
