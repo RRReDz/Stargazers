@@ -45,22 +45,20 @@ class URLSessionHTTPClientTests: XCTestCase {
     }
     
     func test_get_deliversSuccessOnRequestDeliveredWithHTTPURLResponseAndData() {
-        let error = anyNSError()
-        let url = anyURL()
         let data = anyData()
         let httpResponse = anyHTTPURLResponse()
         
         URLProtocolStub.stub(data: data, response: httpResponse, error: nil)
 
         let exp = expectation(description: "Wait for get completion")
-        makeSUT().get(from: url) { result in
+        makeSUT().get(from: anyURL()) { result in
             switch result {
             case let .success((receivedData, receivedResponse)):
                 XCTAssertEqual(receivedData, data)
                 XCTAssertEqual(receivedResponse.url, httpResponse.url)
                 XCTAssertEqual(receivedResponse.statusCode, httpResponse.statusCode)
             default:
-                XCTFail("Expected failure with error \(error), got \(result) instead")
+                XCTFail("Expected success, got \(result) instead")
             }
             exp.fulfill()
         }
