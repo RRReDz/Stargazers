@@ -51,6 +51,16 @@ class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(session.requestedURLs, [url])
     }
     
+    func test_getTwice_doesRequestDataFromURLTwice() {
+        let url = anyURL()
+        let (sut, session) = makeSUT()
+
+        sut.get(from: url)
+        sut.get(from: url)
+
+        XCTAssertEqual(session.requestedURLs, [url, url])
+    }
+    
     //MARK: - Utils
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (URLSessionHTTPClient, URLSessionSpy) {
         let session = URLSessionSpy()
