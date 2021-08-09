@@ -39,7 +39,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         let (sut, client) = makeSUT(for: anyURL())
         
         assert(that: sut, completesWith: .failure(.connectivity), on: {
-            client.complete(with: NSError(domain: "any", code: -1))
+            client.complete(with: anyNSError())
         })
     }
     
@@ -107,6 +107,25 @@ class RemoteStargazersLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_doesNotDeliverResultWhenInstanceHasBeenDeallocated() {
+        let url = anyURL()
+        let client = HTTPClientSpy()
+        var sut: RemoteStargazersLoader? = .init(client: client, url: url)
+        
+        var capturedResults = [Any]()
+        sut?.load { capturedResults.append($0) }
+        
+        sut = nil
+        
+        client.complete(with: anyNSError())
+        client.complete(statusCode: 200)
+        client.complete(statusCode: 200, data: "any data".data(using: .utf8)!)
+        
+        XCTAssert(capturedResults.isEmpty, "Expected no captured results")
+    }
+    
+    //MARK: - Utils
+    
     private func makeSUT(for url: URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteStargazersLoader(client: client, url: url)
@@ -169,6 +188,10 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
+    }
+    
+    private func anyNSError() -> NSError {
+        NSError(domain: "any", code: -1)
     }
     
     class HTTPClientSpy: HTTPClient {
