@@ -8,10 +8,18 @@
 import XCTest
 import Stargazers
 
+protocol HTTPSession {
+    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HTTPSessionTask
+}
+
+protocol HTTPSessionTask {
+    func resume()
+}
+
 final class URLSessionHTTPClient {
-    private let session: URLSession
+    private let session: HTTPSession
     
-    init(session: URLSession) {
+    init(session: HTTPSession) {
         self.session = session
     }
     
@@ -85,21 +93,20 @@ class URLSessionHTTPClientTests: XCTestCase {
         NSError(domain: "any", code: -1)
     }
     
-    final class URLSessionSpy: URLSession {
+    final class URLSessionSpy: HTTPSession {
         private struct Stub {
-            let task: URLSessionDataTask
+            let task: HTTPSessionTask
             let error: Error?
         }
         
         var requestedURLs = [URL]()
         private var stubs = [URL: Stub]()
         
-        override init() {}
-        
-        private class FakeURLSessionDataTask: URLSessionDataTask {
-            override func resume() {}
+        private class FakeURLSessionDataTask: HTTPSessionTask {
+            func resume() {}
         }
-        override func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+        
+        func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HTTPSessionTask {
             requestedURLs.append(url)
             guard let stub = stubs[url] else {
                 fatalError("Couldn't find a stub for url \(url)")
@@ -109,15 +116,15 @@ class URLSessionHTTPClientTests: XCTestCase {
             return stub.task
         }
         
-        func stub(url: URL, task: URLSessionDataTask = FakeURLSessionDataTask(), error: Error? = nil) {
+        func stub(url: URL, task: HTTPSessionTask = FakeURLSessionDataTask(), error: Error? = nil) {
             stubs[url] = Stub(task: task, error: error)
         }
     }
 
-    final class URLSessionDataTaskSpy: URLSessionDataTask {
+    final class URLSessionDataTaskSpy: HTTPSessionTask {
         var resumesCallCount: Int = 0
         
-        override func resume() {
+        func resume() {
             resumesCallCount += 1
         }
     }
