@@ -15,6 +15,7 @@
 		7316209B26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
 		73D4E9FF26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D4E9FE26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.swift */; };
 		73D4EA0126C4801C00C2B9F1 /* Stargazers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7301226D26BF258F0007B086 /* Stargazers.framework */; };
+		73D4EA0726C487DD00C2B9F1 /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
 		73D7631026C0133C005CCEC2 /* RemoteStargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */; };
 		73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631126C0135A005CCEC2 /* HTTPClient.swift */; };
 		73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */; };
@@ -340,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				73D4E9FF26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.swift in Sources */,
+				73D4EA0726C487DD00C2B9F1 /* XCTestCase+MemoryLeaksTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

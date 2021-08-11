@@ -12,8 +12,7 @@ class StargazersAPIEndToEndTests: XCTestCase {
     
     func test_loadingStargazers_completesSuccessfully() {
         let url = URL(string: "https://api.github.com/repos/apple/swift/stargazers")!
-        let client = URLSessionHTTPClient()
-        let loader = RemoteStargazersLoader(client: client, url: url)
+        let loader = makeLoader(for: url)
         
         let exp = expectation(description: "Wait for load completion")
         loader.load { receivedResult in
@@ -27,6 +26,14 @@ class StargazersAPIEndToEndTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 5.0)
+    }
+    
+    private func makeLoader(for url: URL) -> RemoteStargazersLoader {
+        let client = URLSessionHTTPClient()
+        let loader = RemoteStargazersLoader(client: client, url: url)
+        trackForMemoryLeak(client)
+        trackForMemoryLeak(loader)
+        return loader
     }
     
 }
