@@ -55,7 +55,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     func test_load_deliversInvalidDataErrorOnClient200HTTPResponseAndInvalidData() {
-        let invalidData = "any invalid data".data(using: .utf8)!
+        let invalidData = anyData()
         let (sut, client) = makeSUT(for: anyURL())
         
         assert(that: sut, completesWith: failure(.invalidData), on: {
@@ -117,7 +117,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
         
         client.complete(with: anyNSError())
         client.complete(statusCode: 200)
-        client.complete(statusCode: 200, data: "any data".data(using: .utf8)!)
+        client.complete(statusCode: 200, data: anyData())
         
         XCTAssert(capturedResults.isEmpty, "Expected no captured results")
     }
@@ -195,7 +195,11 @@ class RemoteStargazersLoaderTests: XCTestCase {
     }
     
     private func anyNSError() -> NSError {
-        NSError(domain: "any", code: -1)
+        NSError(domain: "any error", code: -1)
+    }
+    
+    private func anyData() -> Data {
+        return "any data".data(using: .utf8)!
     }
     
     private func failure(_ error: RemoteStargazersLoader.Error) -> RemoteStargazersLoader.Result {
