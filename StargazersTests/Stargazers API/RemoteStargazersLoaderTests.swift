@@ -63,8 +63,8 @@ class RemoteStargazersLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_deliversNoItemsOnClient200HTTPResponseWithEmtpyListData() throws {
-        let validEmptyData: Data = try JSONSerialization.data(withJSONObject: [] as [[String: Any]])
+    func test_load_deliversNoItemsOnClient200HTTPResponseWithEmtpyListData() {
+        let validEmptyData: Data = makeJSONArray(elements: []).toDataUTF8()!
         let (sut, client) = makeSUT(for: anyURL())
         
         assert(that: sut, completesWith: .success([]), on: {
@@ -91,11 +91,11 @@ class RemoteStargazersLoaderTests: XCTestCase {
             avatarStringURL: "https://image.fake.com/u/5946914?v=4",
             userDetailStringURL: "https://api.fake.com/users/last_login")
         
-        let validData: Data = try [
+        let validData: Data = makeJSONArray(elements: [
             stargazer0JSON,
             stargazer1JSON,
             stargazer2JSON
-        ].serialize()
+        ]).toDataUTF8()!
         
         let (sut, client) = makeSUT(for: anyURL())
         
@@ -137,20 +137,32 @@ class RemoteStargazersLoaderTests: XCTestCase {
         username: String,
         avatarStringURL: String,
         userDetailStringURL: String
-    ) -> (Stargazer, [String: Any]) {
+    ) -> (Stargazer, String) {
         let stargazer = Stargazer(
             id: id,
             username: username,
             avatarURL: URL(string: avatarStringURL)!,
             detailURL: URL(string: userDetailStringURL)!
         )
-        let stargazerJSON: [String: Any] = [
-            "id": id,
-            "login": username,
-            "avatar_url": avatarStringURL,
-            "url": userDetailStringURL
-        ]
+        let stargazerJSON: String = """
+        {
+            \"id\": \(id),
+            \"login\": \"\(username)\",
+            \"avatar_url\": \"\(avatarStringURL)\",
+            \"url\": \"\(userDetailStringURL)\"
+        }
+        """
         return (stargazer, stargazerJSON)
+    }
+    
+    private func makeJSONArray(elements: [String]) -> String {
+        let last = elements.last ?? ""
+        let allButLast = elements.dropLast()
+        return """
+        [
+            \(allButLast.reduce(""){ "\($0)\($1)," })\(last)
+        ]
+        """
     }
     
     private func assert(
@@ -216,8 +228,8 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
 }
 
-private extension Array {
-    func serialize() throws -> Data {
-        try JSONSerialization.data(withJSONObject: self)
+private extension String {
+    func toDataUTF8() -> Data? {
+        self.data(using: .utf8)
     }
 }
