@@ -6,5 +6,27 @@
 //
 
 import XCTest
+import Stargazers
 
-class StargazersAPIEndToEndTests: XCTestCase {}
+class StargazersAPIEndToEndTests: XCTestCase {
+    
+    func test_loadingStargazers_completesSuccessfully() {
+        let url = URL(string: "https://api.github.com/repos/apple/swift/stargazers")!
+        let client = URLSessionHTTPClient()
+        let loader = RemoteStargazersLoader(client: client, url: url)
+        
+        let exp = expectation(description: "Wait for load completion")
+        loader.load { receivedResult in
+            switch receivedResult {
+            case .success:
+                break
+            case let .failure(error):
+                XCTFail("Expected success, got failure with \(error) instead.")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5.0)
+    }
+    
+}
