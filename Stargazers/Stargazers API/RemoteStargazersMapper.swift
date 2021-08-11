@@ -22,23 +22,16 @@ internal final class RemoteStargazersMapper {
     
     internal struct Item: Decodable {
         private let id: Int
-        private let username: String
+        private let login: String
         private let avatar_url: URL
-        private let user_datail_url: URL
-        
-        enum CodingKeys: String, CodingKey {
-            case id
-            case username = "login"
-            case avatar_url
-            case user_datail_url = "url"
-        }
+        private let url: URL
         
         var toModel: Stargazer {
             Stargazer(
                 id: id,
-                username: username,
+                username: login,
                 avatarURL: avatar_url,
-                detailURL: user_datail_url)
+                detailURL: url)
         }
     }
 }
