@@ -28,7 +28,7 @@ class StargazersAPIEndToEndTests: XCTestCase {
     }
     
     private func makeStargazersLoader(file: StaticString = #filePath, line: UInt = #line) -> RemoteStargazersLoader {
-        let url = URL(string: "https://api.github.com/repos/octocat/hello-world/stargazers")!
+        let url = URL(string: "https://api.github.com/repos/apple/swift/stargazers")!
         let client = URLSessionHTTPClient()
         let loader = RemoteStargazersLoader(url: url, client: client)
         trackForMemoryLeak(client, file: file, line: line)
