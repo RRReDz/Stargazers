@@ -11,8 +11,7 @@ import Stargazers
 class StargazersAPIEndToEndTests: XCTestCase {
     
     func test_loadingStargazers_completesSuccessfully() {
-        let url = URL(string: "https://api.github.com/repos/apple/swift/stargazers")!
-        let loader = makeLoader(for: url)
+        let loader = makeStargazersLoader()
         
         let exp = expectation(description: "Wait for load completion")
         loader.load { receivedResult in
@@ -28,11 +27,12 @@ class StargazersAPIEndToEndTests: XCTestCase {
         wait(for: [exp], timeout: 5.0)
     }
     
-    private func makeLoader(for url: URL) -> RemoteStargazersLoader {
+    private func makeStargazersLoader(file: StaticString = #filePath, line: UInt = #line) -> RemoteStargazersLoader {
+        let url = URL(string: "https://api.github.com/repos/octocat/hello-world/stargazers")!
         let client = URLSessionHTTPClient()
         let loader = RemoteStargazersLoader(client: client, url: url)
-        trackForMemoryLeak(client)
-        trackForMemoryLeak(loader)
+        trackForMemoryLeak(client, file: file, line: line)
+        trackForMemoryLeak(loader, file: file, line: line)
         return loader
     }
     
