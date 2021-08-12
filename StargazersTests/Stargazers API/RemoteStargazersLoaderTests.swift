@@ -108,7 +108,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     func test_load_doesNotDeliverResultWhenInstanceHasBeenDeallocated() {
         let url = anyURL()
         let client = HTTPClientSpy()
-        var sut: RemoteStargazersLoader? = .init(client: client, url: url)
+        var sut: RemoteStargazersLoader? = .init(url: url, client: client)
         
         var capturedResults = [Any]()
         sut?.load { capturedResults.append($0) }
@@ -126,7 +126,7 @@ class RemoteStargazersLoaderTests: XCTestCase {
     
     private func makeSUT(for url: URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
-        let sut = RemoteStargazersLoader(client: client, url: url)
+        let sut = RemoteStargazersLoader(url: url, client: client)
         trackForMemoryLeak(sut, file: file, line: line)
         trackForMemoryLeak(client, file: file, line: line)
         return (sut, client)
