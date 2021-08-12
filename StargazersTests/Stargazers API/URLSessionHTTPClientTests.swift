@@ -178,13 +178,12 @@ class URLSessionHTTPClientTests: XCTestCase {
         
         static func stopInterceptingRequests() {
             Self.unregisterClass(Self.self)
-            URLProtocolStub.stub = nil
-            URLProtocolStub.observeRequests = nil
+            stub = nil
+            observeRequests = nil
         }
         
         // Determins if this kind of protocol can handle the request for the given request.
         override class func canInit(with request: URLRequest) -> Bool {
-            URLProtocolStub.observeRequests?(request)
             return true
         }
         
@@ -195,8 +194,9 @@ class URLSessionHTTPClientTests: XCTestCase {
         
         // Starts protocol-specific loading of the request.
         override func startLoading() {
-            if let error = URLProtocolStub.stub?.error {
-                client?.urlProtocol(self, didFailWithError: error)
+            if let observeRequests = URLProtocolStub.observeRequests {
+                client?.urlProtocolDidFinishLoading(self)
+                return observeRequests(request)
             }
             
             if let data = URLProtocolStub.stub?.data {
@@ -205,6 +205,10 @@ class URLSessionHTTPClientTests: XCTestCase {
             
             if let response = URLProtocolStub.stub?.response {
                 client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            }
+            
+            if let error = URLProtocolStub.stub?.error {
+                client?.urlProtocol(self, didFailWithError: error)
             }
             
             client?.urlProtocolDidFinishLoading(self)
