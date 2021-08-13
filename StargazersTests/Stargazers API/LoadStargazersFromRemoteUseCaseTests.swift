@@ -1,5 +1,5 @@
 //
-//  RemoteStargazersLoaderTests.swift
+//  LoadStargazersFromRemoteUseCaseTests.swift
 //  StargazersTests
 //
 //  Created by Riccardo Rossi - Home on 08/08/21.
@@ -8,7 +8,7 @@
 import XCTest
 import Stargazers
 
-class RemoteStargazersLoaderTests: XCTestCase {
+class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT(for: anyURL())
