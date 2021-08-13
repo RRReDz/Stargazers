@@ -6,17 +6,17 @@
 
 ## BDD Specs
 
-### Story: Customer requests to see the stargazers of the selected user's repository. 
+### Story: Customer requests to see the stargazers of the selected user's repository
 
 ### Narrative #1
 
 > As an online customer
-I want the app to automatically load the stargazers of a repository
-So I can always check who starred that repository
+> I want the app to automatically load the stargazers of a repository
+> So I can always check who starred that repository
 
-#### Scenarios (Acceptance criteria)
+#### Scenarios #2 (Acceptance criteria)
 
-```
+```English
 Given the customer has connectivity
 When the customer requests to see certain repository's stargazers
 Then the app should display the latest repository's stargazers
@@ -26,12 +26,12 @@ Then the app should display the latest repository's stargazers
 ### Narrative #2
 
 > As an offline customer
-I want the app to show the latest saved version of stargazers for a repository
-So I can always check who starred that repository
+> I want the app to show the latest saved version of stargazers for a repository
+> So I can always check who starred that repository
 
-#### Scenarios (Acceptance criteria)
+#### Scenarios #2 (Acceptance criteria)
 
-```
+```English
 Given the customer doesn't have connectivity
 And there’s a cached version of the repository's stargazers
 When the customer requests to see the repository's stargazers
@@ -47,53 +47,52 @@ Then the app should display an error message
 
 ### Load Stargazers Use Case
 
-#### Data:
-- URL
-- User (could be inside URL)
-- Repository (could be inside URL)
+#### Data
+  - URL
+  - User (could be inside URL)
+  - Repository (could be inside URL)
 
-#### Primary course (happy path):
-1. Execute "Load Stargazers" command with above data.
-2. System downloads data from the URL.
-3. System validates downloaded data.
-4. System creates stargazers from valid data.
-5. System delivers stargazers.
+#### Primary course (happy path)
+  1. Execute "Load Stargazers" command with above data.
+  2. System downloads data from the URL.
+  3. System validates downloaded data.
+  4. System creates stargazers from valid data.
+  5. System delivers stargazers.
 
-#### Invalid data – error course (sad path):
-1. System delivers error.
+#### Invalid data – error course (sad path)
+  1. System delivers error.
 
-#### No connectivity – error course (sad path):
-1. System delivers error.
+#### No connectivity – error course (sad path)
+  1. System delivers error.
 
 ### Load Stargazers Fallback (Cache) Use Case
 
-#### Data:
-- User
-- Repository
+#### Data
+  - User
+  - Repository
 
-#### Primary course:
-1. Execute "Retrieve Stargazers" command with above data.
-2. System fetches stargazers data from cache.
-3. System creates stargazers from cached data.
-4. System delivers stargazers.
+#### Primary course
+  1. Execute "Retrieve Stargazers" command with above data.
+  2. System fetches stargazers data from cache.
+  3. System creates stargazers from cached data.
+  4. System delivers stargazers.
 
-#### Empty cache course (sad path): 
-1. System delivers no stargazers.
-
+#### Empty cache course (sad path)
+  1. System delivers no stargazers.
 
 ### Save Stargazers Use Case
 
-#### Data:
-- Stargazers
-- User
-- Repository
+#### Data
+  - Stargazers
+  - User
+  - Repository
 
-#### Primary course (happy path):
-1. Execute "Save Stargazers" command with above data.
-2. System encodes stargazers for the user and repository as data.
-3. System timestamps the new cache.
-4. System replaces the cache with new data.
-5. System delivers success message.
+#### Primary course (happy path)
+  1. Execute "Save Stargazers" command with above data.
+  2. System encodes stargazers for the user and repository as data.
+  3. System timestamps the new cache.
+  4. System replaces the cache with new data.
+  5. System delivers success message.
 
 ## Flowchart
 
