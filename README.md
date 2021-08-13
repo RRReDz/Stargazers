@@ -77,7 +77,7 @@ Then the app should display an error message
   3. System creates stargazers from cached data.
   4. System delivers stargazers.
 
-#### Error course (sad path):
+#### Error course (sad path)
   1. System delivers error.
 
 #### Empty cache course (sad path)
