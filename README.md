@@ -45,7 +45,7 @@ Then the app should display an error message
 
 ## Use Cases
 
-### Load Stargazers Use Case
+### Load Stargazers From Remote Use Case
 
 #### Data
   - URL
@@ -60,27 +60,30 @@ Then the app should display an error message
   5. System delivers stargazers.
 
 #### Invalid data – error course (sad path)
-  1. System delivers error.
+  1. System delivers invalid data error.
 
 #### No connectivity – error course (sad path)
-  1. System delivers error.
+  1. System delivers connectivity error.
 
-### Load Stargazers Fallback (Cache) Use Case
+### Load Stargazers From Cache Use Case
 
 #### Data
   - User
   - Repository
 
 #### Primary course
-  1. Execute "Retrieve Stargazers" command with above data.
+  1. Execute "Load Stargazers" command with above data.
   2. System fetches stargazers data from cache.
   3. System creates stargazers from cached data.
   4. System delivers stargazers.
 
+#### Error course (sad path):
+  1. System delivers error.
+
 #### Empty cache course (sad path)
   1. System delivers no stargazers.
 
-### Save Stargazers Use Case
+### Cache Stargazers Use Case
 
 #### Data
   - Stargazers
@@ -89,10 +92,17 @@ Then the app should display an error message
 
 #### Primary course (happy path)
   1. Execute "Save Stargazers" command with above data.
-  2. System encodes stargazers for the user and repository as data.
-  3. System timestamps the new cache.
-  4. System replaces the cache with new data.
-  5. System delivers success message.
+  2. System deletes old cache data.
+  3. System encodes stargazers for the user and repository as data.
+  4. System timestamps the new cache.
+  5. System saves new cache data.
+  6. System delivers success message.
+
+#### Deleting error course (sad path)
+  1. System delivers error.
+
+#### Saving error course (sad path)
+  1. System delivers error.
 
 ## Flowchart
 
