@@ -1,21 +1,30 @@
 name: CI
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  build-and-test:
+    build-and-test:
+        runs-on: macos-latest
+        environment:
+            name: stargazers_prod_env
+        env:
+            DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
 
-    runs-on: macos-latest
-    
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+        steps:
+            - uses: actions/checkout@v2
 
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Build and test
-      run: xcodebuild clean build test -project Stargazers.xcodeproj -scheme "CI" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+            - name: Build and test
+              run: xcodebuild clean build test -project Stargazers.xcodeproj -scheme "CI" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
+            - name: Install Slather & Create report
+              run: sudo gem install slather && slather coverage -x --output-directory ./ --scheme "CI" Stargazers.xcodeproj
+            
+            - name: Codacy Coverage Reporter
+              uses: codacy/codacy-coverage-reporter-action@v1
+              with:
+                  project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+                  coverage-reports: ''
