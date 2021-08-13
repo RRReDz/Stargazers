@@ -116,4 +116,4 @@ TODO
 
 ### Payload contract
 
-https://docs.github.com/en/rest/reference/activity#starring
+https://docs.github.com/en/rest/reference/activity#list-stargazers
