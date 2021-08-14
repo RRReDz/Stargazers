@@ -6,19 +6,30 @@
 //
 
 import XCTest
+import Stargazers
 
-final class LocalStargazersLoader {
+final class LocalStargazersLoader: StargazersLoader {
     private let store: StargazersStore
     
-    internal init(store: StargazersStore) {
+    init(store: StargazersStore) {
         self.store = store
+    }
+    
+    func load(completion: @escaping (StargazersLoader.Result) -> Void) {
+        store.retrieve()
     }
 }
 
 class StargazersStore {
-    enum Message: Equatable {}
+    enum Message {
+        case retrieve
+    }
     
     var messages = [Message]()
+    
+    func retrieve() {
+        messages.append(.retrieve)
+    }
 }
 
 class LoadStargazersFromLocalUseCaseTests: XCTestCase {
@@ -28,6 +39,15 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         _ = LocalStargazersLoader(store: store)
         
         XCTAssertEqual(store.messages, [])
+    }
+    
+    func test_load_sendRetrieveMessageTheStore() {
+        let store = StargazersStore()
+        let sut = LocalStargazersLoader(store: store)
+        
+        sut.load { _ in }
+        
+        XCTAssertEqual(store.messages, [.retrieve])
     }
 
 }
