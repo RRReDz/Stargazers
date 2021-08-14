@@ -14,7 +14,7 @@ class StargazersAPIEndToEndTests: XCTestCase {
         let loader = makeStargazersLoader()
         
         let exp = expectation(description: "Wait for load completion")
-        loader.load { receivedResult in
+        loader.load(from: anyRepository()) { receivedResult in
             switch receivedResult {
             case .success:
                 break
