@@ -25,7 +25,7 @@ public final class RemoteStargazersLoader {
 extension RemoteStargazersLoader: StargazersLoader {
     public typealias Result = StargazersLoader.Result
     
-    public func load(completion: @escaping (Result) -> Void) {
+    public func load(from repository: Repository, completion: @escaping (Result) -> Void) {
         client.get(from: url) { [weak self] in
             guard self != nil else { return }
             completion(

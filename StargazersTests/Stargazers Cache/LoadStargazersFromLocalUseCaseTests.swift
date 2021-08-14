@@ -15,7 +15,7 @@ final class LocalStargazersLoader: StargazersLoader {
         self.store = store
     }
     
-    func load(completion: @escaping (StargazersLoader.Result) -> Void) {
+    func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
         store.retrieve()
     }
 }
@@ -45,7 +45,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let store = StargazersStore()
         let sut = LocalStargazersLoader(store: store)
         
-        sut.load { _ in }
+        sut.load(from: anyRepository()) { _ in }
         
         XCTAssertEqual(store.messages, [.retrieve])
     }

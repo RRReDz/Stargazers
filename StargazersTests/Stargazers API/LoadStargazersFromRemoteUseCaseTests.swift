@@ -20,7 +20,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         let url = anyURL()
         let (sut, client) = makeSUT(for: url)
         
-        sut.load() { _ in }
+        sut.load(from: anyRepository()) { _ in }
         
         XCTAssertEqual(client.requestedURLs, [url])
     }
@@ -29,8 +29,8 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         let url = anyURL()
         let (sut, client) = makeSUT(for: url)
         
-        sut.load() { _ in }
-        sut.load() { _ in }
+        sut.load(from: anyRepository()) { _ in }
+        sut.load(from: anyRepository()) { _ in }
         
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
@@ -111,7 +111,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         var sut: RemoteStargazersLoader? = .init(url: url, client: client)
         
         var capturedResults = [Any]()
-        sut?.load { capturedResults.append($0) }
+        sut?.load(from: anyRepository()) { capturedResults.append($0) }
         
         sut = nil
         
@@ -174,7 +174,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     ) {
         let exp = expectation(description: "Wait for load completion")
         
-        sut.load { receivedResult in
+        sut.load(from: anyRepository()) { receivedResult in
             switch (expectedResult, receivedResult) {
             case let (.failure(expectedError as RemoteStargazersLoader.Error), .failure(receivedError as RemoteStargazersLoader.Error)):
                 XCTAssertEqual(expectedError, receivedError, file: file, line: line)
