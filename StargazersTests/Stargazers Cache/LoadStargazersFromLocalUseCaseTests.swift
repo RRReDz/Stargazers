@@ -16,38 +16,55 @@ final class LocalStargazersLoader: StargazersLoader {
     }
     
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        store.retrieve()
+        store.retrieve(
+            from: LocalRepository(
+                name: repository.name,
+                owner: repository.owner))
     }
 }
 
 class StargazersStore {
-    enum Message {
-        case retrieve
+    enum Message: Equatable {
+        case retrieve(LocalRepository)
     }
     
     var messages = [Message]()
     
-    func retrieve() {
-        messages.append(.retrieve)
+    func retrieve(from repository: LocalRepository) {
+        messages.append(.retrieve(repository))
     }
+}
+
+struct LocalRepository: Equatable {
+    let name: String
+    let owner: String
 }
 
 class LoadStargazersFromLocalUseCaseTests: XCTestCase {
 
-    func test_init_doesNotMessageTheStore() {
+    func test_init_doesNotMessageStore() {
         let store = StargazersStore()
         _ = LocalStargazersLoader(store: store)
         
         XCTAssertEqual(store.messages, [])
     }
     
-    func test_load_sendRetrieveMessageTheStore() {
+    func test_load_sendStoreRetrieveRepositoryMessage() {
         let store = StargazersStore()
         let sut = LocalStargazersLoader(store: store)
+        let (model, local) = makeRepository()
         
-        sut.load(from: anyRepository()) { _ in }
+        sut.load(from: model) { _ in }
         
-        XCTAssertEqual(store.messages, [.retrieve])
+        XCTAssertEqual(store.messages, [.retrieve(local)])
+    }
+    
+    //MARK: - Utils
+    
+    private func makeRepository() -> (model: Repository, local: LocalRepository) {
+        let model = anyRepository()
+        let local = LocalRepository(name: model.name, owner: model.owner)
+        return (model, local)
     }
 
 }
