@@ -14,8 +14,8 @@ public protocol StargazersLoader {
 }
 
 public struct Repository {
-    private let name: String
-    private let owner: String
+    public let name: String
+    public let owner: String
     
     public init(name: String, owner: String) {
         self.name = name

@@ -8,7 +8,7 @@
 import Foundation
 
 public final class RemoteStargazersLoader {
-    private let url: URL
+    private let url: (Repository) -> URL
     private let client: HTTPClient
     
     public enum Error: Swift.Error {
@@ -16,7 +16,7 @@ public final class RemoteStargazersLoader {
         case invalidData
     }
     
-    public init(url: URL, client: HTTPClient) {
+    public init(url: @escaping (Repository) -> URL, client: HTTPClient) {
         self.url = url
         self.client = client
     }
@@ -26,7 +26,7 @@ extension RemoteStargazersLoader: StargazersLoader {
     public typealias Result = StargazersLoader.Result
     
     public func load(from repository: Repository, completion: @escaping (Result) -> Void) {
-        client.get(from: url) { [weak self] in
+        client.get(from: url(repository)) { [weak self] in
             guard self != nil else { return }
             completion(
                 $0.mapError { _ in Error.connectivity }
