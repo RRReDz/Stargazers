@@ -13,7 +13,7 @@ public protocol StargazersLoader {
     func load(from repository: Repository, completion: @escaping (Result) -> Void)
 }
 
-public struct Repository {
+public struct Repository: Equatable {
     public let name: String
     public let owner: String
     

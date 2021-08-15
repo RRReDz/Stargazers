@@ -25,6 +25,20 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url])
     }
     
+    func test_loadFromRepository_requestsURLForRepository() {
+        let expectedRepository = anyRepository()
+        
+        var capturedRepositories = [Repository]()
+        let (sut, _) = makeSUT(for: { [weak self] repository in
+            capturedRepositories.append(repository)
+            return self!.anyURL()
+        })
+        
+        sut.load(from: expectedRepository) { _ in }
+        
+        XCTAssertEqual(capturedRepositories, [expectedRepository])
+    }
+    
     func test_loadTwice_doesRequestDataFromURLTwice() {
         let url = anyURL()
         let (sut, client) = makeSUT(for: url)
@@ -125,8 +139,12 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     //MARK: - Utils
     
     private func makeSUT(for url: URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
+        return makeSUT(for: { _ in url }, file: file, line: line)
+    }
+    
+    private func makeSUT(for url: @escaping (Repository) -> URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
         let client = HTTPClientSpy()
-        let sut = RemoteStargazersLoader(url: { _ in url }, client: client)
+        let sut = RemoteStargazersLoader(url: url, client: client)
         trackForMemoryLeak(sut, file: file, line: line)
         trackForMemoryLeak(client, file: file, line: line)
         return (sut, client)
