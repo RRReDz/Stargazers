@@ -16,22 +16,29 @@ final class LocalStargazersLoader: StargazersLoader {
     }
     
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        store.retrieve(
-            from: LocalRepository(
-                name: repository.name,
-                owner: repository.owner))
+        store.retrieve(from: LocalRepository(name: repository.name, owner: repository.owner)) { error in
+            completion(.failure(error))
+        }
     }
 }
 
 class StargazersStore {
+    typealias RetrieveCompletion = (Error) -> Void
     enum Message: Equatable {
         case retrieve(LocalRepository)
     }
     
     var messages = [Message]()
+    private var completions = [RetrieveCompletion]()
     
-    func retrieve(from repository: LocalRepository) {
+    func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieve(repository))
+        completions.append(completion)
+    }
+    
+    func completeRetrievalWithError(at index: Int = 0) {
+        let error = NSError(domain: "any", code: 1)
+        completions[index](error)
     }
 }
 
@@ -55,6 +62,25 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         sut.load(from: model) { _ in }
         
         XCTAssertEqual(store.messages, [.retrieve(local)])
+    }
+    
+    func test_load_deliversErrorOnStoreError() {
+        let (sut, store) = makeSUT()
+        
+        let exp = expectation(description: "Wait for load completion")
+        sut.load(from: anyRepository()) { result in
+            switch result {
+            case .failure:
+                break
+            default:
+                XCTFail("Expected failre, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        store.completeRetrievalWithError()
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     //MARK: - Utils
