@@ -14,7 +14,7 @@ class StargazersAPIEndToEndTests: XCTestCase {
         let loader = makeStargazersLoader()
         
         let exp = expectation(description: "Wait for load completion")
-        loader.load(from: anyRepository()) { receivedResult in
+        loader.load(from: appleSwiftRepo()) { receivedResult in
             switch receivedResult {
             case .success:
                 break
@@ -28,7 +28,9 @@ class StargazersAPIEndToEndTests: XCTestCase {
     }
     
     private func makeStargazersLoader(file: StaticString = #filePath, line: UInt = #line) -> RemoteStargazersLoader {
-        let url = URL(string: "https://api.github.com/repos/apple/swift/stargazers")!
+        let url = { (repository: Repository) in
+            URL(string: "https://api.github.com/repos/\(repository.owner)/\(repository.name)/stargazers")!
+        }
         let session = URLSession(configuration: .ephemeral)
         let client = URLSessionHTTPClient(session: session)
         let loader = RemoteStargazersLoader(url: url, client: client)
@@ -36,6 +38,10 @@ class StargazersAPIEndToEndTests: XCTestCase {
         trackForMemoryLeak(loader, file: file, line: line)
         trackForMemoryLeak(session, file: file, line: line)
         return loader
+    }
+    
+    private func appleSwiftRepo() -> Repository {
+        Repository(name: "swift", owner: "apple")
     }
     
 }
