@@ -43,15 +43,13 @@ struct LocalRepository: Equatable {
 class LoadStargazersFromLocalUseCaseTests: XCTestCase {
 
     func test_init_doesNotMessageStore() {
-        let store = StargazersStore()
-        _ = LocalStargazersLoader(store: store)
+        let (_, store) = makeSUT()
         
         XCTAssertEqual(store.messages, [])
     }
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
-        let store = StargazersStore()
-        let sut = LocalStargazersLoader(store: store)
+        let (sut, store) = makeSUT()
         let (model, local) = makeRepository()
         
         sut.load(from: model) { _ in }
@@ -60,6 +58,14 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     //MARK: - Utils
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStore) {
+        let store = StargazersStore()
+        let sut = LocalStargazersLoader(store: store)
+        trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(store, file: file, line: line)
+        return (sut, store)
+    }
     
     private func makeRepository() -> (model: Repository, local: LocalRepository) {
         let model = anyRepository()
