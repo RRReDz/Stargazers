@@ -8,10 +8,10 @@
 import Foundation
 
 public struct Stargazer: Equatable {
-    let id: Int
-    let username: String
-    let avatarURL: URL
-    let detailURL: URL
+    public let id: Int
+    public let username: String
+    public let avatarURL: URL
+    public let detailURL: URL
     
     public init(id: Int, username: String, avatarURL: URL, detailURL: URL) {
         self.id = id
