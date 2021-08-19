@@ -18,7 +18,7 @@ final class LocalStargazersLoader: StargazersLoader {
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
         store.retrieve(from: LocalRepository(name: repository.name, owner: repository.owner)) { result in
             completion(
-                result.map { $0.map { Stargazer(id: $0.id, username: $0.username, avatarURL: $0.avatarURL, detailURL: $0.detailURL) } }
+                result.map { $0.map { Stargazer(id: String($0.id), username: $0.username, avatarURL: $0.avatarURL, detailURL: $0.detailURL) } }
             )
         }
     }
@@ -61,7 +61,7 @@ struct LocalStargazer {
 }
 
 class LoadStargazersFromLocalUseCaseTests: XCTestCase {
-
+    
     func test_init_doesNotMessageStore() {
         let (_, store) = makeSUT()
         
@@ -133,17 +133,18 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func makeStargazer() -> (model: Stargazer, local: LocalStargazer) {
+        let idInteger = 123456789
         let model = Stargazer(
-            id: 123456789,
+            id: String(idInteger),
             username: "any",
             avatarURL: URL(string: "http://any-url.com")!,
             detailURL: URL(string: "http://another-url.com")!)
         let local = LocalStargazer(
-            id: model.id,
+            id: idInteger,
             username: model.username,
             avatarURL: model.avatarURL,
             detailURL: model.detailURL)
         return (model, local)
     }
-
+    
 }

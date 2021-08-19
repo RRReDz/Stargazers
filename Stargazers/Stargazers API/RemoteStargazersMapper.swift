@@ -28,7 +28,7 @@ internal final class RemoteStargazersMapper {
         
         var toModel: Stargazer {
             Stargazer(
-                id: id,
+                id: String(id),
                 username: login,
                 avatarURL: avatar_url,
                 detailURL: url)

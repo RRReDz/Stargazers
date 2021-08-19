@@ -88,19 +88,19 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnClient200HTTPResponseAndValidData() throws {
         let (stargazer0, stargazer0JSON) = makeStargazer(
-            id: 5946912,
+            id: "5946912",
             username: "any_login",
             avatarStringURL: "https://image.fake.com/u/5946912?v=4",
             userDetailStringURL: "https://api.fake.com/users/any_login")
         
         let (stargazer1, stargazer1JSON) = makeStargazer(
-            id: 5946913,
+            id: "5946913",
             username: "another_login",
             avatarStringURL: "https://image.fake.com/u/5946913?v=4",
             userDetailStringURL: "https://api.fake.com/users/another_login")
         
         let (stargazer2, stargazer2JSON) = makeStargazer(
-            id: 5946914,
+            id: "5946914",
             username: "last_login",
             avatarStringURL: "https://image.fake.com/u/5946914?v=4",
             userDetailStringURL: "https://api.fake.com/users/last_login")
@@ -151,7 +151,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     }
     
     private func makeStargazer(
-        id: Int,
+        id: String,
         username: String,
         avatarStringURL: String,
         userDetailStringURL: String
