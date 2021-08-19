@@ -39,7 +39,7 @@ class StargazersStore {
     }
     
     func completeRetrievalWithError(at index: Int = 0) {
-        let error = NSError(domain: "any", code: 1)
+        let error = NSError(domain: "any retrieval error", code: 234234)
         completions[index](.failure(error))
     }
     
@@ -77,43 +77,21 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieve(local)])
     }
     
-    func test_load_deliversErrorOnStoreError() {
+    func test_load_deliversErrorOnStoreRetrievalCompletionError() {
         let (sut, store) = makeSUT()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load(from: anyRepository()) { result in
-            switch result {
-            case .failure:
-                break
-            default:
-                XCTFail("Expected failure, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeRetrievalWithError()
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesWith: .failure(anyNSError()), on: {
+            store.completeRetrievalWithError()
+        })
     }
     
-    func test_load_deliversStargazersOnStoreCompletionWithLocalStargazers() {
+    func test_load_deliversStargazersOnStoreRetrievalCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let (expectedStargazers, localStargazers) = makeUniqueStargazers()
+        let stargazers = makeUniqueStargazers()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load(from: anyRepository()) { result in
-            switch result {
-            case let .success(receivedStargazers):
-                XCTAssertEqual(receivedStargazers, expectedStargazers)
-            default:
-                XCTFail("Expected failure, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeRetrievalSuccessfully(with: localStargazers)
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesWith: .success(stargazers.model), on: {
+            store.completeRetrievalSuccessfully(with: stargazers.local)
+        })
     }
     
     //MARK: - Utils
@@ -124,6 +102,33 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         trackForMemoryLeak(sut, file: file, line: line)
         trackForMemoryLeak(store, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func assert(
+        that sut: LocalStargazersLoader,
+        completesWith expectedResult: StargazersLoader.Result,
+        on action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for load completion")
+        sut.load(from: makeRepository().model) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case let (.success(receivedStargazers), .success(expectedStargazers)):
+                XCTAssertEqual(receivedStargazers, expectedStargazers, file: file, line: line)
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func anyNSError() -> NSError {
+        NSError(domain: "any", code: -1)
     }
     
     private func makeRepository() -> (model: Repository, local: LocalRepository) {
