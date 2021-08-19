@@ -98,20 +98,20 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnStoreCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let (expectedStargazer, localStargazer) = makeUniqueStargazer()
+        let (expectedStargazers, localStargazers) = makeUniqueStargazers()
         
         let exp = expectation(description: "Wait for load completion")
         sut.load(from: anyRepository()) { result in
             switch result {
             case let .success(receivedStargazers):
-                XCTAssertEqual(receivedStargazers, [expectedStargazer])
+                XCTAssertEqual(receivedStargazers, expectedStargazers)
             default:
                 XCTFail("Expected failure, got \(result) instead")
             }
             exp.fulfill()
         }
         
-        store.completeRetrievalSuccessfully(with: [localStargazer])
+        store.completeRetrievalSuccessfully(with: localStargazers)
         
         wait(for: [exp], timeout: 1.0)
     }
@@ -144,6 +144,12 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             avatarURL: model.avatarURL,
             detailURL: model.detailURL)
         return (model, local)
+    }
+    
+    private func makeUniqueStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
+        let stargazer0 = makeUniqueStargazer()
+        let stargazer1 = makeUniqueStargazer()
+        return ([stargazer0.model, stargazer1.model], [stargazer0.local, stargazer1.local])
     }
     
 }
