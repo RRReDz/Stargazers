@@ -8,12 +8,12 @@
 import Foundation
 
 public struct Stargazer: Equatable {
-    public let id: Int
+    public let id: String
     public let username: String
     public let avatarURL: URL
     public let detailURL: URL
     
-    public init(id: Int, username: String, avatarURL: URL, detailURL: URL) {
+    public init(id: String, username: String, avatarURL: URL, detailURL: URL) {
         self.id = id
         self.username = username
         self.avatarURL = avatarURL
