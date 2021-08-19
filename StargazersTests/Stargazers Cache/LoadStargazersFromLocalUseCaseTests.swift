@@ -54,7 +54,7 @@ struct LocalRepository: Equatable {
 }
 
 struct LocalStargazer {
-    let id: Int
+    let id: String
     let username: String
     let avatarURL: URL
     let detailURL: URL
@@ -98,7 +98,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnStoreCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let (expectedStargazer, localStargazer) = makeStargazer()
+        let (expectedStargazer, localStargazer) = makeUniqueStargazer()
         
         let exp = expectation(description: "Wait for load completion")
         sut.load(from: anyRepository()) { result in
@@ -132,15 +132,14 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         return (model, local)
     }
     
-    private func makeStargazer() -> (model: Stargazer, local: LocalStargazer) {
-        let idInteger = 123456789
+    private func makeUniqueStargazer() -> (model: Stargazer, local: LocalStargazer) {
         let model = Stargazer(
-            id: String(idInteger),
+            id: UUID().uuidString,
             username: "any",
             avatarURL: URL(string: "http://any-url.com")!,
             detailURL: URL(string: "http://another-url.com")!)
         let local = LocalStargazer(
-            id: idInteger,
+            id: model.id,
             username: model.username,
             avatarURL: model.avatarURL,
             detailURL: model.detailURL)
