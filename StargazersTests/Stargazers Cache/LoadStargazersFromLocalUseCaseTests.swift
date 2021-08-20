@@ -20,12 +20,17 @@ final class LocalStargazersLoader: StargazersLoader {
             completion(result.map([Stargazer].init))
         }
     }
+    
+    func clearStargazers(for repository: Repository) {
+        store.deleteStargazers(for: repository.toLocal)
+    }
 }
 
 class StargazersStore {
     typealias RetrieveCompletion = (Result<[LocalStargazer], Error>) -> Void
     enum Message: Equatable {
         case retrieve(LocalRepository)
+        case deleteStargazers(LocalRepository)
     }
     
     var messages = [Message]()
@@ -34,6 +39,10 @@ class StargazersStore {
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieve(repository))
         completions.append(completion)
+    }
+    
+    func deleteStargazers(for repository: LocalRepository) {
+        messages.append(.deleteStargazers(repository))
     }
     
     func completeRetrievalWithError(at index: Int = 0) {
@@ -88,6 +97,15 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (_, store) = makeSUT()
         
         XCTAssertEqual(store.messages, [])
+    }
+    
+    func test_clearStargazers_sendStoreDeleteRepositoryStargazersMessage() {
+        let (sut, store) = makeSUT()
+        let repository = makeRepository()
+        
+        sut.clearStargazers(for: repository.model)
+        
+        XCTAssertEqual(store.messages, [.deleteStargazers(repository.local)])
     }
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
