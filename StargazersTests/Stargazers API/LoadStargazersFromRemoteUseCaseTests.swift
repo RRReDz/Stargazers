@@ -249,9 +249,3 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
     }
     
 }
-
-private extension String {
-    func toDataUTF8() -> Data? {
-        self.data(using: .utf8)
-    }
-}
