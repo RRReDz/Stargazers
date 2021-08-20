@@ -92,11 +92,11 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
         let (sut, store) = makeSUT()
-        let (model, local) = makeRepository()
+        let repository = makeRepository()
         
-        sut.load(from: model) { _ in }
+        sut.load(from: repository.model) { _ in }
         
-        XCTAssertEqual(store.messages, [.retrieve(local)])
+        XCTAssertEqual(store.messages, [.retrieve(repository.local)])
     }
     
     func test_load_deliversErrorOnStoreRetrievalCompletionError() {
