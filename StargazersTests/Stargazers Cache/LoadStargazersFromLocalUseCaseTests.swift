@@ -209,7 +209,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_load_deliversErrorOnStoreRetrievalCompletionError() {
         let (sut, store) = makeSUT()
         
-        assert(that: sut, completesWith: .failure(anyNSError()), on: {
+        assert(that: sut, completesLoadWith: .failure(anyNSError()), on: {
             store.completeRetrievalWithError()
         })
     }
@@ -218,7 +218,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let stargazers = makeUniqueUseCaseStargazers()
         
-        assert(that: sut, completesWith: .success(stargazers.model), on: {
+        assert(that: sut, completesLoadWith: .success(stargazers.model), on: {
             store.completeRetrievalSuccessfully(with: stargazers.local)
         })
     }
@@ -235,7 +235,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     private func assert(
         that sut: LocalStargazersLoader,
-        completesWith expectedResult: StargazersLoader.Result,
+        completesLoadWith expectedResult: StargazersLoader.Result,
         on action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
