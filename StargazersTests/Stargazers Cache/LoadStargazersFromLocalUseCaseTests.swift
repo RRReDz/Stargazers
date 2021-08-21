@@ -24,7 +24,7 @@ final class LocalStargazersLoader: StargazersLoader {
     func save(_ stargazers: [Stargazer], for repository: Repository) {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             if case .success = result {
-                self.store.insert(stargazers.map(LocalStargazer.init), for: LocalRepository(name: repository.name, owner: repository.owner))
+                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal)
             }
         }
     }
