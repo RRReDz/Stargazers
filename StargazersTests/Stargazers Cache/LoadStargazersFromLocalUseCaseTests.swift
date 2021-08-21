@@ -172,8 +172,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
         
-        XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
-        
         store.completeDeletionWithError()
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
