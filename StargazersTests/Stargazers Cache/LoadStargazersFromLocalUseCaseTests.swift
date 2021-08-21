@@ -75,6 +75,10 @@ class StargazersStore {
         let error = NSError(domain: "any deletion error", code: 739584)
         deleteCompletions[index](.failure(error))
     }
+    
+    func completeDeletionSuccessfully(at index: Int = 0) {
+        deleteCompletions[index](.success(()))
+    }
 }
 
 struct LocalRepository: Equatable {
@@ -156,6 +160,26 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         }
         
         store.completeDeletionWithError()
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    func test_clearStargazers_deliversSuccessOnStoreRepositoryDeletionCompletionSuccess() {
+        let (sut, store) = makeSUT()
+        let repository = makeUseCaseRepository()
+        
+        let exp = expectation(description: "Wait for clearStargazers completion")
+        sut.clearStargazers(for: repository.model) { result in
+            switch result {
+            case .success:
+                break
+            default:
+                XCTFail("Expected success, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        store.completeDeletionSuccessfully()
         
         wait(for: [exp], timeout: 1.0)
     }
