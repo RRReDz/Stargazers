@@ -170,12 +170,11 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
     
-    func test_save_doesNotSendStoreOtherMessagesOnDeletionError() {
+    func test_save_sendOnlyDeleteMessageAfterDeletionError() {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
         
         sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
-        
         store.completeDeletionWithError()
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
@@ -187,7 +186,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let stargazers = makeUniqueUseCaseStargazers()
         
         sut.save(stargazers.model, for: repository.model)
-        
         store.completeDeletionSuccessfully()
         
         XCTAssertEqual(store.messages, [
