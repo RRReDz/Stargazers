@@ -16,8 +16,8 @@ final class LocalStargazersLoader: StargazersLoader {
     }
     
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        store.retrieve(from: repository.toLocal) { result in
-            completion(result.map([Stargazer].init))
+        store.retrieve(from: repository.toLocal) {
+            completion($0.map([Stargazer].init))
         }
     }
     
