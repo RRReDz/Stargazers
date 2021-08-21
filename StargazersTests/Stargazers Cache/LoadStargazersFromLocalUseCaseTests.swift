@@ -146,42 +146,18 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_clearStargazers_deliversErrorOnStoreRepositoryDeletionCompletionError() {
         let (sut, store) = makeSUT()
-        let repository = makeUseCaseRepository()
         
-        let exp = expectation(description: "Wait for clearStargazers completion")
-        sut.clearStargazers(for: repository.model) { result in
-            switch result {
-            case .failure:
-                break
-            default:
-                XCTFail("Expected failure, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeDeletionWithError()
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesDeletionWith: .failure(anyNSError()), on: {
+            store.completeDeletionWithError()
+        })
     }
     
     func test_clearStargazers_deliversSuccessOnStoreRepositoryDeletionCompletionSuccess() {
         let (sut, store) = makeSUT()
-        let repository = makeUseCaseRepository()
         
-        let exp = expectation(description: "Wait for clearStargazers completion")
-        sut.clearStargazers(for: repository.model) { result in
-            switch result {
-            case .success:
-                break
-            default:
-                XCTFail("Expected success, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeDeletionSuccessfully()
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesDeletionWith: .success(()), on: {
+            store.completeDeletionSuccessfully()
+        })
     }
     
     func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
@@ -253,6 +229,31 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             exp.fulfill()
         }
         action()
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func assert(
+        that sut: LocalStargazersLoader,
+        completesDeletionWith expectedResult: Result<Void, Error>,
+        on action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for clearStargazers completion")
+        sut.clearStargazers(for: makeUseCaseRepository().model) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case (.success, .success):
+                break
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+        
+        action()
+        
         wait(for: [exp], timeout: 1.0)
     }
     
