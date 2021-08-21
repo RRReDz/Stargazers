@@ -28,7 +28,7 @@ final class LocalStargazersLoader: StargazersLoader {
             for: repository.toLocal)
     }
     
-    func clearStargazers(for repository: Repository, completion: @escaping (Error) -> Void = { _ in }) {
+    func clearStargazers(for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         store.deleteStargazers(for: repository.toLocal) {
             completion($0)
         }
@@ -46,7 +46,7 @@ class StargazersStore {
     
     var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
-    private var deleteCompletions = [(Error) -> Void]()
+    private var deleteCompletions = [(Result<Void, Error>) -> Void]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieve(for: repository))
@@ -57,7 +57,7 @@ class StargazersStore {
         messages.append(.insert(for: repository))
     }
     
-    func deleteStargazers(for repository: LocalRepository, completion: @escaping (Error) -> Void = { _ in }) {
+    func deleteStargazers(for repository: LocalRepository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         messages.append(.delete(for: repository))
         deleteCompletions.append(completion)
     }
@@ -73,7 +73,7 @@ class StargazersStore {
     
     func completeDeletionWithError(at index: Int = 0) {
         let error = NSError(domain: "any deletion error", code: 739584)
-        deleteCompletions[index](error)
+        deleteCompletions[index](.failure(error))
     }
 }
 
@@ -144,14 +144,20 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
         
-        var capturedErrors = [Error]()
-        sut.clearStargazers(for: repository.model) { error in
-            capturedErrors.append(error)
+        let exp = expectation(description: "Wait for clearStargazers completion")
+        sut.clearStargazers(for: repository.model) { result in
+            switch result {
+            case .failure:
+                break
+            default:
+                XCTFail("Expected failure, got \(result) instead")
+            }
+            exp.fulfill()
         }
         
         store.completeDeletionWithError()
         
-        XCTAssertFalse(capturedErrors.isEmpty)
+        wait(for: [exp], timeout: 1.0)
     }
     
     func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
