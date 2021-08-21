@@ -23,9 +23,6 @@ final class LocalStargazersLoader: StargazersLoader {
     
     func save(_ stargazers: [Stargazer], for repository: Repository) {
         store.deleteStargazers(for: repository.toLocal)
-        store.insert(
-            stargazers.map(LocalStargazer.init),
-            for: repository.toLocal)
     }
     
     func clearStargazers(for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
@@ -160,17 +157,13 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
-    func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
+    func test_save_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
-        let stargazers = makeUniqueUseCaseStargazers()
         
-        sut.save(stargazers.model, for: repository.model)
+        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
         
-        XCTAssertEqual(store.messages, [
-            .deleteStargazers(for: repository.local),
-            .insert(stargazers.local, for: repository.local)
-        ])
+        XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
