@@ -29,7 +29,7 @@ final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
-    func clearStargazers(for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
+    func clearStargazers(for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void) {
         store.deleteStargazers(for: repository.toLocal) {
             completion($0)
         }
@@ -147,7 +147,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
         
-        sut.clearStargazers(for: repository.model)
+        sut.clearStargazers(for: repository.model) { _ in }
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
