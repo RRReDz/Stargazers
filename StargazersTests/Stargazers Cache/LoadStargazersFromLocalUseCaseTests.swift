@@ -39,9 +39,9 @@ class StargazersStore {
     typealias RetrieveCompletion = (Result<[LocalStargazer], Error>) -> Void
     
     enum Message: Equatable {
-        case retrieve(for: LocalRepository)
-        case delete(for: LocalRepository)
-        case insert(for: LocalRepository)
+        case retrieveStargazers(for: LocalRepository)
+        case deleteStargazers(for: LocalRepository)
+        case insert([LocalStargazer], for: LocalRepository)
     }
     
     var messages = [Message]()
@@ -49,16 +49,16 @@ class StargazersStore {
     private var deleteCompletions = [(Result<Void, Error>) -> Void]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
-        messages.append(.retrieve(for: repository))
+        messages.append(.retrieveStargazers(for: repository))
         retrieveCompletions.append(completion)
     }
     
     func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository) {
-        messages.append(.insert(for: repository))
+        messages.append(.insert(stargazers, for: repository))
     }
     
     func deleteStargazers(for repository: LocalRepository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
-        messages.append(.delete(for: repository))
+        messages.append(.deleteStargazers(for: repository))
         deleteCompletions.append(completion)
     }
     
@@ -86,7 +86,7 @@ struct LocalRepository: Equatable {
     let owner: String
 }
 
-struct LocalStargazer {
+struct LocalStargazer: Equatable {
     let id: String
     let username: String
     let avatarURL: URL
@@ -141,7 +141,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut.clearStargazers(for: repository.model)
         
-        XCTAssertEqual(store.messages, [.delete(for: repository.local)])
+        XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
     
     func test_clearStargazers_deliversErrorOnStoreRepositoryDeletionCompletionError() {
@@ -187,12 +187,13 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
+        let stargazers = makeUniqueUseCaseStargazers()
         
-        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
+        sut.save(stargazers.model, for: repository.model)
         
         XCTAssertEqual(store.messages, [
-            .delete(for: repository.local),
-            .insert(for: repository.local)
+            .deleteStargazers(for: repository.local),
+            .insert(stargazers.local, for: repository.local)
         ])
     }
     
@@ -202,7 +203,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut.load(from: repository.model) { _ in }
         
-        XCTAssertEqual(store.messages, [.retrieve(for: repository.local)])
+        XCTAssertEqual(store.messages, [.retrieveStargazers(for: repository.local)])
     }
     
     func test_load_deliversErrorOnStoreRetrievalCompletionError() {
