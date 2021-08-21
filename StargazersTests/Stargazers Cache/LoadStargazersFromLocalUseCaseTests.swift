@@ -35,6 +35,7 @@ final class LocalStargazersLoader: StargazersLoader {
 
 class StargazersStore {
     typealias RetrieveCompletion = (Result<[LocalStargazer], Error>) -> Void
+    
     enum Message: Equatable {
         case retrieve(LocalRepository)
         case deleteStargazers(LocalRepository)
@@ -123,7 +124,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_clearStargazers_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
-        let repository = makeRepository()
+        let repository = makeUseCaseRepository()
         
         sut.clearStargazers(for: repository.model)
         
@@ -132,17 +133,16 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
-        let repository = makeRepository()
-        let stargazers = makeUniqueStargazers()
+        let repository = makeUseCaseRepository()
         
-        sut.save(stargazers.model, for: repository.model)
+        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
         
         XCTAssertEqual(store.messages, [.deleteStargazers(repository.local), .insert(repository.local)])
     }
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
         let (sut, store) = makeSUT()
-        let repository = makeRepository()
+        let repository = makeUseCaseRepository()
         
         sut.load(from: repository.model) { _ in }
         
@@ -159,7 +159,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnStoreRetrievalCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let stargazers = makeUniqueStargazers()
+        let stargazers = makeUniqueUseCaseStargazers()
         
         assert(that: sut, completesWith: .success(stargazers.model), on: {
             store.completeRetrievalSuccessfully(with: stargazers.local)
@@ -184,7 +184,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for load completion")
-        sut.load(from: makeRepository().model) { receivedResult in
+        sut.load(from: makeUseCaseRepository().model) { receivedResult in
             switch (expectedResult, receivedResult) {
             case let (.success(receivedStargazers), .success(expectedStargazers)):
                 XCTAssertEqual(receivedStargazers, expectedStargazers, file: file, line: line)
@@ -203,13 +203,13 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         NSError(domain: "any", code: -1)
     }
     
-    private func makeRepository() -> (model: Repository, local: LocalRepository) {
+    private func makeUseCaseRepository() -> (model: Repository, local: LocalRepository) {
         let model = anyRepository()
         let local = LocalRepository(name: model.name, owner: model.owner)
         return (model, local)
     }
     
-    private func makeUniqueStargazer() -> (model: Stargazer, local: LocalStargazer) {
+    private func makeUniqueUseCaseStargazer() -> (model: Stargazer, local: LocalStargazer) {
         let model = Stargazer(
             id: UUID().uuidString,
             username: "any",
@@ -223,9 +223,9 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         return (model, local)
     }
     
-    private func makeUniqueStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
-        let stargazer0 = makeUniqueStargazer()
-        let stargazer1 = makeUniqueStargazer()
+    private func makeUniqueUseCaseStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
+        let stargazer0 = makeUniqueUseCaseStargazer()
+        let stargazer1 = makeUniqueUseCaseStargazer()
         return ([stargazer0.model, stargazer1.model], [stargazer0.local, stargazer1.local])
     }
     
