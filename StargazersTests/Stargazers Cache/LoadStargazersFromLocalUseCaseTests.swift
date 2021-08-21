@@ -24,7 +24,7 @@ final class LocalStargazersLoader: StargazersLoader {
     func save(_ stargazers: [Stargazer], for repository: Repository) {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             if case .success = result {
-                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal)
+                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { _ in }
             }
         }
     }
@@ -48,14 +48,16 @@ class StargazersStore {
     var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
     private var deleteCompletions = [(Result<Void, Error>) -> Void]()
+    private var insertionCompletions = [(Error) -> Void]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieveStargazers(for: repository))
         retrieveCompletions.append(completion)
     }
     
-    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository) {
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Error) -> Void) {
         messages.append(.insert(stargazers, for: repository))
+        insertionCompletions.append(completion)
     }
     
     func deleteStargazers(for repository: LocalRepository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
@@ -79,6 +81,11 @@ class StargazersStore {
     
     func completeDeletionSuccessfully(at index: Int = 0) {
         deleteCompletions[index](.success(()))
+    }
+    
+    func completeInsertionWithError(at index: Int = 0) {
+        let error = NSError(domain: "any insertion error", code: 834957)
+        insertionCompletions[index](error)
     }
 }
 
@@ -187,6 +194,21 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut.save(stargazers.model, for: repository.model)
         store.completeDeletionSuccessfully()
+        
+        XCTAssertEqual(store.messages, [
+            .deleteStargazers(for: repository.local),
+            .insert(stargazers.local, for: repository.local)
+        ])
+    }
+    
+    func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionError() {
+        let (sut, store) = makeSUT()
+        let repository = makeUseCaseRepository()
+        let stargazers = makeUniqueUseCaseStargazers()
+        
+        sut.save(stargazers.model, for: repository.model)
+        store.completeDeletionSuccessfully()
+        store.completeInsertionWithError()
         
         XCTAssertEqual(store.messages, [
             .deleteStargazers(for: repository.local),
