@@ -43,11 +43,11 @@ class StargazersStore {
     }
     
     var messages = [Message]()
-    private var completions = [RetrieveCompletion]()
+    private var retrieveCompletions = [RetrieveCompletion]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieve(repository))
-        completions.append(completion)
+        retrieveCompletions.append(completion)
     }
     
     func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository) {
@@ -60,11 +60,11 @@ class StargazersStore {
     
     func completeRetrievalWithError(at index: Int = 0) {
         let error = NSError(domain: "any retrieval error", code: 234234)
-        completions[index](.failure(error))
+        retrieveCompletions[index](.failure(error))
     }
     
     func completeRetrievalSuccessfully(with stargazers: [LocalStargazer], at index: Int = 0) {
-        completions[index](.success(stargazers))
+        retrieveCompletions[index](.success(stargazers))
     }
 }
 
