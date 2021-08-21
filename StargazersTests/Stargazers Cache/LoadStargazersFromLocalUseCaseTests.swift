@@ -21,6 +21,13 @@ final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
+    func save(_ stargazers: [Stargazer], for repository: Repository) {
+        store.deleteStargazers(for: repository.toLocal)
+        store.insert(
+            stargazers.map(LocalStargazer.init),
+            for: repository.toLocal)
+    }
+    
     func clearStargazers(for repository: Repository) {
         store.deleteStargazers(for: repository.toLocal)
     }
@@ -31,6 +38,7 @@ class StargazersStore {
     enum Message: Equatable {
         case retrieve(LocalRepository)
         case deleteStargazers(LocalRepository)
+        case insert(LocalRepository)
     }
     
     var messages = [Message]()
@@ -39,6 +47,10 @@ class StargazersStore {
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieve(repository))
         completions.append(completion)
+    }
+    
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository) {
+        messages.append(.insert(repository))
     }
     
     func deleteStargazers(for repository: LocalRepository) {
@@ -83,6 +95,16 @@ private extension Stargazer {
     }
 }
 
+private extension LocalStargazer {
+    init(model: Stargazer) {
+        self.init(
+            id: model.id,
+            username: model.username,
+            avatarURL: model.avatarURL,
+            detailURL: model.detailURL)
+    }
+}
+
 private extension Repository {
     var toLocal: LocalRepository {
         LocalRepository(
@@ -106,6 +128,16 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         sut.clearStargazers(for: repository.model)
         
         XCTAssertEqual(store.messages, [.deleteStargazers(repository.local)])
+    }
+    
+    func test_save_sendStoreDeleteAndInsertRepositoryStargazersMessage() {
+        let (sut, store) = makeSUT()
+        let repository = makeRepository()
+        let stargazers = makeUniqueStargazers()
+        
+        sut.save(stargazers.model, for: repository.model)
+        
+        XCTAssertEqual(store.messages, [.deleteStargazers(repository.local), .insert(repository.local)])
     }
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
