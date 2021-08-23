@@ -248,45 +248,19 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_deliversErrorOnDeletionError() {
         let (sut, store) = makeSUT()
-        let stargazers = makeUniqueUseCaseStargazers()
-        let repository = makeUseCaseRepository()
         
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(stargazers.model, for: repository.model) { result in
-            switch result {
-            case .failure:
-                break
-            case .success:
-                XCTFail("Expected failure, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeDeletionWithError()
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesSaveWith: .failure(anyNSError()), on: {
+            store.completeDeletionWithError()
+        })
     }
     
     func test_save_deliversErrorOnDeletionSuccessAndInsertionError() {
         let (sut, store) = makeSUT()
-        let stargazers = makeUniqueUseCaseStargazers()
-        let repository = makeUseCaseRepository()
         
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(stargazers.model, for: repository.model) { result in
-            switch result {
-            case .failure:
-                break
-            case .success:
-                XCTFail("Expected failure, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        store.completeDeletionSuccessfully()
-        store.completeInsertionWithError()
-        
-        wait(for: [exp], timeout: 1.0)
+        assert(that: sut, completesSaveWith: .failure(anyNSError()), on: {
+            store.completeDeletionSuccessfully()
+            store.completeInsertionWithError()
+        })
     }
     
     //MARK: - Load Stargazers
@@ -375,6 +349,31 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    private func assert(
+        that sut: LocalStargazersLoader,
+        completesSaveWith expectedResult: Result<Void, Error>,
+        on action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for save completion")
+        sut.save([makeUniqueStargazer()], for: anyRepository()) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case (.success, .success):
+                break
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+        
+        action()
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     private func anyNSError() -> NSError {
         NSError(domain: "any nserror", code: -12345)
     }
@@ -386,17 +385,21 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func makeUniqueUseCaseStargazer() -> (model: Stargazer, local: LocalStargazer) {
-        let model = Stargazer(
-            id: UUID().uuidString,
-            username: "any",
-            avatarURL: URL(string: "http://any-url.com")!,
-            detailURL: URL(string: "http://another-url.com")!)
+        let model = makeUniqueStargazer()
         let local = LocalStargazer(
             id: model.id,
             username: model.username,
             avatarURL: model.avatarURL,
             detailURL: model.detailURL)
         return (model, local)
+    }
+    
+    private func makeUniqueStargazer() -> Stargazer {
+        return Stargazer(
+            id: UUID().uuidString,
+            username: "any",
+            avatarURL: URL(string: "http://any-url.com")!,
+            detailURL: URL(string: "http://another-url.com")!)
     }
     
     private func makeUniqueUseCaseStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
