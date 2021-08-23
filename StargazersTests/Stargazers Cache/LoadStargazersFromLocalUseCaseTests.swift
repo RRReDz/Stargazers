@@ -33,9 +33,7 @@ final class LocalStargazersLoader: StargazersLoader {
     }
     
     func clearStargazers(for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void) {
-        store.deleteStargazers(for: repository.toLocal) {
-            completion($0)
-        }
+        store.deleteStargazers(for: repository.toLocal, completion: completion)
     }
 }
 
