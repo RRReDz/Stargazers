@@ -44,6 +44,7 @@ final class LocalStargazersLoader: StargazersLoader {
 class StargazersStore {
     typealias RetrieveCompletion = (Result<[LocalStargazer], Error>) -> Void
     typealias DeleteCompletion = (Result<Void, Error>) -> Void
+    typealias InsertCompletion = (Result<Void, Error>) -> Void
     
     enum Message: Equatable {
         case retrieveStargazers(for: LocalRepository)
@@ -54,14 +55,14 @@ class StargazersStore {
     var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
     private var deleteCompletions = [DeleteCompletion]()
-    private var insertionCompletions = [(Result<Void, Error>) -> Void]()
+    private var insertionCompletions = [InsertCompletion]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieveStargazers(for: repository))
         retrieveCompletions.append(completion)
     }
     
-    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Result<Void, Error>) -> Void) {
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping InsertCompletion) {
         messages.append(.insert(stargazers, for: repository))
         insertionCompletions.append(completion)
     }
