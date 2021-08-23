@@ -168,7 +168,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_clearStargazers_deliversErrorOnStoreRepositoryDeletionCompletionError() {
         let (sut, store) = makeSUT()
         
-        assert(that: sut, completesDeletionWith: .failure(anyNSError()), on: {
+        assert(that: sut, completesClearWith: .failure(anyNSError()), on: {
             store.completeDeletionWithError()
         })
     }
@@ -176,7 +176,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_clearStargazers_deliversSuccessOnStoreRepositoryDeletionCompletionSuccess() {
         let (sut, store) = makeSUT()
         
-        assert(that: sut, completesDeletionWith: .success(()), on: {
+        assert(that: sut, completesClearWith: .success(()), on: {
             store.completeDeletionSuccessfully()
         })
     }
@@ -316,7 +316,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             case (.failure, .failure):
                 break
             default:
-                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
@@ -326,7 +326,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     private func assert(
         that sut: LocalStargazersLoader,
-        completesDeletionWith expectedResult: Result<Void, Error>,
+        completesClearWith expectedResult: Result<Void, Error>,
         on action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -339,7 +339,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             case (.failure, .failure):
                 break
             default:
-                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
@@ -364,7 +364,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             case (.failure, .failure):
                 break
             default:
-                XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
