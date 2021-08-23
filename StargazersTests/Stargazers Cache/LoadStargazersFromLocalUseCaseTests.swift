@@ -25,7 +25,11 @@ final class LocalStargazersLoader: StargazersLoader {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             switch result {
             case .success:
-                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { _ in }
+                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    }
+                }
             case let .failure(error):
                 completion(.failure(error))
             }
@@ -258,6 +262,28 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         }
         
         store.completeDeletionWithError()
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    func test_save_deliversErrorOnDeletionSuccessAndInsertionError() {
+        let (sut, store) = makeSUT()
+        let stargazers = makeUniqueUseCaseStargazers()
+        let repository = makeUseCaseRepository()
+        
+        let exp = expectation(description: "Wait for save completion")
+        sut.save(stargazers.model, for: repository.model) { result in
+            switch result {
+            case .failure:
+                break
+            case .success:
+                XCTFail("Expected failure, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        
+        store.completeDeletionSuccessfully()
+        store.completeInsertionWithError()
         
         wait(for: [exp], timeout: 1.0)
     }
