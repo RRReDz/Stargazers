@@ -245,20 +245,19 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_deliversErrorOnDeletionError() {
         let (sut, store) = makeSUT()
+        let stargazers = makeUniqueUseCaseStargazers()
+        let repository = makeUseCaseRepository()
         
         let exp = expectation(description: "Wait for save completion")
-        sut.save(
-            makeUniqueUseCaseStargazers().model,
-            for: makeUseCaseRepository().model,
-            completion: { result in
-                switch result {
-                case .failure:
-                    break
-                case .success:
-                    XCTFail("Expected failure, got \(result) instead")
-                }
-                exp.fulfill()
-            })
+        sut.save(stargazers.model, for: repository.model) { result in
+            switch result {
+            case .failure:
+                break
+            case .success:
+                XCTFail("Expected failure, got \(result) instead")
+            }
+            exp.fulfill()
+        }
         
         store.completeDeletionWithError()
         
