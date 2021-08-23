@@ -21,7 +21,7 @@ final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
-    func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
+    func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void) {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             switch result {
             case .success:
@@ -184,7 +184,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
         
-        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
+        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model) { _ in }
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
@@ -193,7 +193,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
         
-        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model)
+        sut.save(makeUniqueUseCaseStargazers().model, for: repository.model) { _ in }
         store.completeDeletionWithError()
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
@@ -204,7 +204,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = makeUseCaseRepository()
         let stargazers = makeUniqueUseCaseStargazers()
         
-        sut.save(stargazers.model, for: repository.model)
+        sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
         
         XCTAssertEqual(store.messages, [
@@ -218,7 +218,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = makeUseCaseRepository()
         let stargazers = makeUniqueUseCaseStargazers()
         
-        sut.save(stargazers.model, for: repository.model)
+        sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
         store.completeInsertionWithError()
         
@@ -233,7 +233,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = makeUseCaseRepository()
         let stargazers = makeUniqueUseCaseStargazers()
         
-        sut.save(stargazers.model, for: repository.model)
+        sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
         store.completeInsertionSuccessfully()
         
