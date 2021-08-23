@@ -25,8 +25,8 @@ final class LocalStargazersLoader: StargazersLoader {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             switch result {
             case .success:
-                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { error in
-                    if let error = error {
+                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { result in
+                    if case let .failure(error) = result {
                         completion(.failure(error))
                     }
                 }
@@ -54,14 +54,14 @@ class StargazersStore {
     var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
     private var deleteCompletions = [DeleteCompletion]()
-    private var insertionCompletions = [(Error?) -> Void]()
+    private var insertionCompletions = [(Result<Void, Error>) -> Void]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieveStargazers(for: repository))
         retrieveCompletions.append(completion)
     }
     
-    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Error?) -> Void) {
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Result<Void, Error>) -> Void) {
         messages.append(.insert(stargazers, for: repository))
         insertionCompletions.append(completion)
     }
@@ -91,11 +91,11 @@ class StargazersStore {
     
     func completeInsertionWithError(at index: Int = 0) {
         let error = NSError(domain: "any insertion error", code: 834957)
-        insertionCompletions[index](error)
+        insertionCompletions[index](.failure(error))
     }
     
     func completeInsertionSuccessfully(at index: Int = 0) {
-        insertionCompletions[index](nil)
+        insertionCompletions[index](.success(()))
     }
 }
 
