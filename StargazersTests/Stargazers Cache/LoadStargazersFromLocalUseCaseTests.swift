@@ -49,14 +49,14 @@ class StargazersStore {
     var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
     private var deleteCompletions = [DeleteCompletion]()
-    private var insertionCompletions = [(Error) -> Void]()
+    private var insertionCompletions = [(Error?) -> Void]()
     
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         messages.append(.retrieveStargazers(for: repository))
         retrieveCompletions.append(completion)
     }
     
-    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Error) -> Void) {
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping (Error?) -> Void) {
         messages.append(.insert(stargazers, for: repository))
         insertionCompletions.append(completion)
     }
@@ -87,6 +87,10 @@ class StargazersStore {
     func completeInsertionWithError(at index: Int = 0) {
         let error = NSError(domain: "any insertion error", code: 834957)
         insertionCompletions[index](error)
+    }
+    
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](nil)
     }
 }
 
@@ -210,6 +214,21 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         sut.save(stargazers.model, for: repository.model)
         store.completeDeletionSuccessfully()
         store.completeInsertionWithError()
+        
+        XCTAssertEqual(store.messages, [
+            .deleteStargazers(for: repository.local),
+            .insert(stargazers.local, for: repository.local)
+        ])
+    }
+    
+    func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionSuccess() {
+        let (sut, store) = makeSUT()
+        let repository = makeUseCaseRepository()
+        let stargazers = makeUniqueUseCaseStargazers()
+        
+        sut.save(stargazers.model, for: repository.model)
+        store.completeDeletionSuccessfully()
+        store.completeInsertionSuccessfully()
         
         XCTAssertEqual(store.messages, [
             .deleteStargazers(for: repository.local),
