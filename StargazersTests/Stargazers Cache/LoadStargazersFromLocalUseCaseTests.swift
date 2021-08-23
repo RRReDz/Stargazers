@@ -23,9 +23,10 @@ final class LocalStargazersLoader: StargazersLoader {
     
     func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
-            if case .success = result {
+            switch result {
+            case .success:
                 self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { _ in }
-            } else if case let .failure(error) = result {
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
