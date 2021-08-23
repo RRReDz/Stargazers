@@ -21,10 +21,12 @@ final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
-    func save(_ stargazers: [Stargazer], for repository: Repository) {
+    func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         store.deleteStargazers(for: repository.toLocal) { [unowned self] result in
             if case .success = result {
                 self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { _ in }
+            } else if case let .failure(error) = result {
+                completion(.failure(error))
             }
         }
     }
@@ -148,6 +150,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [])
     }
     
+    //MARK: - Clear Stargazers
+    
     func test_clearStargazers_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
         let repository = makeUseCaseRepository()
@@ -172,6 +176,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             store.completeDeletionSuccessfully()
         })
     }
+    
+    //MARK: - Save Stargazers
     
     func test_save_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
@@ -235,6 +241,30 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             .insert(stargazers.local, for: repository.local)
         ])
     }
+    
+    func test_save_deliversErrorOnDeletionError() {
+        let (sut, store) = makeSUT()
+        
+        let exp = expectation(description: "Wait for save completion")
+        sut.save(
+            makeUniqueUseCaseStargazers().model,
+            for: makeUseCaseRepository().model,
+            completion: { result in
+                switch result {
+                case .failure:
+                    break
+                case .success:
+                    XCTFail("Expected failure, got \(result) instead")
+                }
+                exp.fulfill()
+            })
+        
+        store.completeDeletionWithError()
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    //MARK: - Load Stargazers
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
         let (sut, store) = makeSUT()
