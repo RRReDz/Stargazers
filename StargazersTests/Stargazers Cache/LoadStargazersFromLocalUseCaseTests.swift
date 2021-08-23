@@ -351,7 +351,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func anyNSError() -> NSError {
-        NSError(domain: "any", code: -1)
+        NSError(domain: "any nserror", code: -12345)
     }
     
     private func makeUseCaseRepository() -> (model: Repository, local: LocalRepository) {
