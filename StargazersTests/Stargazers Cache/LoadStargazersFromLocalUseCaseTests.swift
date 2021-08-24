@@ -83,8 +83,7 @@ class StargazersStore {
         retrieveCompletions[index](.success(stargazers))
     }
     
-    func completeDeletionWithError(at index: Int = 0) {
-        let error = NSError(domain: "any deletion error", code: 739584)
+    func completeDeletionWithError(_ error: Error, at index: Int = 0) {
         deleteCompletions[index](.failure(error))
     }
     
@@ -92,8 +91,7 @@ class StargazersStore {
         deleteCompletions[index](.success(()))
     }
     
-    func completeInsertionWithError(at index: Int = 0) {
-        let error = NSError(domain: "any insertion error", code: 834957)
+    func completeInsertionWithError(_ error: Error, at index: Int = 0) {
         insertionCompletions[index](.failure(error))
     }
     
@@ -175,9 +173,10 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_clearStargazers_deliversErrorOnStoreRepositoryDeletionCompletionError() {
         let (sut, store) = makeSUT()
+        let error = anyNSError()
         
-        assert(that: sut, completesClearWith: .failure(anyNSError()), on: {
-            store.completeDeletionWithError()
+        assert(that: sut, completesClearWith: .failure(error), on: {
+            store.completeDeletionWithError(error)
         })
     }
     
@@ -220,7 +219,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = useCaseRepository()
         
         sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
-        store.completeDeletionWithError()
+        store.completeDeletionWithError(anyNSError())
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
@@ -246,7 +245,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
-        store.completeInsertionWithError()
+        store.completeInsertionWithError(anyNSError())
         
         XCTAssertEqual(store.messages, [
             .deleteStargazers(for: repository.local),
@@ -271,9 +270,10 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_deliversErrorOnDeletionError() {
         let (sut, store) = makeSUT()
+        let error = anyNSError()
         
-        assert(that: sut, completesSaveWith: .failure(anyNSError()), on: {
-            store.completeDeletionWithError()
+        assert(that: sut, completesSaveWith: .failure(error), on: {
+            store.completeDeletionWithError(error)
         })
     }
     
@@ -292,10 +292,11 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_deliversErrorOnDeletionSuccessAndInsertionError() {
         let (sut, store) = makeSUT()
+        let error = anyNSError()
         
-        assert(that: sut, completesSaveWith: .failure(anyNSError()), on: {
+        assert(that: sut, completesSaveWith: .failure(error), on: {
             store.completeDeletionSuccessfully()
-            store.completeInsertionWithError()
+            store.completeInsertionWithError(error)
         })
     }
     
@@ -334,7 +335,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         sut = nil
         
-        store.completeDeletionWithError()
+        store.completeDeletionWithError(anyNSError())
         
         XCTAssert(capturedResults.isEmpty)
     }
@@ -431,8 +432,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             switch (expectedResult, receivedResult) {
             case (.success, .success):
                 break
-            case (.failure, .failure):
-                break
+            case let (.failure(expectedError as NSError), .failure(receivedError as NSError)):
+                XCTAssertEqual(expectedError, receivedError, file: file, line: line)
             default:
                 XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
@@ -456,8 +457,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             switch (expectedResult, receivedResult) {
             case (.success, .success):
                 break
-            case (.failure, .failure):
-                break
+            case let (.failure(expectedError as NSError), .failure(receivedError as NSError)):
+                XCTAssertEqual(expectedError, receivedError, file: file, line: line)
             default:
                 XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
