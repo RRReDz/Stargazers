@@ -117,33 +117,33 @@ struct LocalStargazer: Equatable {
 
 private extension Array where Element == Stargazer {
     var toLocal: [LocalStargazer] {
-        return self.map(LocalStargazer.init)
+        return self.map { $0.toLocal }
     }
 }
 
 private extension Array where Element == LocalStargazer {
     var toModel: [Stargazer] {
-        return self.map(Stargazer.init)
+        return self.map { $0.toModel }
     }
 }
 
 private extension Stargazer {
-    init(local: LocalStargazer) {
-        self.init(
-            id: local.id,
-            username: local.username,
-            avatarURL: local.avatarURL,
-            detailURL: local.detailURL)
+    var toLocal: LocalStargazer {
+        return LocalStargazer(
+            id: id,
+            username: username,
+            avatarURL: avatarURL,
+            detailURL: detailURL)
     }
 }
 
 private extension LocalStargazer {
-    init(model: Stargazer) {
-        self.init(
-            id: model.id,
-            username: model.username,
-            avatarURL: model.avatarURL,
-            detailURL: model.detailURL)
+    var toModel: Stargazer {
+        Stargazer(
+            id: id,
+            username: username,
+            avatarURL: avatarURL,
+            detailURL: detailURL)
     }
 }
 
