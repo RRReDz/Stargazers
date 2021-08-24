@@ -44,60 +44,14 @@ final class LocalStargazersLoader: StargazersLoader {
     }
 }
 
-class StargazersStore {
+protocol StargazersStore {
     typealias RetrieveCompletion = (Result<[LocalStargazer], Error>) -> Void
     typealias DeleteCompletion = (Result<Void, Error>) -> Void
     typealias InsertCompletion = (Result<Void, Error>) -> Void
     
-    enum Message: Equatable {
-        case retrieveStargazers(for: LocalRepository)
-        case deleteStargazers(for: LocalRepository)
-        case insert([LocalStargazer], for: LocalRepository)
-    }
-    
-    private(set) var messages = [Message]()
-    private var retrieveCompletions = [RetrieveCompletion]()
-    private var deleteCompletions = [DeleteCompletion]()
-    private var insertionCompletions = [InsertCompletion]()
-    
-    func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
-        messages.append(.retrieveStargazers(for: repository))
-        retrieveCompletions.append(completion)
-    }
-    
-    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping InsertCompletion) {
-        messages.append(.insert(stargazers, for: repository))
-        insertionCompletions.append(completion)
-    }
-    
-    func deleteStargazers(for repository: LocalRepository, completion: @escaping DeleteCompletion) {
-        messages.append(.deleteStargazers(for: repository))
-        deleteCompletions.append(completion)
-    }
-    
-    func completeRetrievalWithError(_ error: Error, at index: Int = 0) {
-        retrieveCompletions[index](.failure(error))
-    }
-    
-    func completeRetrievalSuccessfully(with stargazers: [LocalStargazer], at index: Int = 0) {
-        retrieveCompletions[index](.success(stargazers))
-    }
-    
-    func completeDeletionWithError(_ error: Error, at index: Int = 0) {
-        deleteCompletions[index](.failure(error))
-    }
-    
-    func completeDeletionSuccessfully(at index: Int = 0) {
-        deleteCompletions[index](.success(()))
-    }
-    
-    func completeInsertionWithError(_ error: Error, at index: Int = 0) {
-        insertionCompletions[index](.failure(error))
-    }
-    
-    func completeInsertionSuccessfully(at index: Int = 0) {
-        insertionCompletions[index](.success(()))
-    }
+    func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion)
+    func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping InsertCompletion)
+    func deleteStargazers(for repository: LocalRepository, completion: @escaping DeleteCompletion)
 }
 
 struct LocalRepository: Equatable {
@@ -190,7 +144,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_clearStargazers_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletion() {
         let repository = useCaseRepository().model
-        let store = StargazersStore()
+        let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
         var capturedResults = [Result<Void, Error>]()
@@ -312,7 +266,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotSendStoreInsertMessageWhenInstanceHasBeenDeallocatedAndCompleteDeletionSuccessfully() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStore()
+        let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
         sut?.save(stargazers, for: repository.model) { _ in }
@@ -327,7 +281,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletionWithError() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStore()
+        let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
         var capturedResults = [Result<Void, Error>]()
@@ -343,7 +297,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotDeliverResultOnSuccessfulDeletionThenInstanceIsDeallocatedAndInsertionCompleted() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStore()
+        let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
         var capturedResults = [Result<Void, Error>]()
@@ -389,12 +343,64 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     //MARK: - Utils
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStore) {
-        let store = StargazersStore()
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStoreSpy) {
+        let store = StargazersStoreSpy()
         let sut = LocalStargazersLoader(store: store)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(store, file: file, line: line)
         return (sut, store)
+    }
+    
+    private class StargazersStoreSpy: StargazersStore {
+        enum Message: Equatable {
+            case retrieveStargazers(for: LocalRepository)
+            case deleteStargazers(for: LocalRepository)
+            case insert([LocalStargazer], for: LocalRepository)
+        }
+        
+        private(set) var messages = [Message]()
+        private var retrieveCompletions = [RetrieveCompletion]()
+        private var deleteCompletions = [DeleteCompletion]()
+        private var insertionCompletions = [InsertCompletion]()
+        
+        func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
+            messages.append(.retrieveStargazers(for: repository))
+            retrieveCompletions.append(completion)
+        }
+        
+        func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping InsertCompletion) {
+            messages.append(.insert(stargazers, for: repository))
+            insertionCompletions.append(completion)
+        }
+        
+        func deleteStargazers(for repository: LocalRepository, completion: @escaping DeleteCompletion) {
+            messages.append(.deleteStargazers(for: repository))
+            deleteCompletions.append(completion)
+        }
+        
+        func completeRetrievalWithError(_ error: Error, at index: Int = 0) {
+            retrieveCompletions[index](.failure(error))
+        }
+        
+        func completeRetrievalSuccessfully(with stargazers: [LocalStargazer], at index: Int = 0) {
+            retrieveCompletions[index](.success(stargazers))
+        }
+        
+        func completeDeletionWithError(_ error: Error, at index: Int = 0) {
+            deleteCompletions[index](.failure(error))
+        }
+        
+        func completeDeletionSuccessfully(at index: Int = 0) {
+            deleteCompletions[index](.success(()))
+        }
+        
+        func completeInsertionWithError(_ error: Error, at index: Int = 0) {
+            insertionCompletions[index](.failure(error))
+        }
+        
+        func completeInsertionSuccessfully(at index: Int = 0) {
+            insertionCompletions[index](.success(()))
+        }
     }
     
     private func assert(
