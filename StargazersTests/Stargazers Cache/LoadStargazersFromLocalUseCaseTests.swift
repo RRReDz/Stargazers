@@ -75,8 +75,7 @@ class StargazersStore {
         deleteCompletions.append(completion)
     }
     
-    func completeRetrievalWithError(at index: Int = 0) {
-        let error = NSError(domain: "any retrieval error", code: 234234)
+    func completeRetrievalWithError(_ error: Error, at index: Int = 0) {
         retrieveCompletions[index](.failure(error))
     }
     
@@ -371,9 +370,10 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_deliversErrorOnStoreRetrievalCompletionError() {
         let (sut, store) = makeSUT()
+        let error = anyNSError()
         
-        assert(that: sut, completesLoadWith: .failure(anyNSError()), on: {
-            store.completeRetrievalWithError()
+        assert(that: sut, completesLoadWith: .failure(error), on: {
+            store.completeRetrievalWithError(error)
         })
     }
     
@@ -408,8 +408,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
             switch (expectedResult, receivedResult) {
             case let (.success(receivedStargazers), .success(expectedStargazers)):
                 XCTAssertEqual(receivedStargazers, expectedStargazers, file: file, line: line)
-            case (.failure, .failure):
-                break
+            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+                XCTAssertEqual(receivedError, expectedError, file: file, line: line)
             default:
                 XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
