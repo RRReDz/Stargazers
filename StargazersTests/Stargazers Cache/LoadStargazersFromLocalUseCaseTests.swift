@@ -25,7 +25,10 @@ final class LocalStargazersLoader: StargazersLoader {
         store.deleteStargazers(for: repository.toLocal) { [weak self] result in
             switch result {
             case .success:
-                self?.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal, completion: completion)
+                self?.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) {
+                    guard self != nil else { return }
+                    completion($0)
+                }
             case let .failure(error):
                 completion(.failure(error))
             }
@@ -281,6 +284,24 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         store.completeDeletionSuccessfully()
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
+    }
+    
+    func test_save_doesNotDeliverResultOnSuccessfulDeletionThenInstanceIsDeallocatedAndInsertionCompleted() {
+        let stargazers = makeUniqueUseCaseStargazers().model
+        let repository = makeUseCaseRepository()
+        let store = StargazersStore()
+        var sut: LocalStargazersLoader? = .init(store: store)
+        
+        var capturedResults = [Result<Void, Error>]()
+        sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
+        
+        store.completeDeletionSuccessfully()
+        
+        sut = nil
+        
+        store.completeInsertionSuccessfully()
+        
+        XCTAssert(capturedResults.isEmpty)
     }
     
     //MARK: - Load Stargazers
