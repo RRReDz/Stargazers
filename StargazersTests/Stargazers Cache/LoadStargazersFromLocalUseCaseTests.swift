@@ -116,10 +116,6 @@ struct LocalStargazer: Equatable {
 }
 
 private extension Array where Element == Stargazer {
-    init(local: [LocalStargazer]) {
-        self.init(local.map(Stargazer.init))
-    }
-    
     var toLocal: [LocalStargazer] {
         return self.map(LocalStargazer.init)
     }
