@@ -34,9 +34,9 @@ class StargazersAPIEndToEndTests: XCTestCase {
         let session = URLSession(configuration: .ephemeral)
         let client = URLSessionHTTPClient(session: session)
         let loader = RemoteStargazersLoader(url: url, client: client)
-        trackForMemoryLeak(client, file: file, line: line)
-        trackForMemoryLeak(loader, file: file, line: line)
-        trackForMemoryLeak(session, file: file, line: line)
+        trackForMemoryLeaks(client, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(session, file: file, line: line)
         return loader
     }
     
