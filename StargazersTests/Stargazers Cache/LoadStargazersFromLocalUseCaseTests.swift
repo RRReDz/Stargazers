@@ -28,6 +28,8 @@ final class LocalStargazersLoader: StargazersLoader {
                 self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { result in
                     if case let .failure(error) = result {
                         completion(.failure(error))
+                    } else if case .success = result {
+                        completion(.success(()))
                     }
                 }
             case let .failure(error):
@@ -260,6 +262,15 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         assert(that: sut, completesSaveWith: .failure(anyNSError()), on: {
             store.completeDeletionSuccessfully()
             store.completeInsertionWithError()
+        })
+    }
+    
+    func test_save_deliversSuccessOnDeletionSuccessAndInsertionSuccess() {
+        let (sut, store) = makeSUT()
+        
+        assert(that: sut, completesSaveWith: .success(()), on: {
+            store.completeDeletionSuccessfully()
+            store.completeInsertionSuccessfully()
         })
     }
     
