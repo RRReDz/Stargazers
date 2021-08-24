@@ -16,8 +16,8 @@ final class LocalStargazersLoader: StargazersLoader {
     }
     
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        store.retrieve(from: repository.toLocal) {
-            completion($0.map([Stargazer].init))
+        store.retrieve(from: repository.toLocal) { result in
+            completion(result.map { stargazers in stargazers.toModel })
         }
     }
     
@@ -26,7 +26,7 @@ final class LocalStargazersLoader: StargazersLoader {
             guard let self = self else { return }
             switch result {
             case .success:
-                self.store.insert(stargazers.map(LocalStargazer.init), for: repository.toLocal) { [weak self] in
+                self.store.insert(stargazers.toLocal, for: repository.toLocal) { [weak self] in
                     guard self != nil else { return }
                     completion($0)
                 }
@@ -115,6 +115,16 @@ struct LocalStargazer: Equatable {
 private extension Array where Element == Stargazer {
     init(local: [LocalStargazer]) {
         self.init(local.map(Stargazer.init))
+    }
+    
+    var toLocal: [LocalStargazer] {
+        return self.map(LocalStargazer.init)
+    }
+}
+
+private extension Array where Element == LocalStargazer {
+    var toModel: [Stargazer] {
+        return self.map(Stargazer.init)
     }
 }
 
