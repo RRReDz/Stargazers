@@ -55,7 +55,7 @@ class StargazersStore {
         case insert([LocalStargazer], for: LocalRepository)
     }
     
-    var messages = [Message]()
+    private(set) var messages = [Message]()
     private var retrieveCompletions = [RetrieveCompletion]()
     private var deleteCompletions = [DeleteCompletion]()
     private var insertionCompletions = [InsertCompletion]()
