@@ -391,8 +391,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStore) {
         let store = StargazersStore()
         let sut = LocalStargazersLoader(store: store)
-        trackForMemoryLeak(sut, file: file, line: line)
-        trackForMemoryLeak(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(store, file: file, line: line)
         return (sut, store)
     }
     
