@@ -282,6 +282,19 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
+    func test_save_doesNotDeliverResultJustOnDeletionSuccess() {
+        let (sut, store) = makeSUT()
+        let stargazers = makeUniqueUseCaseStargazers().model
+        let repository = makeUseCaseRepository().model
+        
+        var capturedResults = [Result<Void, Error>]()
+        sut.save(stargazers, for: repository) { capturedResults.append($0) }
+        
+        store.completeDeletionSuccessfully()
+        
+        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save")
+    }
+    
     func test_save_deliversErrorOnDeletionSuccessAndInsertionError() {
         let (sut, store) = makeSUT()
         
