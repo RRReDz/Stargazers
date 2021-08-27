@@ -26,13 +26,17 @@ final class LocalStargazersLoader: StargazersLoader {
             guard let self = self else { return }
             switch result {
             case .success:
-                self.store.insert(stargazers.toLocal, for: repository.toLocal) { [weak self] in
-                    guard self != nil else { return }
-                    completion($0)
-                }
+                self.cache(stargazers.toLocal, for: repository.toLocal, with: completion)
             case .failure:
                 completion(result)
             }
+        }
+    }
+    
+    private func cache(_ stargazers: [LocalStargazer], for repository: LocalRepository, with completion: @escaping (Result<Void, Error>) -> Void) {
+        store.insert(stargazers, for: repository) { [weak self] in
+            guard self != nil else { return }
+            completion($0)
         }
     }
     
