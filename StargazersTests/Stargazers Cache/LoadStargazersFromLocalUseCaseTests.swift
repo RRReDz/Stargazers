@@ -134,15 +134,10 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_save_doesNotDeliverResultJustOnDeletionSuccess() {
         let (sut, store) = makeSUT()
-        let stargazers = uniqueUseCaseStargazers().model
-        let repository = useCaseRepository().model
         
-        var capturedResults = [LocalStargazersLoader.SaveResult]()
-        sut.save(stargazers, for: repository) { capturedResults.append($0) }
-        
-        store.completeDeletionSuccessfully()
-        
-        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save")
+        assert(sut.toWeak, saveDoesNotDeliverResultsOn: {
+            store.completeDeletionSuccessfully()
+        })
     }
     
     func test_save_deliversErrorOnDeletionSuccessAndInsertionError() {
@@ -179,35 +174,22 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     func test_save_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletionWithError() {
-        let stargazers = uniqueUseCaseStargazers().model
-        let repository = useCaseRepository()
         var (sut, store) = makeOptionalSUT()
         
-        var capturedResults = [LocalStargazersLoader.SaveResult]()
-        sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
-        
-        sut = nil
-        
-        store.completeDeletionWithError(anyNSError())
-        
-        XCTAssert(capturedResults.isEmpty)
+        assert(sut.toWeak, saveDoesNotDeliverResultsOn: {
+            sut = nil
+            store.completeDeletionWithError(anyNSError())
+        })
     }
     
     func test_save_doesNotDeliverResultOnSuccessfulDeletionThenInstanceIsDeallocatedAndInsertionCompleted() {
-        let stargazers = uniqueUseCaseStargazers().model
-        let repository = useCaseRepository()
         var (sut, store) = makeOptionalSUT()
         
-        var capturedResults = [LocalStargazersLoader.SaveResult]()
-        sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
-        
-        store.completeDeletionSuccessfully()
-        
-        sut = nil
-        
-        store.completeInsertionSuccessfully()
-        
-        XCTAssert(capturedResults.isEmpty)
+        assert(sut.toWeak, saveDoesNotDeliverResultsOn: {
+            store.completeDeletionSuccessfully()
+            sut = nil
+            store.completeInsertionSuccessfully()
+        })
     }
     
     //MARK: - Load Stargazers
@@ -378,6 +360,23 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    private func assert(
+        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        saveDoesNotDeliverResultsOn action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let stargazers = uniqueUseCaseStargazers().model
+        let repository = useCaseRepository()
+        
+        var capturedResults = [LocalStargazersLoader.SaveResult]()
+        weakSut.object?.save(stargazers, for: repository.model) { capturedResults.append($0) }
+        
+        action()
+        
+        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save command", file: file, line: line)
+    }
+    
     private func anyNSError() -> NSError {
         NSError(domain: "any nserror", code: -12345)
     }
@@ -412,4 +411,20 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         return ([stargazer0.model, stargazer1.model], [stargazer0.local, stargazer1.local])
     }
     
+}
+
+private class WeakRefProxy<T: AnyObject> {
+    private(set) weak var object: T?
+    
+    init(_ object: T?) {
+        self.object = object
+    }
+}
+
+private extension LocalStargazersLoader {
+    var toWeak: WeakRefProxy<LocalStargazersLoader> { .init(self) }
+}
+
+private extension Optional where Wrapped == LocalStargazersLoader {
+    var toWeak: WeakRefProxy<Wrapped> { .init(self) }
 }
