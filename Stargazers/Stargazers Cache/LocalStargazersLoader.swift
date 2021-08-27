@@ -35,7 +35,7 @@ public final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
-    private func cache(_ stargazers: [LocalStargazer], for repository: LocalRepository, with completion: @escaping (Result<Void, Error>) -> Void) {
+    private func cache(_ stargazers: [LocalStargazer], for repository: LocalRepository, with completion: @escaping (SaveResult) -> Void) {
         store.insert(stargazers, for: repository) { [weak self] in
             guard self != nil else { return }
             completion($0)
