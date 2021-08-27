@@ -14,8 +14,10 @@ public final class LocalStargazersLoader: StargazersLoader {
         self.store = store
     }
     
-    public func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        store.retrieve(from: repository.toLocal) { result in
+    public typealias LoadResult = StargazersLoader.Result
+    public func load(from repository: Repository, completion: @escaping (LoadResult) -> Void) {
+        store.retrieve(from: repository.toLocal) { [weak self] result in
+            guard self != nil else { return }
             completion(result.map { stargazers in stargazers.toModel })
         }
     }
