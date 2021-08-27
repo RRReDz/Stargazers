@@ -378,13 +378,9 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     ) {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        
-        var capturedResults = [LocalStargazersLoader.SaveResult]()
+        var capturedResults = [Any]()
         weakSut.object?.save(stargazers, for: repository.model) { capturedResults.append($0) }
-        
-        action()
-        
-        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save command", file: file, line: line)
+        assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
     private func assert(
@@ -394,13 +390,19 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         line: UInt = #line
     ) {
         let repository = useCaseRepository()
-        
-        var capturedResults = [LocalStargazersLoader.LoadResult]()
+        var capturedResults = [Any]()
         weakSut.object?.load(from: repository.model) { capturedResults.append($0) }
-        
+        assertIsEmpty(capturedResults, on: action, file: file, line: line)
+    }
+    
+    private func assertIsEmpty(
+        _ items: [Any],
+        on action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line)
+    {
         action()
-        
-        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save command, got \(capturedResults) instead.", file: file, line: line)
+        XCTAssert(items.isEmpty, "Expected no delivered results from save command, got \(items) instead.", file: file, line: line)
     }
     
     private func anyNSError() -> NSError {
