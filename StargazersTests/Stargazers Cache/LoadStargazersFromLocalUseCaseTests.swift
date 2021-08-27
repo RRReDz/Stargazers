@@ -30,8 +30,8 @@ final class LocalStargazersLoader: StargazersLoader {
                     guard self != nil else { return }
                     completion($0)
                 }
-            case let .failure(error):
-                completion(.failure(error))
+            case .failure:
+                completion(result)
             }
         }
     }
