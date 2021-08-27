@@ -44,18 +44,13 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
-    func test_clearStargazers_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletion() {
-        let repository = useCaseRepository().model
+    func test_clearStargazers_doesNotDeliverResultsOnDeletionCompletionWhenInstanceHasBeenDeallocated() {
         var (sut, store) = makeOptionalSUT()
         
-        var capturedResults = [LocalStargazersLoader.ClearResult]()
-        sut?.clearStargazers(for: repository) { capturedResults.append($0) }
-        
-        sut = nil
-        
-        store.completeDeletionSuccessfully()
-        
-        XCTAssert(capturedResults.isEmpty)
+        assert(sut.toWeak, clearDoesNotDeliverResultsOn: {
+            sut = nil
+            store.completeDeletionSuccessfully()
+        })
     }
     
     //MARK: - Save Stargazers
@@ -392,6 +387,18 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         weakSut.object?.load(from: repository.model) { capturedResults.append($0) }
+        assertIsEmpty(capturedResults, on: action, file: file, line: line)
+    }
+    
+    private func assert(
+        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        clearDoesNotDeliverResultsOn action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let repository = useCaseRepository()
+        var capturedResults = [Any]()
+        weakSut.object?.clearStargazers(for: repository.model) { capturedResults.append($0) }
         assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
