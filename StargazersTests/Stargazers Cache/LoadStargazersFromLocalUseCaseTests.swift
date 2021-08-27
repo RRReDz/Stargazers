@@ -49,7 +49,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
-        var capturedResults = [Result<Void, Error>]()
+        var capturedResults = [LocalStargazersLoader.ClearResult]()
         sut?.clearStargazers(for: repository) { capturedResults.append($0) }
         
         sut = nil
