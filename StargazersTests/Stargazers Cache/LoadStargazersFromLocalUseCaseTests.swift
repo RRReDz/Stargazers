@@ -138,7 +138,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository().model
         
-        var capturedResults = [Result<Void, Error>]()
+        var capturedResults = [LocalStargazersLoader.SaveResult]()
         sut.save(stargazers, for: repository) { capturedResults.append($0) }
         
         store.completeDeletionSuccessfully()
@@ -186,7 +186,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
-        var capturedResults = [Result<Void, Error>]()
+        var capturedResults = [LocalStargazersLoader.SaveResult]()
         sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
         
         sut = nil
@@ -202,7 +202,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let store = StargazersStoreSpy()
         var sut: LocalStargazersLoader? = .init(store: store)
         
-        var capturedResults = [Result<Void, Error>]()
+        var capturedResults = [LocalStargazersLoader.SaveResult]()
         sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
         
         store.completeDeletionSuccessfully()
