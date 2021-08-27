@@ -402,7 +402,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         line: UInt = #line)
     {
         action()
-        XCTAssert(items.isEmpty, "Expected no delivered results from save command, got \(items) instead.", file: file, line: line)
+        XCTAssert(items.isEmpty, "Expected no items, got \(items) instead.", file: file, line: line)
     }
     
     private func anyNSError() -> NSError {
