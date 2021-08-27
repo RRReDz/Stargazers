@@ -46,8 +46,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_clearStargazers_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletion() {
         let repository = useCaseRepository().model
-        let store = StargazersStoreSpy()
-        var sut: LocalStargazersLoader? = .init(store: store)
+        var (sut, store) = makeOptionalSUT()
         
         var capturedResults = [LocalStargazersLoader.ClearResult]()
         sut?.clearStargazers(for: repository) { capturedResults.append($0) }
@@ -168,8 +167,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotSendStoreInsertMessageWhenInstanceHasBeenDeallocatedAndCompleteDeletionSuccessfully() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStoreSpy()
-        var sut: LocalStargazersLoader? = .init(store: store)
+        var (sut, store) = makeOptionalSUT()
         
         sut?.save(stargazers, for: repository.model) { _ in }
         
@@ -183,8 +181,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotDeliverResultWhenInstanceHasBeenDeallocatedAndCompleteDeletionWithError() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStoreSpy()
-        var sut: LocalStargazersLoader? = .init(store: store)
+        var (sut, store) = makeOptionalSUT()
         
         var capturedResults = [LocalStargazersLoader.SaveResult]()
         sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
@@ -199,8 +196,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotDeliverResultOnSuccessfulDeletionThenInstanceIsDeallocatedAndInsertionCompleted() {
         let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
-        let store = StargazersStoreSpy()
-        var sut: LocalStargazersLoader? = .init(store: store)
+        var (sut, store) = makeOptionalSUT()
         
         var capturedResults = [LocalStargazersLoader.SaveResult]()
         sut?.save(stargazers, for: repository.model) { capturedResults.append($0) }
@@ -251,6 +247,10 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(store, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func makeOptionalSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader?, StargazersStoreSpy) {
+        return makeSUT()
     }
     
     private class StargazersStoreSpy: StargazersStore {
