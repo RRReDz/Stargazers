@@ -221,6 +221,16 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
+    func test_load_doesNotDeliverResultOnStoreCompletionWhenSUTHasBeenDeallocated() {
+        var (sut, store) = makeOptionalSUT()
+        
+        assert(sut.toWeak, loadDoesNotDeliverResultsOn: {
+            sut = nil
+            store.completeRetrievalSuccessfully(with: uniqueUseCaseStargazers().local)
+            store.completeRetrievalWithError(anyNSError())
+        })
+    }
+    
     //MARK: - Utils
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStoreSpy) {
@@ -375,6 +385,22 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         action()
         
         XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save command", file: file, line: line)
+    }
+    
+    private func assert(
+        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        loadDoesNotDeliverResultsOn action: () -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let repository = useCaseRepository()
+        
+        var capturedResults = [LocalStargazersLoader.LoadResult]()
+        weakSut.object?.load(from: repository.model) { capturedResults.append($0) }
+        
+        action()
+        
+        XCTAssert(capturedResults.isEmpty, "Expected no delivered results from save command, got \(capturedResults) instead.", file: file, line: line)
     }
     
     private func anyNSError() -> NSError {
