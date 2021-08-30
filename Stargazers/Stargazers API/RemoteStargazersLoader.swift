@@ -30,7 +30,7 @@ extension RemoteStargazersLoader: StargazersLoader {
             guard self != nil else { return }
             completion(
                 $0.mapError { _ in Error.connectivity }
-                .flatMap { data, response in Result { try RemoteStargazersMapper.map(data, response) } }
+                    .flatMap { data, response in Result { try RemoteStargazersMapper.map(data, response).toModels } }
             )
         }
     }
