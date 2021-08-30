@@ -9,7 +9,7 @@ import Foundation
 
 internal final class RemoteStargazersMapper {
     
-    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [Stargazer] {
+    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [Item] {
         guard
             response.isOK,
             let remoteStargazers = try? JSONDecoder().decode([Item].self, from: data)
@@ -17,7 +17,7 @@ internal final class RemoteStargazersMapper {
             throw RemoteStargazersLoader.Error.invalidData
         }
         
-        return remoteStargazers.toModels
+        return remoteStargazers
     }
     
     internal struct Item: Decodable {
