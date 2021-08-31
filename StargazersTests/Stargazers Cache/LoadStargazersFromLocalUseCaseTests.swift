@@ -59,7 +59,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
         
-        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
+        sut.save(uniqueStargazers().model, for: repository.model) { _ in }
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
@@ -68,7 +68,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
         
-        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
+        sut.save(uniqueStargazers().model, for: repository.model) { _ in }
         store.completeDeletionWithError(anyNSError())
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
@@ -77,7 +77,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccess() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueUseCaseStargazers()
+        let stargazers = uniqueStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -91,7 +91,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionError() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueUseCaseStargazers()
+        let stargazers = uniqueStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -106,7 +106,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionSuccess() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueUseCaseStargazers()
+        let stargazers = uniqueStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -155,7 +155,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     func test_save_doesNotSendStoreInsertMessageWhenInstanceHasBeenDeallocatedAndCompleteDeletionSuccessfully() {
-        let stargazers = uniqueUseCaseStargazers().model
+        let stargazers = uniqueStargazers().model
         let repository = useCaseRepository()
         var (sut, store) = makeOptionalSUT()
         
@@ -209,7 +209,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnStoreRetrievalCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let stargazers = uniqueUseCaseStargazers()
+        let stargazers = uniqueStargazers()
         
         assert(that: sut, completesLoadWith: .success(stargazers.model), on: {
             store.completeRetrievalSuccessfully(with: stargazers.local)
@@ -221,7 +221,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         
         assert(sut.toWeak, loadDoesNotDeliverResultsOn: {
             sut = nil
-            store.completeRetrievalSuccessfully(with: uniqueUseCaseStargazers().local)
+            store.completeRetrievalSuccessfully(with: uniqueStargazers().local)
             store.completeRetrievalWithError(anyNSError())
         })
     }
@@ -348,7 +348,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for save completion")
-        sut.save([uniqueStargazer()], for: anyRepository()) { receivedResult in
+        sut.save(uniqueStargazers().model, for: anyRepository()) { receivedResult in
             switch (expectedResult, receivedResult) {
             case (.success, .success):
                 break
@@ -371,7 +371,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let stargazers = uniqueUseCaseStargazers().model
+        let stargazers = uniqueStargazers().model
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         weakSut.object?.save(stargazers, for: repository.model) { capturedResults.append($0) }
@@ -422,8 +422,13 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         return (model, local)
     }
     
-    private func uniqueUseCaseStargazer() -> (model: Stargazer, local: LocalStargazer) {
-        let model = uniqueStargazer()
+    private func uniqueStargazer() -> (model: Stargazer, local: LocalStargazer) {
+        let model = Stargazer(
+            id: UUID().uuidString,
+            username: "any",
+            avatarURL: URL(string: "http://any-avatar-url.com")!,
+            detailURL: URL(string: "http://any-detail-url.com")!)
+        
         let local = LocalStargazer(
             id: model.id,
             username: model.username,
@@ -432,18 +437,12 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         return (model, local)
     }
     
-    private func uniqueStargazer() -> Stargazer {
-        return Stargazer(
-            id: UUID().uuidString,
-            username: "any",
-            avatarURL: URL(string: "http://any-url.com")!,
-            detailURL: URL(string: "http://another-url.com")!)
-    }
-    
-    private func uniqueUseCaseStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
-        let stargazer0 = uniqueUseCaseStargazer()
-        let stargazer1 = uniqueUseCaseStargazer()
-        return ([stargazer0.model, stargazer1.model], [stargazer0.local, stargazer1.local])
+    private func uniqueStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
+        let stargazers = [uniqueStargazer(), uniqueStargazer()]
+        return (
+            stargazers.map { $0.model },
+            stargazers.map { $0.local }
+        )
     }
     
 }
