@@ -366,7 +366,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func assert(
-        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        _ sut: StargazersSaver,
         saveDoesNotDeliverResultsOn action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -374,31 +374,31 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let stargazers = uniqueStargazers().model
         let repository = useCaseRepository()
         var capturedResults = [Any]()
-        weakSut.object?.save(stargazers, for: repository.model) { capturedResults.append($0) }
+        sut.save(stargazers, for: repository.model) { capturedResults.append($0) }
         assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
     private func assert(
-        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        _ sut: StargazersLoader,
         loadDoesNotDeliverResultsOn action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let repository = useCaseRepository()
         var capturedResults = [Any]()
-        weakSut.object?.load(from: repository.model) { capturedResults.append($0) }
+        sut.load(from: repository.model) { capturedResults.append($0) }
         assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
     private func assert(
-        _ weakSut: WeakRefProxy<LocalStargazersLoader>,
+        _ sut: StargazersCleaner,
         clearDoesNotDeliverResultsOn action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let repository = useCaseRepository()
         var capturedResults = [Any]()
-        weakSut.object?.clearStargazers(for: repository.model) { capturedResults.append($0) }
+        sut.clearStargazers(for: repository.model) { capturedResults.append($0) }
         assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
@@ -455,9 +455,41 @@ private class WeakRefProxy<T: AnyObject> {
     }
 }
 
+private protocol StargazersCleaner {
+    typealias Result = Swift.Result<Void, Error>
+    func clearStargazers(for repository: Repository, completion: @escaping (Result) -> Void)
+}
+
+private protocol StargazersSaver {
+    typealias Result = Swift.Result<Void, Error>
+    func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result) -> Void)
+}
+
+extension WeakRefProxy: StargazersLoader where T: StargazersLoader {
+    func load(from repository: Repository, completion: @escaping (T.Result) -> Void) {
+        object?.load(from: repository, completion: completion)
+    }
+}
+
+extension WeakRefProxy: StargazersCleaner where T: StargazersCleaner {
+    func clearStargazers(for repository: Repository, completion: @escaping (T.Result) -> Void) {
+        object?.clearStargazers(for: repository, completion: completion)
+    }
+}
+
+extension WeakRefProxy: StargazersSaver where T: StargazersSaver {
+    func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (T.Result) -> Void) {
+        object?.save(stargazers, for: repository, completion: completion)
+    }
+}
+
 private extension LocalStargazersLoader {
     var toWeak: WeakRefProxy<LocalStargazersLoader> { .init(self) }
 }
+
+extension LocalStargazersLoader: StargazersCleaner {}
+
+extension LocalStargazersLoader: StargazersSaver {}
 
 private extension Optional where Wrapped == LocalStargazersLoader {
     var toWeak: WeakRefProxy<Wrapped> { .init(self) }
