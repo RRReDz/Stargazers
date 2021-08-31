@@ -130,7 +130,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     func test_save_doesNotDeliverResultJustOnDeletionSuccess() {
         let (sut, store) = makeSUT()
         
-        assert(sut.toWeak, saveDoesNotDeliverResultsOn: {
+        assert(sut, saveDoesNotDeliverResultsOn: {
             store.completeDeletionSuccessfully()
         })
     }
