@@ -34,6 +34,13 @@
 		73D7631926C14224005CCEC2 /* ItemsArray+ModelMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */; };
 		73D7631C26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */; };
 		73DD5E3026D59115002E7B5C /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
+		73E0D83F26DED3E5001FF825 /* WeakRefProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */; };
+		73E0D84126DED43D001FF825 /* WeakRefProxy+TypeConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */; };
+		73E0D84326DED464001FF825 /* StargazersCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84226DED464001FF825 /* StargazersCleaner.swift */; };
+		73E0D84526DED47E001FF825 /* StargazersSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84426DED47E001FF825 /* StargazersSaver.swift */; };
+		73E0D84726DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84626DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift */; };
+		73E0D84926DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */; };
+		73E0D84B26DED545001FF825 /* Optional+toWeak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84A26DED545001FF825 /* Optional+toWeak.swift */; };
 		73E38EFF26C9C0F300556AD4 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E38EFE26C9C0F300556AD4 /* Repository.swift */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +92,13 @@
 		73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+StatusCode.swift"; sourceTree = "<group>"; };
 		73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemsArray+ModelMapping.swift"; sourceTree = "<group>"; };
 		73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
+		73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRefProxy.swift; sourceTree = "<group>"; };
+		73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeakRefProxy+TypeConformances.swift"; sourceTree = "<group>"; };
+		73E0D84226DED464001FF825 /* StargazersCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersCleaner.swift; sourceTree = "<group>"; };
+		73E0D84426DED47E001FF825 /* StargazersSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersSaver.swift; sourceTree = "<group>"; };
+		73E0D84626DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalStargazersLoader+Helpers.swift"; sourceTree = "<group>"; };
+		73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalStargazersLoader+TypeConformances.swift"; sourceTree = "<group>"; };
+		73E0D84A26DED545001FF825 /* Optional+toWeak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+toWeak.swift"; sourceTree = "<group>"; };
 		73E38EFE26C9C0F300556AD4 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -160,6 +174,7 @@
 		730E681F26C880DB00481C11 /* Stargazers Cache */ = {
 			isa = PBXGroup;
 			children = (
+				73E0D83C26DED3D0001FF825 /* Helpers */,
 				730E681D26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift */,
 			);
 			path = "Stargazers Cache";
@@ -246,6 +261,20 @@
 				73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */,
 			);
 			path = "Stargazers API";
+			sourceTree = "<group>";
+		};
+		73E0D83C26DED3D0001FF825 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */,
+				73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */,
+				73E0D84226DED464001FF825 /* StargazersCleaner.swift */,
+				73E0D84426DED47E001FF825 /* StargazersSaver.swift */,
+				73E0D84626DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift */,
+				73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */,
+				73E0D84A26DED545001FF825 /* Optional+toWeak.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -411,11 +440,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73E0D84126DED43D001FF825 /* WeakRefProxy+TypeConformances.swift in Sources */,
+				73E0D84526DED47E001FF825 /* StargazersSaver.swift in Sources */,
+				73E0D84726DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift in Sources */,
+				73E0D84326DED464001FF825 /* StargazersCleaner.swift in Sources */,
 				738B444926CF8ADA0042503F /* Strings+UTF8DataEncoding.swift in Sources */,
 				730122A826BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift in Sources */,
 				730E682426C88C7E00481C11 /* TestHelpers.swift in Sources */,
 				730E681E26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift in Sources */,
 				7316209B26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift in Sources */,
+				73E0D83F26DED3E5001FF825 /* WeakRefProxy.swift in Sources */,
+				73E0D84926DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift in Sources */,
+				73E0D84B26DED545001FF825 /* Optional+toWeak.swift in Sources */,
 				73D7631C26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
