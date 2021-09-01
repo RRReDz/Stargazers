@@ -31,7 +31,7 @@
 		73D7631226C0135A005CCEC2 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631126C0135A005CCEC2 /* HTTPClient.swift */; };
 		73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */; };
 		73D7631726C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */; };
-		73D7631926C14224005CCEC2 /* ItemsArray+ModelMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */; };
+		73D7631926C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631826C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift */; };
 		73D7631C26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */; };
 		73DD5E3026D59115002E7B5C /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
 		73E0D83F26DED3E5001FF825 /* WeakRefProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */; };
@@ -90,7 +90,7 @@
 		73D7631126C0135A005CCEC2 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersMapper.swift; sourceTree = "<group>"; };
 		73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+StatusCode.swift"; sourceTree = "<group>"; };
-		73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemsArray+ModelMapping.swift"; sourceTree = "<group>"; };
+		73D7631826C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RemoteStargazerItems+ModelMapping.swift"; sourceTree = "<group>"; };
 		73D7631B26C171D8005CCEC2 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 		73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRefProxy.swift; sourceTree = "<group>"; };
 		73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeakRefProxy+TypeConformances.swift"; sourceTree = "<group>"; };
@@ -237,7 +237,7 @@
 				73D7631126C0135A005CCEC2 /* HTTPClient.swift */,
 				73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */,
 				73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */,
-				73D7631826C14224005CCEC2 /* ItemsArray+ModelMapping.swift */,
+				73D7631826C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift */,
 				7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */,
 			);
 			path = "Stargazers API";
@@ -416,7 +416,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				733EC21426D983B60097DFA0 /* Repository+toModel.swift in Sources */,
-				73D7631926C14224005CCEC2 /* ItemsArray+ModelMapping.swift in Sources */,
+				73D7631926C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift in Sources */,
 				733EC20826D982280097DFA0 /* LocalStargazer.swift in Sources */,
 				733EC20E26D982FC0097DFA0 /* Stargazer+toLocal.swift in Sources */,
 				73D7631526C09E05005CCEC2 /* RemoteStargazersMapper.swift in Sources */,
