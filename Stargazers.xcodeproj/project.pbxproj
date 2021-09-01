@@ -235,13 +235,8 @@
 		73D7630E26C01301005CCEC2 /* Stargazers API */ = {
 			isa = PBXGroup;
 			children = (
-				73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */,
-				73D7631126C0135A005CCEC2 /* HTTPClient.swift */,
-				73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */,
-				73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */,
-				73D7631826C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift */,
-				7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */,
-				73EE324B26E0215F000CA9B2 /* RemoteStargazerItem.swift */,
+				73EE324D26E021A6000CA9B2 /* Loader */,
+				73EE324E26E021C7000CA9B2 /* Client */,
 			);
 			path = "Stargazers API";
 			sourceTree = "<group>";
@@ -276,6 +271,43 @@
 				73E0D84626DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift */,
 				73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */,
 				73E0D84A26DED545001FF825 /* Optional+toWeak.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		73EE324D26E021A6000CA9B2 /* Loader */ = {
+			isa = PBXGroup;
+			children = (
+				73EE324F26E021E0000CA9B2 /* Helpers */,
+				73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */,
+				73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */,
+				73EE324B26E0215F000CA9B2 /* RemoteStargazerItem.swift */,
+			);
+			path = Loader;
+			sourceTree = "<group>";
+		};
+		73EE324E26E021C7000CA9B2 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				73EE325026E021F1000CA9B2 /* Helpers */,
+				73D7631126C0135A005CCEC2 /* HTTPClient.swift */,
+				7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */,
+			);
+			path = Client;
+			sourceTree = "<group>";
+		};
+		73EE324F26E021E0000CA9B2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				73D7631826C14224005CCEC2 /* RemoteStargazerItems+ModelMapping.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		73EE325026E021F1000CA9B2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				73D7631626C14198005CCEC2 /* HTTPURLResponse+StatusCode.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
