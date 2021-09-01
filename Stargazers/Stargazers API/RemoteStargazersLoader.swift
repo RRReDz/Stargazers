@@ -28,10 +28,15 @@ extension RemoteStargazersLoader: StargazersLoader {
     public func load(from repository: Repository, completion: @escaping (Result) -> Void) {
         client.get(from: url(repository)) { [weak self] in
             guard self != nil else { return }
-            completion(
-                $0.mapError { _ in Error.connectivity }
-                    .flatMap { data, response in Result { try RemoteStargazersMapper.map(data, response).toModels } }
-            )
+            completion(Self.map($0))
         }
+    }
+    
+    private static func map(_ result: HTTPClient.Result) -> Result {
+        return result
+            .mapError { _ in Error.connectivity }
+            .flatMap { data, response in
+                Result { try RemoteStargazersMapper.map(data, response).toModels }
+            }
     }
 }
