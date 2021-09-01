@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal extension Array where Element == RemoteStargazerItem {
+internal extension Array where Element == RemoteStargazer {
     var toModels: [Stargazer] {
         self.map {
             Stargazer(
