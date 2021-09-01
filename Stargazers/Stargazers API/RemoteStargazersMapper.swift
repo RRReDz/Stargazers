@@ -7,31 +7,23 @@
 
 import Foundation
 
+internal struct RemoteStargazerItem: Decodable {
+    internal let id: Int
+    internal let login: String
+    internal let avatar_url: URL
+    internal let url: URL
+}
+
 internal final class RemoteStargazersMapper {
     
-    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [Item] {
+    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [RemoteStargazerItem] {
         guard
             response.isOK,
-            let remoteStargazers = try? JSONDecoder().decode([Item].self, from: data)
+            let remoteStargazers = try? JSONDecoder().decode([RemoteStargazerItem].self, from: data)
         else {
             throw RemoteStargazersLoader.Error.invalidData
         }
         
         return remoteStargazers
-    }
-    
-    internal struct Item: Decodable {
-        private let id: Int
-        private let login: String
-        private let avatar_url: URL
-        private let url: URL
-        
-        var toModel: Stargazer {
-            Stargazer(
-                id: String(id),
-                username: login,
-                avatarURL: avatar_url,
-                detailURL: url)
-        }
     }
 }
