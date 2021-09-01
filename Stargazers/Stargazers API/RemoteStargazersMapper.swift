@@ -7,13 +7,6 @@
 
 import Foundation
 
-internal struct RemoteStargazerItem: Decodable {
-    internal let id: Int
-    internal let login: String
-    internal let avatar_url: URL
-    internal let url: URL
-}
-
 internal final class RemoteStargazersMapper {
     
     internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [RemoteStargazerItem] {
