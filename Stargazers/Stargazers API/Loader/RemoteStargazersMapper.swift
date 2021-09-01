@@ -9,10 +9,10 @@ import Foundation
 
 internal final class RemoteStargazersMapper {
     
-    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [RemoteStargazerItem] {
+    internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [RemoteStargazer] {
         guard
             response.isOK,
-            let remoteStargazers = try? JSONDecoder().decode([RemoteStargazerItem].self, from: data)
+            let remoteStargazers = try? JSONDecoder().decode([RemoteStargazer].self, from: data)
         else {
             throw RemoteStargazersLoader.Error.invalidData
         }
