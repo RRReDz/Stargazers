@@ -8,13 +8,13 @@
 import Foundation
 
 public final class RemoteStargazersLoader {
-    private let url: (Repository) -> URL
-    private let client: HTTPClient
-    
     public enum Error: Swift.Error {
         case connectivity
         case invalidData
     }
+    
+    private let url: (Repository) -> URL
+    private let client: HTTPClient
     
     public init(url: @escaping (Repository) -> URL, client: HTTPClient) {
         self.url = url
