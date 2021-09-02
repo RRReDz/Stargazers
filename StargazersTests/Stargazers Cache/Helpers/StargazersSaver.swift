@@ -7,7 +7,7 @@
 
 import Stargazers
 
-protocol StargazersSaver {
+internal protocol StargazersSaver {
     typealias Result = Swift.Result<Void, Error>
     func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (Result) -> Void)
 }

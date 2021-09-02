@@ -8,7 +8,7 @@
 import Foundation
 
 extension Array where Element == LocalStargazer {
-    var toModel: [Stargazer] {
+    internal var toModel: [Stargazer] {
         return self.map { $0.toModel }
     }
 }

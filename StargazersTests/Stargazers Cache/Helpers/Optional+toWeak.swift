@@ -8,5 +8,5 @@
 import Stargazers
 
 extension Optional where Wrapped == LocalStargazersLoader {
-    var toWeak: WeakRefProxy<Wrapped> { .init(self) }
+    internal var toWeak: WeakRefProxy<Wrapped> { .init(self) }
 }

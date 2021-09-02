@@ -7,10 +7,10 @@
 
 import Foundation
 
-class WeakRefProxy<T: AnyObject> {
+internal class WeakRefProxy<T: AnyObject> {
     private(set) weak var object: T?
     
-    init(_ object: T?) {
+    internal init(_ object: T?) {
         self.object = object
     }
 }

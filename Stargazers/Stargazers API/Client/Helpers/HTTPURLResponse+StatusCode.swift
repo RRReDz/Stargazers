@@ -7,8 +7,8 @@
 
 import Foundation
 
-internal extension HTTPURLResponse {
+extension HTTPURLResponse {
     private static var OK_200: Int { 200 }
     
-    var isOK: Bool { statusCode == HTTPURLResponse.OK_200 }
+    internal var isOK: Bool { statusCode == HTTPURLResponse.OK_200 }
 }

@@ -7,7 +7,7 @@
 
 import Stargazers
 
-protocol StargazersCleaner {
+internal protocol StargazersCleaner {
     typealias Result = Swift.Result<Void, Error>
     func clearStargazers(for repository: Repository, completion: @escaping (Result) -> Void)
 }

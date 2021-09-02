@@ -154,8 +154,8 @@
 		7301226F26BF258F0007B086 /* Stargazers */ = {
 			isa = PBXGroup;
 			children = (
-				733EC20226D980FD0097DFA0 /* Stargazers Cache */,
 				73D7630E26C01301005CCEC2 /* Stargazers API */,
+				733EC20226D980FD0097DFA0 /* Stargazers Cache */,
 				73D7631326C016F1005CCEC2 /* Stargazers Feature */,
 				7301227126BF258F0007B086 /* Info.plist */,
 			);

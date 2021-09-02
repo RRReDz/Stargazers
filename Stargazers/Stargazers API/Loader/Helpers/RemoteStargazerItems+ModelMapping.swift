@@ -7,8 +7,8 @@
 
 import Foundation
 
-internal extension Array where Element == RemoteStargazer {
-    var toModels: [Stargazer] {
+extension Array where Element == RemoteStargazer {
+    internal var toModels: [Stargazer] {
         self.map {
             Stargazer(
                 id: String($0.id),

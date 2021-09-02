@@ -8,7 +8,7 @@
 import Foundation
 
 extension Repository {
-    var toLocal: LocalRepository {
+    internal var toLocal: LocalRepository {
         LocalRepository(
             name: name,
             owner: owner)

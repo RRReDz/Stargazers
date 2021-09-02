@@ -8,8 +8,8 @@
 import Foundation
 
 public struct LocalRepository: Equatable {
-    let name: String
-    let owner: String
+    internal let name: String
+    internal let owner: String
     
     public init(name: String, owner: String) {
         self.name = name
