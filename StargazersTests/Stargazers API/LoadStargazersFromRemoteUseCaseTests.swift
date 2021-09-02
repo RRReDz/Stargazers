@@ -136,7 +136,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         XCTAssert(capturedResults.isEmpty, "Expected no captured results")
     }
     
-    //MARK: - Utils
+    // MARK: - Utils
     
     private func makeSUT(for url: URL, file: StaticString = #filePath, line: UInt = #line) -> (RemoteStargazersLoader, HTTPClientSpy) {
         return makeSUT(for: { _ in url }, file: file, line: line)

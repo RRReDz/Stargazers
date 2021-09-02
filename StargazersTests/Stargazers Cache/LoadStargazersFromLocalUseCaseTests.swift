@@ -16,7 +16,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [])
     }
     
-    //MARK: - Clear Stargazers
+    // MARK: - Clear Stargazers
     
     func test_clearStargazers_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
@@ -53,7 +53,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
-    //MARK: - Save Stargazers
+    // MARK: - Save Stargazers
     
     func test_save_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
@@ -187,7 +187,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
-    //MARK: - Load Stargazers
+    // MARK: - Load Stargazers
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
         let (sut, store) = makeSUT()
@@ -226,7 +226,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         })
     }
     
-    //MARK: - Utils
+    // MARK: - Utils
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (LocalStargazersLoader, StargazersStoreSpy) {
         let store = StargazersStoreSpy()
