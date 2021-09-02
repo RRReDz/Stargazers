@@ -8,6 +8,6 @@
 import Foundation
 import Stargazers
 
-func anyRepository() -> Repository {
+internal func anyRepository() -> Repository {
     return Repository(name: "any repository name", owner: "any repository owner")
 }

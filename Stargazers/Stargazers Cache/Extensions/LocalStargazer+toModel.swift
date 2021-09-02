@@ -8,7 +8,7 @@
 import Foundation
 
 extension LocalStargazer {
-    var toModel: Stargazer {
+    internal var toModel: Stargazer {
         Stargazer(
             id: id,
             username: username,

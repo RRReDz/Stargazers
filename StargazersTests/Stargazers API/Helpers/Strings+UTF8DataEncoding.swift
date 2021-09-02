@@ -8,7 +8,7 @@
 import Foundation
 
 extension String {
-    func toDataUTF8() -> Data? {
+    internal func toDataUTF8() -> Data? {
         self.data(using: .utf8)
     }
 }

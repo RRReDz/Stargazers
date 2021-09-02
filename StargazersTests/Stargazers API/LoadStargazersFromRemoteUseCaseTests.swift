@@ -224,7 +224,7 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         return .failure(error)
     }
     
-    class HTTPClientSpy: HTTPClient {
+    private class HTTPClientSpy: HTTPClient {
         private var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
         var requestedURLs: [URL] {
             messages.map { $0.url }
