@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal final class RemoteStargazersMapper {
+internal enum RemoteStargazersMapper {
     internal static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [RemoteStargazer] {
         guard
             response.isOK,
