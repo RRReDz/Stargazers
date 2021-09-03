@@ -33,7 +33,7 @@ extension RemoteStargazersLoader: StargazersLoader {
     }
     
     private static func map(_ result: HTTPClient.Result) -> Result {
-        return result
+        result
             .mapError { _ in Error.connectivity }
             .flatMap { data, response in
                 Result { try RemoteStargazersMapper.map(data, response).toModels }
