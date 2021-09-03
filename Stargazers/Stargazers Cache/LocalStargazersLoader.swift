@@ -23,7 +23,11 @@ public final class LocalStargazersLoader: StargazersLoader {
     }
     
     public typealias SaveResult = Result<Void, Error>
-    public func save(_ stargazers: [Stargazer], for repository: Repository, completion: @escaping (SaveResult) -> Void) {
+    public func save(
+        _ stargazers: [Stargazer],
+        for repository: Repository,
+        completion: @escaping (SaveResult) -> Void
+    ) {
         store.deleteStargazers(for: repository.toLocal) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -35,7 +39,11 @@ public final class LocalStargazersLoader: StargazersLoader {
         }
     }
     
-    private func cache(_ stargazers: [LocalStargazer], for repository: LocalRepository, with completion: @escaping (SaveResult) -> Void) {
+    private func cache(
+        _ stargazers: [LocalStargazer],
+        for repository: LocalRepository,
+        with completion: @escaping (SaveResult) -> Void
+    ) {
         store.insert(stargazers, for: repository) { [weak self] in
             guard self != nil else { return }
             completion($0)
