@@ -9,6 +9,6 @@ import Foundation
 
 extension Array where Element == Stargazer {
     internal var toLocal: [LocalStargazer] {
-        return self.map { $0.toLocal }
+        self.map { $0.toLocal }
     }
 }

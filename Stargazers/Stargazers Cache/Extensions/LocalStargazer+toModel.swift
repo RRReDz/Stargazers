@@ -13,6 +13,7 @@ extension LocalStargazer {
             id: id,
             username: username,
             avatarURL: avatarURL,
-            detailURL: detailURL)
+            detailURL: detailURL
+        )
     }
 }

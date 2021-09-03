@@ -11,6 +11,7 @@ extension Repository {
     internal var toLocal: LocalRepository {
         LocalRepository(
             name: name,
-            owner: owner)
+            owner: owner
+        )
     }
 }
