@@ -33,6 +33,7 @@ public final class LocalStargazersLoader: StargazersLoader {
             switch result {
             case .success:
                 self.cache(stargazers.toLocal, for: repository.toLocal, with: completion)
+                
             case .failure:
                 completion(result)
             }
