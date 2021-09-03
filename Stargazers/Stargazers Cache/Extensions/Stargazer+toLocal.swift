@@ -9,10 +9,11 @@ import Foundation
 
 extension Stargazer {
     internal var toLocal: LocalStargazer {
-        return LocalStargazer(
+        LocalStargazer(
             id: id,
             username: username,
             avatarURL: avatarURL,
-            detailURL: detailURL)
+            detailURL: detailURL
+        )
     }
 }

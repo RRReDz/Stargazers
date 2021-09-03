@@ -14,7 +14,8 @@ extension Array where Element == RemoteStargazer {
                 id: String($0.id),
                 username: $0.login,
                 avatarURL: $0.avatar_url,
-                detailURL: $0.url)
+                detailURL: $0.url
+            )
         }
     }
 }
