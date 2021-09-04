@@ -197,17 +197,8 @@ class CacheStargazersUseCaseTests: XCTestCase {
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         sut.save(stargazers, for: repository.model) { capturedResults.append($0) }
-        assertIsEmpty(capturedResults, on: action, file: file, line: line)
-    }
-    
-    private func assertIsEmpty(
-        _ items: [Any],
-        on action: () -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
         action()
-        XCTAssert(items.isEmpty, "Expected no items, got \(items) instead.", file: file, line: line)
+        XCTAssert(capturedResults.isEmpty, "Expected no results, got \(capturedResults) instead.", file: file, line: line)
     }
 
 }
