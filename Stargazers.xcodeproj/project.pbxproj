@@ -185,7 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				73E0D83C26DED3D0001FF825 /* Helpers */,
-				730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */,
+				73E5BB0F26E3D26F00D85231 /* Load */,
 				73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */,
 				73E5BB0726E3C49200D85231 /* ClearCachedStargazersUseCaseTests.swift */,
 			);
@@ -285,6 +285,14 @@
 				73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		73E5BB0F26E3D26F00D85231 /* Load */ = {
+			isa = PBXGroup;
+			children = (
+				730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */,
+			);
+			path = Load;
 			sourceTree = "<group>";
 		};
 		73EE324D26E021A6000CA9B2 /* Loader */ = {
