@@ -42,6 +42,7 @@
 		73E0D84926DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */; };
 		73E0D84B26DED545001FF825 /* Optional+toWeak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E0D84A26DED545001FF825 /* Optional+toWeak.swift */; };
 		73E38EFF26C9C0F300556AD4 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E38EFE26C9C0F300556AD4 /* Repository.swift */; };
+		73E5BB0626E3C08000D85231 /* CacheStargazersUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */; };
 		73EE324C26E0215F000CA9B2 /* RemoteStargazer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EE324B26E0215F000CA9B2 /* RemoteStargazer.swift */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +102,7 @@
 		73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalStargazersLoader+TypeConformances.swift"; sourceTree = "<group>"; };
 		73E0D84A26DED545001FF825 /* Optional+toWeak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+toWeak.swift"; sourceTree = "<group>"; };
 		73E38EFE26C9C0F300556AD4 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheStargazersUseCaseTests.swift; sourceTree = "<group>"; };
 		73EE324B26E0215F000CA9B2 /* RemoteStargazer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +180,7 @@
 			children = (
 				73E0D83C26DED3D0001FF825 /* Helpers */,
 				730E681D26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift */,
+				73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */,
 			);
 			path = "Stargazers Cache";
 			sourceTree = "<group>";
@@ -484,6 +487,7 @@
 				730122A826BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift in Sources */,
 				730E682426C88C7E00481C11 /* TestHelpers.swift in Sources */,
 				730E681E26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift in Sources */,
+				73E5BB0626E3C08000D85231 /* CacheStargazersUseCaseTests.swift in Sources */,
 				7316209B26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift in Sources */,
 				73E0D83F26DED3E5001FF825 /* WeakRefProxy.swift in Sources */,
 				73E0D84926DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift in Sources */,
