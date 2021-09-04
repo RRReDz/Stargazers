@@ -118,12 +118,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         NSError(domain: "any nserror", code: -12345)
     }
     
-    private func useCaseRepository() -> (model: Repository, local: LocalRepository) {
-        let model = anyRepository()
-        let local = LocalRepository(name: model.name, owner: model.owner)
-        return (model, local)
-    }
-    
     private func uniqueStargazer() -> (model: Stargazer, local: LocalStargazer) {
         let model = Stargazer(
             id: UUID().uuidString,

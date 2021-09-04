@@ -11,3 +11,8 @@ import Stargazers
 internal func anyRepository() -> Repository {
     return Repository(name: "any repository name", owner: "any repository owner")
 }
+
+internal func anyNSError() -> NSError {
+    NSError(domain: "any error", code: -1)
+}
+

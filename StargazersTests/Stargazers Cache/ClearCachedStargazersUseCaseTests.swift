@@ -93,15 +93,5 @@ class ClearCachedStargazersUseCaseTests: XCTestCase {
         
         wait(for: [exp], timeout: 1.0)
     }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any nserror", code: -12345)
-    }
-    
-    private func useCaseRepository() -> (model: Repository, local: LocalRepository) {
-        let model = anyRepository()
-        let local = LocalRepository(name: model.name, owner: model.owner)
-        return (model, local)
-    }
 
 }
