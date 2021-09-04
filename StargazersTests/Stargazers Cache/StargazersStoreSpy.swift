@@ -7,7 +7,7 @@
 
 import Stargazers
 
-class StargazersStoreSpy: StargazersStore {
+internal class StargazersStoreSpy: StargazersStore {
     enum Message: Equatable {
         case retrieveStargazers(for: LocalRepository)
         case deleteStargazers(for: LocalRepository)
