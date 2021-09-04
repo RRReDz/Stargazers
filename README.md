@@ -43,14 +43,12 @@ When the customer requests to see the repository's stargazers
 Then the app should display an error message
 ```
 
-## Use Cases
+# Use Cases
 
-### Load Stargazers From Remote Use Case
+## Load Stargazers From Remote Use Case
 
 #### Data
-  - URL
-  - User (could be inside URL)
-  - Repository (could be inside URL)
+  - `URL` (for certain `UserRepository`)
 
 #### Primary course (happy path)
   1. Execute "Load Stargazers" command with above data.
@@ -65,11 +63,10 @@ Then the app should display an error message
 #### No connectivity – error course (sad path)
   1. System delivers connectivity error.
 
-### Load Stargazers From Cache Use Case
+## Load Stargazers From Cache Use Case
 
 #### Data
-  - User
-  - Repository
+  - `UserRepository`
 
 #### Primary course
   1. Execute "Load Stargazers" command with above data.
@@ -83,17 +80,16 @@ Then the app should display an error message
 #### Empty cache course (sad path)
   1. System delivers no stargazers.
 
-### Cache Stargazers Use Case
+## Cache Stargazers Use Case
 
 #### Data
-  - Stargazers
-  - User
-  - Repository
+  - `Stargazers`
+  - `UserRepository`
 
 #### Primary course (happy path)
   1. Execute "Save Stargazers" command with above data.
   2. System deletes old cache data.
-  3. System encodes stargazers for the user and repository as data.
+  3. System encodes stargazers for the repository as data.
   4. System saves new cache data.
   5. System delivers success message.
 
