@@ -11,7 +11,7 @@
 		730122A426BF3EB20007B086 /* StargazersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A326BF3EB20007B086 /* StargazersLoader.swift */; };
 		730122A626BF3F0B0007B086 /* Stargazer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A526BF3F0B0007B086 /* Stargazer.swift */; };
 		730122A826BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730122A726BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift */; };
-		730E681E26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E681D26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift */; };
+		730E681E26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */; };
 		730E682426C88C7E00481C11 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E682326C88C7E00481C11 /* TestHelpers.swift */; };
 		7316209926C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */; };
 		7316209B26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
@@ -74,7 +74,7 @@
 		730122A326BF3EB20007B086 /* StargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersLoader.swift; sourceTree = "<group>"; };
 		730122A526BF3F0B0007B086 /* Stargazer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stargazer.swift; sourceTree = "<group>"; };
 		730122A726BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadStargazersFromRemoteUseCaseTests.swift; sourceTree = "<group>"; };
-		730E681D26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadStargazersFromLocalUseCaseTests.swift; sourceTree = "<group>"; };
+		730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadStargazersFromCacheUseCaseTests.swift; sourceTree = "<group>"; };
 		730E682326C88C7E00481C11 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 		7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeaksTracking.swift"; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				73E0D83C26DED3D0001FF825 /* Helpers */,
-				730E681D26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift */,
+				730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */,
 				73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */,
 				73E5BB0726E3C49200D85231 /* ClearCachedStargazersUseCaseTests.swift */,
 				73E5BB0B26E3C88900D85231 /* StargazersStoreSpy.swift */,
@@ -496,7 +496,7 @@
 				738B444926CF8ADA0042503F /* Strings+UTF8DataEncoding.swift in Sources */,
 				730122A826BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift in Sources */,
 				730E682426C88C7E00481C11 /* TestHelpers.swift in Sources */,
-				730E681E26C880D700481C11 /* LoadStargazersFromLocalUseCaseTests.swift in Sources */,
+				730E681E26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift in Sources */,
 				73E5BB0626E3C08000D85231 /* CacheStargazersUseCaseTests.swift in Sources */,
 				73E5BB0826E3C49200D85231 /* ClearCachedStargazersUseCaseTests.swift in Sources */,
 				73E5BB0E26E3CC1600D85231 /* CacheTestHelpers.swift in Sources */,
