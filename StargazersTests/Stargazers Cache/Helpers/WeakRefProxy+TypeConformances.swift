@@ -7,12 +7,6 @@
 
 import Stargazers
 
-extension WeakRefProxy: StargazersLoader where T: StargazersLoader {
-    internal func load(from repository: Repository, completion: @escaping (T.Result) -> Void) {
-        object?.load(from: repository, completion: completion)
-    }
-}
-
 extension WeakRefProxy: StargazersCleaner where T: StargazersCleaner {
     internal func clearStargazers(for repository: Repository, completion: @escaping (T.Result) -> Void) {
         object?.clearStargazers(for: repository, completion: completion)
