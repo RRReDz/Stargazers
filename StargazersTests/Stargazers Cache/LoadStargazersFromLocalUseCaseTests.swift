@@ -113,32 +113,4 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         action()
         XCTAssert(items.isEmpty, "Expected no items, got \(items) instead.", file: file, line: line)
     }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any nserror", code: -12345)
-    }
-    
-    private func uniqueStargazer() -> (model: Stargazer, local: LocalStargazer) {
-        let model = Stargazer(
-            id: UUID().uuidString,
-            username: "any",
-            avatarURL: URL(string: "http://any-avatar-url.com")!,
-            detailURL: URL(string: "http://any-detail-url.com")!)
-        
-        let local = LocalStargazer(
-            id: model.id,
-            username: model.username,
-            avatarURL: model.avatarURL,
-            detailURL: model.detailURL)
-        return (model, local)
-    }
-    
-    private func uniqueStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
-        let stargazers = [uniqueStargazer(), uniqueStargazer()]
-        return (
-            stargazers.map { $0.model },
-            stargazers.map { $0.local }
-        )
-    }
-    
 }
