@@ -1,5 +1,5 @@
 //
-//  LoadStargazersFromLocalUseCaseTests.swift
+//  LoadStargazersFromCacheUseCaseTests.swift
 //  StargazersTests
 //
 //  Created by Riccardo Rossi - Home on 15/08/21.
@@ -8,7 +8,7 @@
 import XCTest
 import Stargazers
 
-class LoadStargazersFromLocalUseCaseTests: XCTestCase {
+class LoadStargazersFromCacheUseCaseTests: XCTestCase {
     
     func test_init_doesNotMessageStore() {
         let (_, store) = makeSUT()
