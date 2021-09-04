@@ -188,7 +188,6 @@
 				730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */,
 				73E5BB0526E3C08000D85231 /* CacheStargazersUseCaseTests.swift */,
 				73E5BB0726E3C49200D85231 /* ClearCachedStargazersUseCaseTests.swift */,
-				73E5BB0B26E3C88900D85231 /* StargazersStoreSpy.swift */,
 			);
 			path = "Stargazers Cache";
 			sourceTree = "<group>";
@@ -275,14 +274,15 @@
 		73E0D83C26DED3D0001FF825 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */,
-				73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */,
-				73E0D84226DED464001FF825 /* StargazersCleaner.swift */,
-				73E0D84426DED47E001FF825 /* StargazersSaver.swift */,
+				73E5BB0D26E3CC1600D85231 /* CacheTestHelpers.swift */,
 				73E0D84626DED4AF001FF825 /* LocalStargazersLoader+Helpers.swift */,
 				73E0D84826DED4D3001FF825 /* LocalStargazersLoader+TypeConformances.swift */,
 				73E0D84A26DED545001FF825 /* Optional+toWeak.swift */,
-				73E5BB0D26E3CC1600D85231 /* CacheTestHelpers.swift */,
+				73E0D84226DED464001FF825 /* StargazersCleaner.swift */,
+				73E0D84426DED47E001FF825 /* StargazersSaver.swift */,
+				73E5BB0B26E3C88900D85231 /* StargazersStoreSpy.swift */,
+				73E0D83E26DED3E5001FF825 /* WeakRefProxy.swift */,
+				73E0D84026DED43D001FF825 /* WeakRefProxy+TypeConformances.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
