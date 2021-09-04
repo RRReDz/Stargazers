@@ -31,7 +31,7 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let error = anyNSError()
         
-        assert(that: sut, completesLoadWith: .failure(error), on: {
+        assert(sut, completesWith: .failure(error), on: {
             store.completeRetrievalWithError(error)
         })
     }
@@ -40,19 +40,22 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let stargazers = uniqueStargazers()
         
-        assert(that: sut, completesLoadWith: .success(stargazers.model), on: {
+        assert(sut, completesWith: .success(stargazers.model), on: {
             store.completeRetrievalSuccessfully(with: stargazers.local)
         })
     }
     
-    func test_load_doesNotDeliverResultOnStoreCompletionWhenSUTHasBeenDeallocated() {
+    func test_load_doesNotDeliverResultsOnStoreCompletionWhenSUTHasBeenDeallocated() {
         var (sut, store) = makeOptionalSUT()
         
-        assert(sut.toWeak, loadDoesNotDeliverResultsOn: {
-            sut = nil
-            store.completeRetrievalSuccessfully(with: uniqueStargazers().local)
-            store.completeRetrievalWithError(anyNSError())
-        })
+        var capturedResults = [Any]()
+        sut?.load(from: useCaseRepository().model) { capturedResults.append($0) }
+        
+        sut = nil
+        store.completeRetrievalSuccessfully(with: uniqueStargazers().local)
+        store.completeRetrievalWithError(anyNSError())
+        
+        XCTAssert(capturedResults.isEmpty, "Expected no results, got \(capturedResults) instead.")
     }
     
     // MARK: - Utils
@@ -70,8 +73,8 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func assert(
-        that sut: LocalStargazersLoader,
-        completesLoadWith expectedResult: StargazersLoader.Result,
+        _ sut: LocalStargazersLoader,
+        completesWith expectedResult: StargazersLoader.Result,
         on action: () -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -90,27 +93,5 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         }
         action()
         wait(for: [exp], timeout: 1.0)
-    }
-    
-    private func assert(
-        _ sut: StargazersLoader,
-        loadDoesNotDeliverResultsOn action: () -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let repository = useCaseRepository()
-        var capturedResults = [Any]()
-        sut.load(from: repository.model) { capturedResults.append($0) }
-        assertIsEmpty(capturedResults, on: action, file: file, line: line)
-    }
-    
-    private func assertIsEmpty(
-        _ items: [Any],
-        on action: () -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        action()
-        XCTAssert(items.isEmpty, "Expected no items, got \(items) instead.", file: file, line: line)
     }
 }
