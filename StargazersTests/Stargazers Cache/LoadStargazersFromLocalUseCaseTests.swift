@@ -16,43 +16,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [])
     }
     
-    // MARK: - Clear Stargazers
-    
-    func test_clearStargazers_sendStoreDeleteRepositoryStargazersMessage() {
-        let (sut, store) = makeSUT()
-        let repository = useCaseRepository()
-        
-        sut.clearStargazers(for: repository.model) { _ in }
-        
-        XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
-    }
-    
-    func test_clearStargazers_deliversErrorOnStoreRepositoryDeletionCompletionError() {
-        let (sut, store) = makeSUT()
-        let error = anyNSError()
-        
-        assert(that: sut, completesClearWith: .failure(error), on: {
-            store.completeDeletionWithError(error)
-        })
-    }
-    
-    func test_clearStargazers_deliversSuccessOnStoreRepositoryDeletionCompletionSuccess() {
-        let (sut, store) = makeSUT()
-        
-        assert(that: sut, completesClearWith: .success(()), on: {
-            store.completeDeletionSuccessfully()
-        })
-    }
-    
-    func test_clearStargazers_doesNotDeliverResultsOnDeletionCompletionWhenInstanceHasBeenDeallocated() {
-        var (sut, store) = makeOptionalSUT()
-        
-        assert(sut.toWeak, clearDoesNotDeliverResultsOn: {
-            sut = nil
-            store.completeDeletionSuccessfully()
-        })
-    }
-    
     // MARK: - Load Stargazers
     
     func test_load_sendStoreRetrieveRepositoryMessage() {
@@ -182,31 +145,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
     }
     
     private func assert(
-        that sut: LocalStargazersLoader,
-        completesClearWith expectedResult: Result<Void, Error>,
-        on action: () -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let exp = expectation(description: "Wait for clearStargazers completion")
-        sut.clearStargazers(for: useCaseRepository().model) { receivedResult in
-            switch (expectedResult, receivedResult) {
-            case (.success, .success):
-                break
-            case let (.failure(expectedError as NSError), .failure(receivedError as NSError)):
-                XCTAssertEqual(expectedError, receivedError, file: file, line: line)
-            default:
-                XCTFail("Expected \(expectedResult), got \(receivedResult) instead", file: file, line: line)
-            }
-            exp.fulfill()
-        }
-        
-        action()
-        
-        wait(for: [exp], timeout: 1.0)
-    }
-    
-    private func assert(
         _ sut: StargazersLoader,
         loadDoesNotDeliverResultsOn action: () -> Void,
         file: StaticString = #filePath,
@@ -215,18 +153,6 @@ class LoadStargazersFromLocalUseCaseTests: XCTestCase {
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         sut.load(from: repository.model) { capturedResults.append($0) }
-        assertIsEmpty(capturedResults, on: action, file: file, line: line)
-    }
-    
-    private func assert(
-        _ sut: StargazersCleaner,
-        clearDoesNotDeliverResultsOn action: () -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let repository = useCaseRepository()
-        var capturedResults = [Any]()
-        sut.clearStargazers(for: repository.model) { capturedResults.append($0) }
         assertIsEmpty(capturedResults, on: action, file: file, line: line)
     }
     
