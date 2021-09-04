@@ -1,5 +1,5 @@
 //
-//  Optional+toWeak.swift
+//  Optional+WeakRefProxyConversion.swift
 //  StargazersTests
 //
 //  Created by Riccardo Rossi - Home on 31/08/21.
