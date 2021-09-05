@@ -50,12 +50,4 @@ public final class LocalStargazersLoader: StargazersLoader {
             completion($0)
         }
     }
-    
-    public typealias ClearResult = Result<Void, Error>
-    public func clearStargazers(for repository: Repository, completion: @escaping (ClearResult) -> Void) {
-        store.deleteStargazers(for: repository.toLocal) { [weak self] in
-            guard self != nil else { return }
-            completion($0)
-        }
-    }
 }
