@@ -7,13 +7,15 @@
 
 import Foundation
 
-public final class LocalStargazersLoader: StargazersLoader {
+public final class LocalStargazersLoader {
     private let store: StargazersStore
     
     public init(store: StargazersStore) {
         self.store = store
     }
-    
+}
+
+extension LocalStargazersLoader: StargazersLoader {
     public typealias LoadResult = StargazersLoader.Result
     public func load(from repository: Repository, completion: @escaping (LoadResult) -> Void) {
         store.retrieve(from: repository.toLocal) { [weak self] result in
@@ -21,7 +23,9 @@ public final class LocalStargazersLoader: StargazersLoader {
             completion(result.map { stargazers in stargazers.toModel })
         }
     }
-    
+}
+ 
+extension LocalStargazersLoader {
     public typealias SaveResult = Result<Void, Error>
     public func save(
         _ stargazers: [Stargazer],
