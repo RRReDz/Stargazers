@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LocalStargazer: Equatable {
+public struct LocalStargazer: Equatable, Codable {
     internal let id: String
     internal let username: String
     internal let avatarURL: URL
