@@ -9,6 +9,28 @@ import XCTest
 import Stargazers
 
 class CodableStargazersStore {
+    private struct CodableStargazer: Codable {
+        private let id: String
+        private let username: String
+        private let avatarURL: URL
+        private let detailURL: URL
+        
+        init(_ localStargazer: LocalStargazer) {
+            id = localStargazer.id
+            username = localStargazer.username
+            avatarURL = localStargazer.avatarURL
+            detailURL = localStargazer.detailURL
+        }
+        
+        var local: LocalStargazer {
+            return LocalStargazer(
+                id: id,
+                username: username,
+                avatarURL: avatarURL,
+                detailURL: detailURL)
+        }
+    }
+    
     private let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("stargazers.store")
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
@@ -16,8 +38,8 @@ class CodableStargazersStore {
             completion(.success([]))
             return
         }
-        let stargazers = try! JSONDecoder().decode([LocalStargazer].self, from: data)
-        completion(.success(stargazers))
+        let stargazers = try! JSONDecoder().decode([CodableStargazer].self, from: data)
+        completion(.success(stargazers.map { $0.local }))
     }
     
     func insert(
@@ -25,7 +47,7 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.InsertCompletion
     ) {
-        let data = try! JSONEncoder().encode(stargazers)
+        let data = try! JSONEncoder().encode(stargazers.map(CodableStargazer.init))
         try! data.write(to: storeURL)
         completion(.success(()))
     }
