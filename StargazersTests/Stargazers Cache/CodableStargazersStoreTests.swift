@@ -31,7 +31,11 @@ class CodableStargazersStore {
         }
     }
     
-    private let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("stargazers.store")
+    private let storeURL: URL
+    
+    init(storeURL: URL) {
+        self.storeURL = storeURL
+    }
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
         guard let data = try? Data(contentsOf: storeURL) else {
@@ -58,8 +62,7 @@ class CodableStargazersStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("stargazers.store")
-        try? FileManager.default.removeItem(at: storeURL)
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
     }
 
     func test_retrieve_deliversNoResultsOnEmptyCache() {
@@ -123,8 +126,13 @@ class CodableStargazersStoreTests: XCTestCase {
     }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
-        let sut = CodableStargazersStore()
+        let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        let cachesDirectoryURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return cachesDirectoryURL.appendingPathComponent("\(String(describing: self)).store")
     }
 }
