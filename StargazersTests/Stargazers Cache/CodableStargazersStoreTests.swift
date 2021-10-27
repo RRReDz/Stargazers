@@ -122,9 +122,9 @@ class CodableStargazersStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
 
-    private func makeSUT() -> CodableStargazersStore {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
         let sut = CodableStargazersStore()
-        trackForMemoryLeaks(sut)
+        trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 }
