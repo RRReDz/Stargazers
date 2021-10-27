@@ -41,7 +41,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
 
     func test_retrieve_deliversNoResultsOnEmptyCache() {
-        let sut = CodableStargazersStore()
+        let sut = makeSUT()
         let exp = expectation(description: "Wait for retrieve completion")
         
         sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { result in
@@ -58,7 +58,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     func test_retrieve_hasNoSideEffectsOnEmtpyCache() {
-        let sut = CodableStargazersStore()
+        let sut = makeSUT()
         let exp = expectation(description: "Wait for retrieve completion")
         
         sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { firstResult in
@@ -78,7 +78,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
-        let sut = CodableStargazersStore()
+        let sut = makeSUT()
         let stargazers = uniqueStargazers().local
         let repository = useCaseRepository().local
         
@@ -100,4 +100,9 @@ class CodableStargazersStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
 
+    private func makeSUT() -> CodableStargazersStore {
+        let sut = CodableStargazersStore()
+        trackForMemoryLeaks(sut)
+        return sut
+    }
 }
