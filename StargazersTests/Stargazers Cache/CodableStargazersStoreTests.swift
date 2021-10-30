@@ -67,62 +67,22 @@ class CodableStargazersStoreTests: XCTestCase {
 
     func test_retrieve_deliversNoResultsOnEmptyCache() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for retrieve completion")
         
-        sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { result in
-            switch result {
-            case let .success(receivedStargazers):
-                XCTAssertEqual(receivedStargazers, [])
-            default:
-                XCTFail("Expected success, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieve: .success([]))
     }
     
     func test_retrieve_hasNoSideEffectsOnEmtpyCache() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for retrieve completion")
         
-        sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { firstResult in
-            sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { secondResult in
-                switch (firstResult, secondResult) {
-                case let (.success(firstStargazers), .success(secondStargazers)):
-                    XCTAssertEqual(firstStargazers, [])
-                    XCTAssertEqual(secondStargazers, [])
-                default:
-                    XCTFail("Expected both results to be successful and empty, got \(firstResult) and \(secondResult) instead")
-                }
-                exp.fulfill()
-            }
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieveTwice: .success([]))
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
         let sut = makeSUT()
         let stargazers = uniqueStargazers().local
-        let repository = useCaseRepository().local
         
-        let exp = expectation(description: "Wait for retrieve completion")
-        
-        sut.insert(stargazers, for: repository) { insertionResult in
-            XCTAssertNotNil(try? insertionResult.get(), "Expected stargazers to be inserted successfully")
-            sut.retrieve(from: repository) { retrievalResult in
-                switch retrievalResult {
-                case let .success(retrievedStargazers):
-                    XCTAssertEqual(stargazers, retrievedStargazers)
-                default:
-                    XCTFail("Expected success, got \(retrievalResult) instead")
-                }
-                exp.fulfill()
-            }
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        insert(stargazers: stargazers, to: sut)
+        expect(sut, toRetrieve: .success(stargazers))
     }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
@@ -135,4 +95,63 @@ class CodableStargazersStoreTests: XCTestCase {
         let cachesDirectoryURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         return cachesDirectoryURL.appendingPathComponent("\(String(describing: self)).store")
     }
+    
+    private func expect(
+        _ sut: CodableStargazersStore,
+        toRetrieve expectedResult: Result<[LocalStargazer], Error>,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for retrieve completion")
+        
+        sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case let (.success(expectedStargazers), .success(receivedStargazers)):
+                XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
+            case let (.failure(expectedError as NSError), .failure(receivedError as NSError)):
+                XCTAssertEqual(expectedError, receivedError, file: file, line: line)
+            default:
+                XCTFail(
+                    "Expected results to be the same, expected \(expectedResult) got \(receivedResult) instead",
+                    file: file,
+                    line: line
+                )
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func expect(
+        _ sut: CodableStargazersStore,
+        toRetrieveTwice expectedResult: Result<[LocalStargazer], Error>,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+    }
+    
+    private func insert(
+        stargazers: [LocalStargazer],
+        to sut: CodableStargazersStore,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for insert completion")
+        
+        sut.insert(stargazers, for: LocalRepository(name: "any", owner: "any")) { insertionResult in
+            XCTAssertNotNil(
+                try? insertionResult.get(),
+                "Expected stargazers to be inserted successfully",
+                file: file,
+                line: line
+            )
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
 }
