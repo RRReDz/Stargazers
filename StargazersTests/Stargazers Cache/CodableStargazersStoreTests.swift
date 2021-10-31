@@ -73,7 +73,7 @@ class CodableStargazersStore {
     ) {
         var cache = (try? retrieveCache()) ?? [:]
         let key = Cache.Key(from: repository)
-        cache[key] = stargazers.map(CodableStargazer.init)
+        cache[key] = stargazers.map(Cache.Value.Element.init)
         let newData = try! JSONEncoder().encode(cache)
         try! newData.write(to: storeURL)
         completion(.success(()))
