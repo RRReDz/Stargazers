@@ -12,8 +12,13 @@ class CodableStargazersStore {
     private typealias Cache = [CodableHashableRepository: [CodableStargazer]]
     
     private struct CodableHashableRepository: Codable, Hashable {
-        let name: String
-        let owner: String
+        private let name: String
+        private let owner: String
+        
+        init(from localRepository: LocalRepository) {
+            name = localRepository.name
+            owner = localRepository.owner
+        }
     }
     
     private struct CodableStargazer: Codable {
@@ -51,8 +56,8 @@ class CodableStargazersStore {
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
         do {
             let cache = try retrieveCache()
-            let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
-            let stargazers = cache[hashableRepository] ?? []
+            let key = Cache.Key(from: repository)
+            let stargazers = cache[key] ?? []
             completion(.success(stargazers.map { $0.local }))
         } catch RetrieveInnerError.invalidURL {
             completion(.success([]))
@@ -67,8 +72,8 @@ class CodableStargazersStore {
         completion: @escaping StargazersStore.InsertCompletion
     ) {
         var cache = (try? retrieveCache()) ?? [:]
-        let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
-        cache[hashableRepository] = stargazers.map(CodableStargazer.init)
+        let key = Cache.Key(from: repository)
+        cache[key] = stargazers.map(CodableStargazer.init)
         let newData = try! JSONEncoder().encode(cache)
         try! newData.write(to: storeURL)
         completion(.success(()))
