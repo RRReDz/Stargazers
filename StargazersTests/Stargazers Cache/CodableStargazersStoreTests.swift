@@ -38,13 +38,16 @@ class CodableStargazersStore {
     }
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
-        guard let data = try? Data(contentsOf: storeURL) else {
-            completion(.success([]))
-            return
+        enum InnerError: Error {
+            case invalidURL
         }
+        
         do {
+            guard let data = try? Data(contentsOf: storeURL) else { throw InnerError.invalidURL }
             let stargazers = try JSONDecoder().decode([CodableStargazer].self, from: data)
             completion(.success(stargazers.map { $0.local }))
+        } catch InnerError.invalidURL {
+            completion(.success([]))
         } catch {
             completion(.failure(error))
         }
