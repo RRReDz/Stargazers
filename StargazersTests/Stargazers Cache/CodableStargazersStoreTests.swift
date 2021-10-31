@@ -83,16 +83,16 @@ class CodableStargazersStoreTests: XCTestCase {
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
         let sut = makeSUT()
         let stargazers = uniqueStargazers().local
-        
         insert(stargazers: stargazers, to: sut)
+        
         expect(sut, toRetrieve: .success(stargazers))
     }
     
     func test_retrieve_hasNoSideEffectOnNonEmptyCache() {
         let sut = makeSUT()
         let stargazers = uniqueStargazers().local
-        
         insert(stargazers: stargazers, to: sut)
+        
         expect(sut, toRetrieveTwice: .success(stargazers))
     }
     
@@ -108,6 +108,17 @@ class CodableStargazersStoreTests: XCTestCase {
         try data.write(to: testSpecificStoreURL())
         
         expect(makeSUT(), toRetrieveTwice: .failure(anyNSError()))
+    }
+    
+    func test_insert_toNonEmptyCacheOverridesPreviousData() {
+        let sut = makeSUT()
+        let previousStargazers = uniqueStargazers().local
+        insert(stargazers: previousStargazers, to: sut)
+        
+        let newStargazers = uniqueStargazers().local
+        insert(stargazers: newStargazers, to: sut)
+        
+        expect(sut, toRetrieve: .success(newStargazers))
     }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
