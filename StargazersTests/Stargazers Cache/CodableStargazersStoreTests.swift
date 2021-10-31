@@ -9,6 +9,15 @@ import XCTest
 import Stargazers
 
 class CodableStargazersStore {
+    private struct Cache: Codable {
+        let stargazersForRepository: [CodableHashableRepository: [CodableStargazer]]
+    }
+    
+    private struct CodableHashableRepository: Codable, Hashable {
+        let name: String
+        let owner: String
+    }
+    
     private struct CodableStargazer: Codable {
         private let id: String
         private let username: String
@@ -44,7 +53,9 @@ class CodableStargazersStore {
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
         do {
             guard let data = try? Data(contentsOf: storeURL) else { throw RetrieveInnerError.invalidURL }
-            let stargazers = try JSONDecoder().decode([CodableStargazer].self, from: data)
+            let cache = try JSONDecoder().decode(Cache.self, from: data)
+            let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
+            let stargazers = cache.stargazersForRepository[hashableRepository] ?? []
             completion(.success(stargazers.map { $0.local }))
         } catch RetrieveInnerError.invalidURL {
             completion(.success([]))
@@ -58,8 +69,16 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.InsertCompletion
     ) {
-        let data = try! JSONEncoder().encode(stargazers.map(CodableStargazer.init))
-        try! data.write(to: storeURL)
+        var stargazersForRepository: [CodableHashableRepository: [CodableStargazer]] = [:]
+        if let data = try? Data(contentsOf: storeURL) {
+            let cache = try! JSONDecoder().decode(Cache.self, from: data)
+            stargazersForRepository = cache.stargazersForRepository
+        }
+        let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
+        stargazersForRepository[hashableRepository] = stargazers.map(CodableStargazer.init)
+        let newCache = Cache(stargazersForRepository: stargazersForRepository)
+        let newData = try! JSONEncoder().encode(newCache)
+        try! newData.write(to: storeURL)
         completion(.success(()))
     }
 }
@@ -120,6 +139,18 @@ class CodableStargazersStoreTests: XCTestCase {
         
         expect(sut, toRetrieve: .success(newStargazers))
     }
+    
+    func test_insert_toNonEmptyCacheButOtherRepoDoesNotOverridePreviousRepoData() {
+        let sut = makeSUT()
+        let firstRepoStargazers = uniqueStargazers().local
+        let firstRepo = uniqueLocalRepository()
+        insert(stargazers: firstRepoStargazers, for: firstRepo, to: sut)
+        
+        let secondRepoStargazers = uniqueStargazers().local
+        insert(stargazers: secondRepoStargazers, for: uniqueLocalRepository(), to: sut)
+        
+        expect(sut, toRetrieve: .success(firstRepoStargazers), for: firstRepo)
+    }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
         let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
@@ -135,12 +166,13 @@ class CodableStargazersStoreTests: XCTestCase {
     private func expect(
         _ sut: CodableStargazersStore,
         toRetrieve expectedResult: Result<[LocalStargazer], Error>,
+        for repository: LocalRepository = LocalRepository(name: "any", owner: "any"),
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for retrieve completion")
         
-        sut.retrieve(from: LocalRepository(name: "any", owner: "any")) { receivedResult in
+        sut.retrieve(from: repository) { receivedResult in
             switch (expectedResult, receivedResult) {
             case let (.success(expectedStargazers), .success(receivedStargazers)):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
@@ -171,13 +203,14 @@ class CodableStargazersStoreTests: XCTestCase {
     
     private func insert(
         stargazers: [LocalStargazer],
+        for repository: LocalRepository = LocalRepository(name: "any", owner: "any"),
         to sut: CodableStargazersStore,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for insert completion")
         
-        sut.insert(stargazers, for: LocalRepository(name: "any", owner: "any")) { insertionResult in
+        sut.insert(stargazers, for: repository) { insertionResult in
             XCTAssertNotNil(
                 try? insertionResult.get(),
                 "Expected stargazers to be inserted successfully",
@@ -188,6 +221,10 @@ class CodableStargazersStoreTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func uniqueLocalRepository() -> LocalRepository {
+        return LocalRepository(name: UUID().uuidString, owner: UUID().uuidString)
     }
     
 }
