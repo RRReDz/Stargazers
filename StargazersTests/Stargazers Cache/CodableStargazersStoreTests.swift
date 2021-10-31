@@ -73,15 +73,11 @@ class CodableStargazersStoreTests: XCTestCase {
     }
 
     func test_retrieve_deliversNoResultsOnEmptyCache() {
-        let sut = makeSUT()
-        
-        expect(sut, toRetrieve: .success([]))
+        expect(makeSUT(), toRetrieve: .success([]))
     }
     
     func test_retrieve_hasNoSideEffectsOnEmtpyCache() {
-        let sut = makeSUT()
-        
-        expect(sut, toRetrieveTwice: .success([]))
+        expect(makeSUT(), toRetrieveTwice: .success([]))
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
