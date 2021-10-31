@@ -42,8 +42,12 @@ class CodableStargazersStore {
             completion(.success([]))
             return
         }
-        let stargazers = try! JSONDecoder().decode([CodableStargazer].self, from: data)
-        completion(.success(stargazers.map { $0.local }))
+        do {
+            let stargazers = try JSONDecoder().decode([CodableStargazer].self, from: data)
+            completion(.success(stargazers.map { $0.local }))
+        } catch {
+            completion(.failure(error))
+        }
     }
     
     func insert(
@@ -92,6 +96,13 @@ class CodableStargazersStoreTests: XCTestCase {
         insert(stargazers: stargazers, to: sut)
         expect(sut, toRetrieveTwice: .success(stargazers))
     }
+    
+    func test_retrieve_returnsErrorWhenDataInvalid() throws {
+        let data = "invalid data".data(using: .utf8)!
+        try data.write(to: testSpecificStoreURL())
+        
+        expect(makeSUT(), toRetrieve: .failure(anyNSError()))
+    }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
         let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
@@ -116,8 +127,8 @@ class CodableStargazersStoreTests: XCTestCase {
             switch (expectedResult, receivedResult) {
             case let (.success(expectedStargazers), .success(receivedStargazers)):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
-            case let (.failure(expectedError as NSError), .failure(receivedError as NSError)):
-                XCTAssertEqual(expectedError, receivedError, file: file, line: line)
+            case (.failure, .failure):
+                break
             default:
                 XCTFail(
                     "Expected results to be the same, expected \(expectedResult) got \(receivedResult) instead",
