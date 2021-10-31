@@ -106,6 +106,13 @@ class CodableStargazersStoreTests: XCTestCase {
         
         expect(makeSUT(), toRetrieve: .failure(anyNSError()))
     }
+    
+    func test_retrieve_hasNoSideEffectsOnInvalidCacheData() throws {
+        let data = "invalid data".data(using: .utf8)!
+        try data.write(to: testSpecificStoreURL())
+        
+        expect(makeSUT(), toRetrieveTwice: .failure(anyNSError()))
+    }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
         let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
