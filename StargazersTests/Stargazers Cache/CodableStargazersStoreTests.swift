@@ -100,7 +100,7 @@ class CodableStargazersStoreTests: XCTestCase {
         expect(sut, toRetrieveTwice: .success(stargazers))
     }
     
-    func test_retrieve_returnsErrorWhenDataInvalid() throws {
+    func test_retrieve_returnsErrorOnInvalidCacheData() throws {
         let data = "invalid data".data(using: .utf8)!
         try data.write(to: testSpecificStoreURL())
         
