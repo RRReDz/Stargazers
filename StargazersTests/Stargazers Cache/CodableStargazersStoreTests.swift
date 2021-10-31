@@ -84,6 +84,14 @@ class CodableStargazersStoreTests: XCTestCase {
         insert(stargazers: stargazers, to: sut)
         expect(sut, toRetrieve: .success(stargazers))
     }
+    
+    func test_retrieve_hasNoSideEffectOnNonEmptyCache() {
+        let sut = makeSUT()
+        let stargazers = uniqueStargazers().local
+        
+        insert(stargazers: stargazers, to: sut)
+        expect(sut, toRetrieveTwice: .success(stargazers))
+    }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
         let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
