@@ -9,9 +9,7 @@ import XCTest
 import Stargazers
 
 class CodableStargazersStore {
-    private struct Cache: Codable {
-        let stargazersForRepository: [CodableHashableRepository: [CodableStargazer]]
-    }
+    private typealias Cache = [CodableHashableRepository: [CodableStargazer]]
     
     private struct CodableHashableRepository: Codable, Hashable {
         let name: String
@@ -52,10 +50,9 @@ class CodableStargazersStore {
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
         do {
-            guard let data = try? Data(contentsOf: storeURL) else { throw RetrieveInnerError.invalidURL }
-            let cache = try JSONDecoder().decode(Cache.self, from: data)
+            let cache = try retrieveCache()
             let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
-            let stargazers = cache.stargazersForRepository[hashableRepository] ?? []
+            let stargazers = cache[hashableRepository] ?? []
             completion(.success(stargazers.map { $0.local }))
         } catch RetrieveInnerError.invalidURL {
             completion(.success([]))
@@ -69,17 +66,17 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.InsertCompletion
     ) {
-        var stargazersForRepository: [CodableHashableRepository: [CodableStargazer]] = [:]
-        if let data = try? Data(contentsOf: storeURL) {
-            let cache = try! JSONDecoder().decode(Cache.self, from: data)
-            stargazersForRepository = cache.stargazersForRepository
-        }
+        var cache = (try? retrieveCache()) ?? [:]
         let hashableRepository = CodableHashableRepository(name: repository.name, owner: repository.owner)
-        stargazersForRepository[hashableRepository] = stargazers.map(CodableStargazer.init)
-        let newCache = Cache(stargazersForRepository: stargazersForRepository)
-        let newData = try! JSONEncoder().encode(newCache)
+        cache[hashableRepository] = stargazers.map(CodableStargazer.init)
+        let newData = try! JSONEncoder().encode(cache)
         try! newData.write(to: storeURL)
         completion(.success(()))
+    }
+    
+    private func retrieveCache() throws -> Cache {
+        guard let data = try? Data(contentsOf: storeURL) else { throw RetrieveInnerError.invalidURL }
+        return try JSONDecoder().decode(Cache.self, from: data)
     }
 }
 
