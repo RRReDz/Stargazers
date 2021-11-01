@@ -221,13 +221,13 @@ class CodableStargazersStoreTests: XCTestCase {
     private func expect(
         _ sut: CodableStargazersStore,
         toRetrieve expectedResult: Result<[LocalStargazer], Error>,
-        for repository: LocalRepository = LocalRepository(name: "any", owner: "any"),
+        for repository: LocalRepository? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for retrieve completion")
         
-        sut.retrieve(from: repository) { receivedResult in
+        sut.retrieve(from: repository ?? useCaseRepository().local) { receivedResult in
             switch (expectedResult, receivedResult) {
             case let (.success(expectedStargazers), .success(receivedStargazers)):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
@@ -259,7 +259,7 @@ class CodableStargazersStoreTests: XCTestCase {
     @discardableResult
     private func insert(
         stargazers: [LocalStargazer],
-        for repository: LocalRepository = LocalRepository(name: "any", owner: "any"),
+        for repository: LocalRepository? = nil,
         to sut: CodableStargazersStore,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -267,7 +267,7 @@ class CodableStargazersStoreTests: XCTestCase {
         let exp = expectation(description: "Wait for insert completion")
         var result: Result<Void, Error>!
         
-        sut.insert(stargazers, for: repository) {
+        sut.insert(stargazers, for: repository ?? useCaseRepository().local) {
             result = $0
             exp.fulfill()
         }
@@ -277,10 +277,10 @@ class CodableStargazersStoreTests: XCTestCase {
         return result
     }
     
-    private func deleteStargazers(in sut: CodableStargazersStore) {
+    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: CodableStargazersStore) {
         let exp = expectation(description: "Wait for stargazers delete completion")
         
-        sut.deleteStargazers(for: LocalRepository(name: "any", owner: "any")) { _ in
+        sut.deleteStargazers(for: repository ?? useCaseRepository().local) { _ in
             exp.fulfill()
         }
         
