@@ -74,9 +74,13 @@ class CodableStargazersStore {
         var cache = (try? retrieveCache()) ?? [:]
         let key = Cache.Key(from: repository)
         cache[key] = stargazers.map(Cache.Value.Element.init)
-        let newData = try! JSONEncoder().encode(cache)
-        try! newData.write(to: storeURL)
-        completion(.success(()))
+        do {
+            let newData = try JSONEncoder().encode(cache)
+            try newData.write(to: storeURL)
+            completion(.success(()))
+        } catch {
+            completion(.failure(error))
+        }
     }
     
     private func retrieveCache() throws -> Cache {
@@ -153,9 +157,23 @@ class CodableStargazersStoreTests: XCTestCase {
         
         expect(sut, toRetrieve: .success(firstRepoStargazers), for: firstRepo)
     }
+    
+    func test_insert_deliversErrorOnStoreURLWithNoWritePermissions() throws {
+        let cachesDirectoryURL = FileManager.default.urls(for: .adminApplicationDirectory, in: .systemDomainMask).first!
+        let storeURL = cachesDirectoryURL.appendingPathComponent("\(String(describing: self)).store")
+        
+        let sut = makeSUT(storeURL: storeURL)
+        
+        let stargazers = uniqueStargazers().local
+        let insertionResult = insert(stargazers: stargazers, to: sut)
+        
+        XCTAssertThrowsError(try insertionResult.get())
+    }
+    
+    // MARK: - Utils
 
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
-        let sut = CodableStargazersStore(storeURL: testSpecificStoreURL())
+    private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
+        let sut = CodableStargazersStore(storeURL: storeURL ?? testSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
@@ -203,26 +221,25 @@ class CodableStargazersStoreTests: XCTestCase {
         expect(sut, toRetrieve: expectedResult, file: file, line: line)
     }
     
+    @discardableResult
     private func insert(
         stargazers: [LocalStargazer],
         for repository: LocalRepository = LocalRepository(name: "any", owner: "any"),
         to sut: CodableStargazersStore,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) {
+    ) -> Result<Void, Error> {
         let exp = expectation(description: "Wait for insert completion")
+        var result: Result<Void, Error>!
         
-        sut.insert(stargazers, for: repository) { insertionResult in
-            XCTAssertNotNil(
-                try? insertionResult.get(),
-                "Expected stargazers to be inserted successfully",
-                file: file,
-                line: line
-            )
+        sut.insert(stargazers, for: repository) {
+            result = $0
             exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
+        
+        return result
     }
     
     private func uniqueLocalRepository() -> LocalRepository {
