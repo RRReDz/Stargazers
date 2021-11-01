@@ -179,30 +179,19 @@ class CodableStargazersStoreTests: XCTestCase {
     
     func test_deleteStargazers_cacheStaysEmptyOnEmptyCache() {
         let sut = makeSUT()
-        let repository = LocalRepository(name: "any", owner: "any")
-        let exp = expectation(description: "Wait for stargazers delete completion")
         
-        sut.deleteStargazers(for: repository) { [weak self] _ in
-            self?.expect(sut, toRetrieve: .success([]), for: repository)
-            exp.fulfill()
-        }
+        deleteStargazers(in: sut)
         
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieve: .success([]))
     }
     
     func test_deleteStargazers_leavesCacheEmptyOnNonEmptyCache() {
         let sut = makeSUT()
-        let repository = LocalRepository(name: "any", owner: "any")
-        insert(stargazers: uniqueStargazers().local, for: repository, to: sut)
+        insert(stargazers: uniqueStargazers().local, to: sut)
         
-        let exp = expectation(description: "Wait for stargazers delete completion")
+        deleteStargazers(in: sut)
         
-        sut.deleteStargazers(for: repository) { [weak self] _ in
-            self?.expect(sut, toRetrieve: .success([]), for: repository)
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieve: .success([]))
     }
     
     // MARK: - Utils
@@ -286,6 +275,16 @@ class CodableStargazersStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
         
         return result
+    }
+    
+    private func deleteStargazers(in sut: CodableStargazersStore) {
+        let exp = expectation(description: "Wait for stargazers delete completion")
+        
+        sut.deleteStargazers(for: LocalRepository(name: "any", owner: "any")) { _ in
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func uniqueLocalRepository() -> LocalRepository {
