@@ -83,6 +83,13 @@ class CodableStargazersStore {
         }
     }
     
+    func deleteStargazers(
+        for repository: LocalRepository,
+        completion: @escaping StargazersStore.DeleteCompletion
+    ) {
+        completion(.success(()))
+    }
+    
     private func retrieveCache() throws -> Cache {
         guard let data = try? Data(contentsOf: storeURL) else { throw RetrieveInnerError.invalidURL }
         return try JSONDecoder().decode(Cache.self, from: data)
@@ -166,6 +173,18 @@ class CodableStargazersStoreTests: XCTestCase {
         let insertionResult = insert(stargazers: stargazers, to: sut)
         
         XCTAssertThrowsError(try insertionResult.get())
+    }
+    
+    func test_deleteStargazers_cacheStaysEmptyOnEmptyCache() {
+        let sut = makeSUT()
+        let exp = expectation(description: "Wait for stargazers delete completion")
+        
+        sut.deleteStargazers(for: uniqueLocalRepository()) { [weak self] _ in
+            self?.expect(sut, toRetrieve: .success([]))
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     // MARK: - Utils
