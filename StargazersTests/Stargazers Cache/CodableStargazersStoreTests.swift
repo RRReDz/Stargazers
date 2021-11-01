@@ -87,9 +87,12 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.DeleteCompletion
     ) {
+        var cache = (try? retrieveCache()) ?? [:]
+        let key = Cache.Key(from: repository)
+        cache[key] = nil
         do {
-            let emptyCacheData = try JSONEncoder().encode(Cache())
-            try emptyCacheData.write(to: storeURL)
+            let newCacheData = try JSONEncoder().encode(cache)
+            try newCacheData.write(to: storeURL)
             completion(.success(()))
         } catch {
             completion(.failure(error))
@@ -207,6 +210,18 @@ class CodableStargazersStoreTests: XCTestCase {
         let deletionResult = deleteStargazers(in: sut)
         
         XCTAssertThrowsError(try deletionResult.get())
+    }
+    
+    func test_deleteStargazers_doesNotLeaveCacheEmptyForOtherRepositoryNonEmptyData() {
+        let sut = makeSUT()
+        let firstRepoStargazers = uniqueStargazers().local
+        let firstRepo = uniqueLocalRepository()
+        insert(stargazers: firstRepoStargazers, for: firstRepo, to: sut)
+        
+        let secondRepo = uniqueLocalRepository()
+        deleteStargazers(for: secondRepo, in: sut)
+        
+        expect(sut, toRetrieve: .success(firstRepoStargazers), for: firstRepo)
     }
     
     // MARK: - Utils
