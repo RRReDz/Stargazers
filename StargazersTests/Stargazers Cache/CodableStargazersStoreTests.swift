@@ -87,9 +87,13 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.DeleteCompletion
     ) {
-        let emptyCacheData = try! JSONEncoder().encode(Cache())
-        try! emptyCacheData.write(to: storeURL)
-        completion(.success(()))
+        do {
+            let emptyCacheData = try JSONEncoder().encode(Cache())
+            try emptyCacheData.write(to: storeURL)
+            completion(.success(()))
+        } catch {
+            completion(.failure(error))
+        }
     }
     
     private func retrieveCache() throws -> Cache {
@@ -194,6 +198,15 @@ class CodableStargazersStoreTests: XCTestCase {
         expect(sut, toRetrieve: .success([]))
     }
     
+    func test_deleteStargazers_deliversErrorOnStoreURLWithNoWritePermissions() throws {
+        let storeURL = noWritePermissionsURL()
+        let sut = makeSUT(storeURL: storeURL)
+        
+        let deletionResult = deleteStargazers(in: sut)
+        
+        XCTAssertThrowsError(try deletionResult.get())
+    }
+    
     // MARK: - Utils
 
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
@@ -277,14 +290,19 @@ class CodableStargazersStoreTests: XCTestCase {
         return result
     }
     
-    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: CodableStargazersStore) {
+    @discardableResult
+    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: CodableStargazersStore) -> Result<Void, Error> {
         let exp = expectation(description: "Wait for stargazers delete completion")
         
-        sut.deleteStargazers(for: repository ?? useCaseRepository().local) { _ in
+        var result: Result<Void, Error>!
+        sut.deleteStargazers(for: repository ?? useCaseRepository().local) {
+            result = $0
             exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
+        
+        return result
     }
     
     private func uniqueLocalRepository() -> LocalRepository {
