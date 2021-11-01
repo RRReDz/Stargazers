@@ -224,6 +224,30 @@ class CodableStargazersStoreTests: XCTestCase {
         expect(sut, toRetrieve: .success(firstRepoStargazers), for: firstRepo)
     }
     
+    func test_sideEffects_runsSerially() {
+        let sut = makeSUT()
+        
+        let expectations: [XCTestExpectation] = [
+            expectation(description: "First insertion completion"),
+            expectation(description: "Deletion completion"),
+            expectation(description: "Second insertion completion")
+        ]
+        
+        sut.insert(uniqueStargazers().local, for: uniqueLocalRepository()) { _ in
+            expectations[0].fulfill()
+        }
+        
+        sut.deleteStargazers(for: uniqueLocalRepository()) { _ in
+            expectations[1].fulfill()
+        }
+        
+        sut.insert(uniqueStargazers().local, for: uniqueLocalRepository()) { _ in
+            expectations[2].fulfill()
+        }
+        
+        wait(for: expectations, timeout: 1.0, enforceOrder: true)
+    }
+    
     // MARK: - Utils
 
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
