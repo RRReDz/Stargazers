@@ -159,9 +159,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     func test_insert_deliversErrorOnStoreURLWithNoWritePermissions() throws {
-        let cachesDirectoryURL = FileManager.default.urls(for: .adminApplicationDirectory, in: .systemDomainMask).first!
-        let storeURL = cachesDirectoryURL.appendingPathComponent("\(String(describing: self)).store")
-        
+        let storeURL = noWritePermissionsURL()
         let sut = makeSUT(storeURL: storeURL)
         
         let stargazers = uniqueStargazers().local
@@ -179,8 +177,19 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     private func testSpecificStoreURL() -> URL {
-        let cachesDirectoryURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        return cachesDirectoryURL.appendingPathComponent("\(String(describing: self)).store")
+        return cachesDirectoryURL().appendingPathComponent("\(String(describing: self)).store")
+    }
+    
+    private func noWritePermissionsURL() -> URL {
+        return adminApplicationDirectoryURL().appendingPathComponent("any.store")
+    }
+    
+    private func cachesDirectoryURL() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+    
+    private func adminApplicationDirectoryURL() -> URL {
+        FileManager.default.urls(for: .adminApplicationDirectory, in: .systemDomainMask).first!
     }
     
     private func expect(
