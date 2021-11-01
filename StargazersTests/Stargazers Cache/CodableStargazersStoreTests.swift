@@ -87,6 +87,8 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.DeleteCompletion
     ) {
+        let emptyCacheData = try! JSONEncoder().encode(Cache())
+        try! emptyCacheData.write(to: storeURL)
         completion(.success(()))
     }
     
@@ -178,6 +180,21 @@ class CodableStargazersStoreTests: XCTestCase {
     func test_deleteStargazers_cacheStaysEmptyOnEmptyCache() {
         let sut = makeSUT()
         let repository = LocalRepository(name: "any", owner: "any")
+        let exp = expectation(description: "Wait for stargazers delete completion")
+        
+        sut.deleteStargazers(for: repository) { [weak self] _ in
+            self?.expect(sut, toRetrieve: .success([]), for: repository)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    func test_deleteStargazers_leavesCacheEmptyOnNonEmptyCache() {
+        let sut = makeSUT()
+        let repository = LocalRepository(name: "any", owner: "any")
+        insert(stargazers: uniqueStargazers().local, for: repository, to: sut)
+        
         let exp = expectation(description: "Wait for stargazers delete completion")
         
         sut.deleteStargazers(for: repository) { [weak self] _ in
