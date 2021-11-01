@@ -136,16 +136,18 @@ class CodableStargazersStoreTests: XCTestCase {
     
     func test_retrieve_returnsErrorOnInvalidCacheData() throws {
         let data = "invalid data".data(using: .utf8)!
-        try data.write(to: testSpecificStoreURL())
+        let storeURL = testSpecificStoreURL()
+        try data.write(to: storeURL)
         
-        expect(makeSUT(), toRetrieve: .failure(anyNSError()))
+        expect(makeSUT(storeURL: storeURL), toRetrieve: .failure(anyNSError()))
     }
     
     func test_retrieve_hasNoSideEffectsOnInvalidCacheData() throws {
         let data = "invalid data".data(using: .utf8)!
-        try data.write(to: testSpecificStoreURL())
+        let storeURL = testSpecificStoreURL()
+        try data.write(to: storeURL)
         
-        expect(makeSUT(), toRetrieveTwice: .failure(anyNSError()))
+        expect(makeSUT(storeURL: storeURL), toRetrieveTwice: .failure(anyNSError()))
     }
     
     func test_insert_toNonEmptyCacheOverridesPreviousData() {
