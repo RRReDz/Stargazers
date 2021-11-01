@@ -177,10 +177,11 @@ class CodableStargazersStoreTests: XCTestCase {
     
     func test_deleteStargazers_cacheStaysEmptyOnEmptyCache() {
         let sut = makeSUT()
+        let repository = LocalRepository(name: "any", owner: "any")
         let exp = expectation(description: "Wait for stargazers delete completion")
         
-        sut.deleteStargazers(for: uniqueLocalRepository()) { [weak self] _ in
-            self?.expect(sut, toRetrieve: .success([]))
+        sut.deleteStargazers(for: repository) { [weak self] _ in
+            self?.expect(sut, toRetrieve: .success([]), for: repository)
             exp.fulfill()
         }
         
