@@ -44,6 +44,7 @@ class CodableStargazersStore {
     }
     
     private let storeURL: URL
+    private let queue = DispatchQueue(label: "CodableStargazersStoreQueue", attributes: .concurrent)
     
     init(storeURL: URL) {
         self.storeURL = storeURL
@@ -54,15 +55,17 @@ class CodableStargazersStore {
     }
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
-        do {
-            let cache = try retrieveCache()
-            let key = Cache.Key(from: repository)
-            let stargazers = cache[key] ?? []
-            completion(.success(stargazers.map { $0.local }))
-        } catch RetrieveInnerError.invalidURL {
-            completion(.success([]))
-        } catch {
-            completion(.failure(error))
+        queue.async { [weak self] in
+            do {
+                let cache = try self?.retrieveCache()
+                let key = Cache.Key(from: repository)
+                let stargazers = cache?[key] ?? []
+                completion(.success(stargazers.map { $0.local }))
+            } catch RetrieveInnerError.invalidURL {
+                completion(.success([]))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
     
@@ -71,15 +74,18 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.InsertCompletion
     ) {
-        var cache = (try? retrieveCache()) ?? [:]
-        let key = Cache.Key(from: repository)
-        cache[key] = stargazers.map(Cache.Value.Element.init)
-        do {
-            let newData = try JSONEncoder().encode(cache)
-            try newData.write(to: storeURL)
-            completion(.success(()))
-        } catch {
-            completion(.failure(error))
+        let storeURL = storeURL
+        queue.async(flags: .barrier) { [weak self] in
+            var cache = (try? self?.retrieveCache()) ?? [:]
+            let key = Cache.Key(from: repository)
+            cache[key] = stargazers.map(Cache.Value.Element.init)
+            do {
+                let newData = try JSONEncoder().encode(cache)
+                try newData.write(to: storeURL)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
     
@@ -87,15 +93,18 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.DeleteCompletion
     ) {
-        var cache = (try? retrieveCache()) ?? [:]
-        let key = Cache.Key(from: repository)
-        cache[key] = nil
-        do {
-            let newCacheData = try JSONEncoder().encode(cache)
-            try newCacheData.write(to: storeURL)
-            completion(.success(()))
-        } catch {
-            completion(.failure(error))
+        let storeURL = storeURL
+        queue.async(flags: .barrier) { [weak self] in
+            var cache = (try? self?.retrieveCache()) ?? [:]
+            let key = Cache.Key(from: repository)
+            cache[key] = nil
+            do {
+                let newCacheData = try JSONEncoder().encode(cache)
+                try newCacheData.write(to: storeURL)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
     
