@@ -110,7 +110,7 @@ class CodableStargazersStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        try? FileManager.default.removeItem(at: testSpecificStoreURL())
+        deleteStoreArtifacts()
     }
 
     func test_retrieve_deliversNoResultsOnEmptyCache() {
@@ -262,6 +262,10 @@ class CodableStargazersStoreTests: XCTestCase {
     
     private func noWritePermissionsURL() -> URL {
         return adminApplicationDirectoryURL().appendingPathComponent("any.store")
+    }
+    
+    private func deleteStoreArtifacts() {
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
     }
     
     private func cachesDirectoryURL() -> URL {
