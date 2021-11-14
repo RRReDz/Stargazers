@@ -12,7 +12,15 @@ public protocol StargazersStore {
     typealias DeleteCompletion = (Result<Void, Error>) -> Void
     typealias InsertCompletion = (Result<Void, Error>) -> Void
     
+    /// The completion handler can be invoked in any thread.
+    /// Clients are responsible to dispatch to appropriate threads, if needed.
     func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion)
+    
+    /// The completion handler can be invoked in any thread.
+    /// Clients are responsible to dispatch to appropriate threads, if needed.
     func insert(_ stargazers: [LocalStargazer], for repository: LocalRepository, completion: @escaping InsertCompletion)
+    
+    /// The completion handler can be invoked in any thread.
+    /// Clients are responsible to dispatch to appropriate threads, if needed.
     func deleteStargazers(for repository: LocalRepository, completion: @escaping DeleteCompletion)
 }
