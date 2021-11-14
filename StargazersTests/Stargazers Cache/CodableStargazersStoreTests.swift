@@ -193,6 +193,16 @@ class CodableStargazersStoreTests: XCTestCase {
         XCTAssertThrowsError(try insertionResult.get())
     }
     
+    func test_insert_deliversErrorOnInvalidStoreURL() throws {
+        let storeURL = URL(string: "invalid://store-url")!
+        let sut = makeSUT(storeURL: storeURL)
+        
+        let stargazers = uniqueStargazers().local
+        let insertionResult = insert(stargazers: stargazers, to: sut)
+        
+        XCTAssertThrowsError(try insertionResult.get())
+    }
+    
     func test_deleteStargazers_cacheStaysEmptyOnEmptyCache() {
         let sut = makeSUT()
         
