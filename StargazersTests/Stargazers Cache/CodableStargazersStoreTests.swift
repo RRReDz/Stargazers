@@ -259,7 +259,7 @@ class CodableStargazersStoreTests: XCTestCase {
     
     // MARK: - Utils
 
-    private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableStargazersStore {
+    private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> StargazersStore {
         let sut = CodableStargazersStore(storeURL: storeURL ?? testSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
@@ -286,7 +286,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     private func expect(
-        _ sut: CodableStargazersStore,
+        _ sut: StargazersStore,
         toRetrieve expectedResult: Result<[LocalStargazer], Error>,
         for repository: LocalRepository? = nil,
         file: StaticString = #filePath,
@@ -314,7 +314,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     private func expect(
-        _ sut: CodableStargazersStore,
+        _ sut: StargazersStore,
         toRetrieveTwice expectedResult: Result<[LocalStargazer], Error>,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -327,7 +327,7 @@ class CodableStargazersStoreTests: XCTestCase {
     private func insert(
         stargazers: [LocalStargazer],
         for repository: LocalRepository? = nil,
-        to sut: CodableStargazersStore,
+        to sut: StargazersStore,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Result<Void, Error> {
@@ -345,7 +345,7 @@ class CodableStargazersStoreTests: XCTestCase {
     }
     
     @discardableResult
-    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: CodableStargazersStore) -> Result<Void, Error> {
+    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: StargazersStore) -> Result<Void, Error> {
         let exp = expectation(description: "Wait for stargazers delete completion")
         
         var result: Result<Void, Error>!
