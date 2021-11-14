@@ -8,7 +8,7 @@
 import XCTest
 import Stargazers
 
-class CodableStargazersStore {
+class CodableStargazersStore: StargazersStore {
     private typealias Cache = [CodableHashableRepository: [CodableStargazer]]
     
     private struct CodableHashableRepository: Codable, Hashable {
@@ -50,7 +50,7 @@ class CodableStargazersStore {
         self.storeURL = storeURL
     }
     
-    func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
+    func retrieve(from repository: LocalRepository, completion: @escaping RetrieveCompletion) {
         queue.async { [storeURL] in
             do {
                 let cache = try Self.retrieveCache(from: storeURL)
@@ -66,7 +66,7 @@ class CodableStargazersStore {
     func insert(
         _ stargazers: [LocalStargazer],
         for repository: LocalRepository,
-        completion: @escaping StargazersStore.InsertCompletion
+        completion: @escaping InsertCompletion
     ) {
         queue.async(flags: .barrier) { [storeURL] in
             do {
@@ -83,7 +83,7 @@ class CodableStargazersStore {
     
     func deleteStargazers(
         for repository: LocalRepository,
-        completion: @escaping StargazersStore.DeleteCompletion
+        completion: @escaping DeleteCompletion
     ) {
         queue.async(flags: .barrier) { [storeURL] in
             do {
