@@ -130,7 +130,7 @@ class CodableStargazersStoreTests: XCTestCase {
         expect(makeSUT(), toRetrieveTwice: .success([]))
     }
     
-    func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
+    func test_retrieve_deliversValuesOnNonEmptyCache() {
         let sut = makeSUT()
         let stargazers = uniqueStargazers().local
         insert(stargazers: stargazers, to: sut)
