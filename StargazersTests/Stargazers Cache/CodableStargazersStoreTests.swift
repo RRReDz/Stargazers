@@ -51,11 +51,11 @@ class CodableStargazersStore {
     }
     
     func retrieve(from repository: LocalRepository, completion: @escaping StargazersStore.RetrieveCompletion) {
-        queue.async { [weak self] in
+        queue.async { [storeURL] in
             do {
-                let cache = try self?.retrieveCache()
+                let cache = try Self.retrieveCache(from: storeURL)
                 let key = Cache.Key(from: repository)
-                let stargazers = cache?[key] ?? []
+                let stargazers = cache[key] ?? []
                 completion(.success(stargazers.map { $0.local }))
             } catch {
                 completion(.failure(error))
@@ -68,10 +68,9 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.InsertCompletion
     ) {
-        let storeURL = storeURL
-        queue.async(flags: .barrier) { [weak self] in
+        queue.async(flags: .barrier) { [storeURL] in
             do {
-                var cache = (try self?.retrieveCache()) ?? [:]
+                var cache = try Self.retrieveCache(from: storeURL)
                 let key = Cache.Key(from: repository)
                 cache[key] = stargazers.map(Cache.Value.Element.init)
                 try JSONEncoder().encode(cache).write(to: storeURL)
@@ -86,10 +85,9 @@ class CodableStargazersStore {
         for repository: LocalRepository,
         completion: @escaping StargazersStore.DeleteCompletion
     ) {
-        let storeURL = storeURL
-        queue.async(flags: .barrier) { [weak self] in
+        queue.async(flags: .barrier) { [storeURL] in
             do {
-                var cache = (try self?.retrieveCache()) ?? [:]
+                var cache = try Self.retrieveCache(from: storeURL)
                 let key = Cache.Key(from: repository)
                 cache[key] = nil
                 try JSONEncoder().encode(cache).write(to: storeURL)
@@ -100,7 +98,7 @@ class CodableStargazersStore {
         }
     }
     
-    private func retrieveCache() throws -> Cache {
+    private static func retrieveCache(from storeURL: URL) throws -> Cache {
         guard let data = try? Data(contentsOf: storeURL) else {
             return [:]
         }
