@@ -8,8 +8,115 @@
 import XCTest
 import Stargazers
 
-class CodableStargazersStoreTests: XCTestCase {
+protocol StargazersStoreSpecs {
+    func test_retrieve_deliversNoResultsOnEmptyCache()
+    func test_retrieve_hasNoSideEffectsOnEmtpyCache()
+    func test_retrieve_deliversValuesOnNonEmptyCache()
+    func test_retrieve_hasNoSideEffectOnNonEmptyCache()
+    func test_insert_toNonEmptyCacheOverridesPreviousData()
+    func test_insert_toNonEmptyCacheButOtherRepoDoesNotOverridePreviousRepoData()
+    func test_deleteStargazers_cacheStaysEmptyOnEmptyCache()
+    func test_deleteStargazers_leavesCacheEmptyOnNonEmptyCache()
+    func test_deleteStargazers_doesNotLeaveCacheEmptyForOtherRepositoryNonEmptyData()
+    func test_sideEffects_runsSerially()
+}
+
+protocol FailableRetrieveStargazersStoreSpecs: StargazersStoreSpecs {
+    func test_retrieve_returnsErrorOnInvalidCacheData() throws
+    func test_retrieve_hasNoSideEffectsOnInvalidCacheData() throws
+}
+
+protocol FailableInsertStargazersStoreSpecs: StargazersStoreSpecs {
+    func test_insert_deliversErrorOnStoreURLWithNoWritePermissions() throws
+    func test_insert_deliversErrorOnInvalidStoreURL() throws
+}
+
+protocol FailableDeleteStargazersStoreTestSpecs: StargazersStoreSpecs {
+    func test_deleteStargazers_deliversErrorOnStoreURLWithNoWritePermissions() throws
+}
+
+typealias FailableStargazersStoreSpecs =
+    FailableRetrieveStargazersStoreSpecs &
+    FailableInsertStargazersStoreSpecs &
+    FailableDeleteStargazersStoreTestSpecs
+
+extension StargazersStoreSpecs where Self: XCTestCase {
+    func expect(
+        _ sut: StargazersStore,
+        toRetrieve expectedResult: Result<[LocalStargazer], Error>,
+        for repository: LocalRepository? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for retrieve completion")
+        
+        sut.retrieve(from: repository ?? useCaseRepository().local) { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case let (.success(expectedStargazers), .success(receivedStargazers)):
+                XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail(
+                    "Expected results to be the same, expected \(expectedResult) got \(receivedResult) instead",
+                    file: file,
+                    line: line
+                )
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
     
+    func expect(
+        _ sut: StargazersStore,
+        toRetrieveTwice expectedResult: Result<[LocalStargazer], Error>,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+    }
+    
+    @discardableResult
+    func insert(
+        stargazers: [LocalStargazer],
+        for repository: LocalRepository? = nil,
+        to sut: StargazersStore,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Result<Void, Error> {
+        let exp = expectation(description: "Wait for insert completion")
+        var result: Result<Void, Error>!
+        
+        sut.insert(stargazers, for: repository ?? useCaseRepository().local) {
+            result = $0
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        
+        return result
+    }
+    
+    @discardableResult
+    func deleteStargazers(for repository: LocalRepository? = nil, in sut: StargazersStore) -> Result<Void, Error> {
+        let exp = expectation(description: "Wait for stargazers delete completion")
+        
+        var result: Result<Void, Error>!
+        sut.deleteStargazers(for: repository ?? useCaseRepository().local) {
+            result = $0
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        
+        return result
+    }
+}
+
+class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     override func setUp() {
         super.setUp()
         
@@ -185,80 +292,6 @@ class CodableStargazersStoreTests: XCTestCase {
     
     private func adminApplicationDirectoryURL() -> URL {
         FileManager.default.urls(for: .adminApplicationDirectory, in: .systemDomainMask).first!
-    }
-    
-    private func expect(
-        _ sut: StargazersStore,
-        toRetrieve expectedResult: Result<[LocalStargazer], Error>,
-        for repository: LocalRepository? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let exp = expectation(description: "Wait for retrieve completion")
-        
-        sut.retrieve(from: repository ?? useCaseRepository().local) { receivedResult in
-            switch (expectedResult, receivedResult) {
-            case let (.success(expectedStargazers), .success(receivedStargazers)):
-                XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
-            case (.failure, .failure):
-                break
-            default:
-                XCTFail(
-                    "Expected results to be the same, expected \(expectedResult) got \(receivedResult) instead",
-                    file: file,
-                    line: line
-                )
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
-    }
-    
-    private func expect(
-        _ sut: StargazersStore,
-        toRetrieveTwice expectedResult: Result<[LocalStargazer], Error>,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        expect(sut, toRetrieve: expectedResult, file: file, line: line)
-        expect(sut, toRetrieve: expectedResult, file: file, line: line)
-    }
-    
-    @discardableResult
-    private func insert(
-        stargazers: [LocalStargazer],
-        for repository: LocalRepository? = nil,
-        to sut: StargazersStore,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> Result<Void, Error> {
-        let exp = expectation(description: "Wait for insert completion")
-        var result: Result<Void, Error>!
-        
-        sut.insert(stargazers, for: repository ?? useCaseRepository().local) {
-            result = $0
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
-        
-        return result
-    }
-    
-    @discardableResult
-    private func deleteStargazers(for repository: LocalRepository? = nil, in sut: StargazersStore) -> Result<Void, Error> {
-        let exp = expectation(description: "Wait for stargazers delete completion")
-        
-        var result: Result<Void, Error>!
-        sut.deleteStargazers(for: repository ?? useCaseRepository().local) {
-            result = $0
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
-        
-        return result
     }
     
     private func uniqueLocalRepository() -> LocalRepository {
