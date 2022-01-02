@@ -38,7 +38,7 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let loadSut = makeSUT()
         
         let repository = anyRepository()
-        let insertedStargazers = uniqueStargazers().model
+        let insertedStargazers = uniqueUseCaseStargazers().model
         
         let saveExp = expectation(description: "Wait for save completion")
         saveSut.save(insertedStargazers, for: repository) { result in

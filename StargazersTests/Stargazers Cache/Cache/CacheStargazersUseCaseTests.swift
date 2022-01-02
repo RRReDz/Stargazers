@@ -20,7 +20,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
         
-        sut.save(uniqueStargazers().model, for: repository.model) { _ in }
+        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
@@ -29,7 +29,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
         
-        sut.save(uniqueStargazers().model, for: repository.model) { _ in }
+        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
         store.completeDeletionWithError(anyNSError())
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
@@ -38,7 +38,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccess() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueStargazers()
+        let stargazers = uniqueUseCaseStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -52,7 +52,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionError() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueStargazers()
+        let stargazers = uniqueUseCaseStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -67,7 +67,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteAndInsertMessagesOnDeletionSuccessAndInsertionSuccess() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
-        let stargazers = uniqueStargazers()
+        let stargazers = uniqueUseCaseStargazers()
         
         sut.save(stargazers.model, for: repository.model) { _ in }
         store.completeDeletionSuccessfully()
@@ -116,7 +116,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
     }
     
     func test_save_doesNotSendStoreInsertMessageWhenInstanceHasBeenDeallocatedAndCompleteDeletionSuccessfully() {
-        let stargazers = uniqueStargazers().model
+        let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
         var (sut, store) = makeOptionalSUT()
         
@@ -170,7 +170,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for save completion")
-        sut.save(uniqueStargazers().model, for: anyRepository()) { receivedResult in
+        sut.save(uniqueUseCaseStargazers().model, for: anyRepository()) { receivedResult in
             switch (expectedResult, receivedResult) {
             case (.success, .success):
                 break
@@ -193,7 +193,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let stargazers = uniqueStargazers().model
+        let stargazers = uniqueUseCaseStargazers().model
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         sut.save(stargazers, for: repository.model) { capturedResults.append($0) }
