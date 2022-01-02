@@ -29,9 +29,9 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         let expectedRepository = anyRepository()
         
         var capturedRepositories = [Repository]()
-        let (sut, _) = makeSUT(for: { [weak self] repository in
+        let (sut, _) = makeSUT(for: { repository in
             capturedRepositories.append(repository)
-            return self!.anyURL()
+            return anyURL()
         })
         
         sut.load(from: expectedRepository) { _ in }
@@ -206,10 +206,6 @@ class LoadStargazersFromRemoteUseCaseTests: XCTestCase {
         action()
         
         wait(for: [exp], timeout: 1.0)
-    }
-    
-    private func anyURL() -> URL {
-        URL(string: "http://any-url.com")!
     }
     
     private func anyNSError() -> NSError {
