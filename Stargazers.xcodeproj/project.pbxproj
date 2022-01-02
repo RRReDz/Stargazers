@@ -27,6 +27,7 @@
 		733EC21026D9835E0097DFA0 /* LocalStargazersArray+toModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733EC20F26D9835E0097DFA0 /* LocalStargazersArray+toModel.swift */; };
 		733EC21226D983960097DFA0 /* LocalStargazer+toModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733EC21126D983960097DFA0 /* LocalStargazer+toModel.swift */; };
 		733EC21426D983B60097DFA0 /* Repository+toModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733EC21326D983B60097DFA0 /* Repository+toModel.swift */; };
+		7360A5AF2781FBF7006A807B /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
 		738B444926CF8ADA0042503F /* Strings+UTF8DataEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738B444826CF8ADA0042503F /* Strings+UTF8DataEncoding.swift */; };
 		7399298C2776748800180E02 /* StargazersCacheIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399298B2776748800180E02 /* StargazersCacheIntegrationTests.swift */; };
 		7399298D2776748800180E02 /* Stargazers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7301226D26BF258F0007B086 /* Stargazers.framework */; };
@@ -599,6 +600,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7399298C2776748800180E02 /* StargazersCacheIntegrationTests.swift in Sources */,
+				7360A5AF2781FBF7006A807B /* XCTestCase+MemoryLeaksTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
