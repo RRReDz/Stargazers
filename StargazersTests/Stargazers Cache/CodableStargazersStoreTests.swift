@@ -25,7 +25,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_retrieve_deliversValuesOnNonEmptyCache() {
         let sut = makeSUT()
-        let stargazers = uniqueStargazers().local
+        let stargazers = uniqueUseCaseStargazers().local
         insert(stargazers: stargazers, to: sut)
         
         expect(sut, toRetrieve: .success(stargazers))
@@ -33,7 +33,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_retrieve_hasNoSideEffectOnNonEmptyCache() {
         let sut = makeSUT()
-        let stargazers = uniqueStargazers().local
+        let stargazers = uniqueUseCaseStargazers().local
         insert(stargazers: stargazers, to: sut)
         
         expect(sut, toRetrieveTwice: .success(stargazers))
@@ -55,10 +55,10 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_insert_toNonEmptyCacheOverridesPreviousData() {
         let sut = makeSUT()
-        let previousStargazers = uniqueStargazers().local
+        let previousStargazers = uniqueUseCaseStargazers().local
         insert(stargazers: previousStargazers, to: sut)
         
-        let newStargazers = uniqueStargazers().local
+        let newStargazers = uniqueUseCaseStargazers().local
         insert(stargazers: newStargazers, to: sut)
         
         expect(sut, toRetrieve: .success(newStargazers))
@@ -66,11 +66,11 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_insert_toNonEmptyCacheButOtherRepoDoesNotOverridePreviousRepoData() {
         let sut = makeSUT()
-        let firstRepoStargazers = uniqueStargazers().local
+        let firstRepoStargazers = uniqueUseCaseStargazers().local
         let firstRepo = uniqueLocalRepository()
         insert(stargazers: firstRepoStargazers, for: firstRepo, to: sut)
         
-        let secondRepoStargazers = uniqueStargazers().local
+        let secondRepoStargazers = uniqueUseCaseStargazers().local
         insert(stargazers: secondRepoStargazers, for: uniqueLocalRepository(), to: sut)
         
         expect(sut, toRetrieve: .success(firstRepoStargazers), for: firstRepo)
@@ -80,7 +80,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
         let storeURL = noWritePermissionsURL()
         let sut = makeSUT(storeURL: storeURL)
         
-        let stargazers = uniqueStargazers().local
+        let stargazers = uniqueUseCaseStargazers().local
         let insertionResult = insert(stargazers: stargazers, to: sut)
         
         XCTAssertThrowsError(try insertionResult.get())
@@ -90,7 +90,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
         let storeURL = URL(string: "invalid://store-url")!
         let sut = makeSUT(storeURL: storeURL)
         
-        let stargazers = uniqueStargazers().local
+        let stargazers = uniqueUseCaseStargazers().local
         let insertionResult = insert(stargazers: stargazers, to: sut)
         
         XCTAssertThrowsError(try insertionResult.get())
@@ -106,7 +106,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_deleteStargazers_leavesCacheEmptyOnNonEmptyCache() {
         let sut = makeSUT()
-        insert(stargazers: uniqueStargazers().local, to: sut)
+        insert(stargazers: uniqueUseCaseStargazers().local, to: sut)
         
         deleteStargazers(in: sut)
         
@@ -124,7 +124,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
     
     func test_deleteStargazers_doesNotLeaveCacheEmptyForOtherRepositoryNonEmptyData() {
         let sut = makeSUT()
-        let firstRepoStargazers = uniqueStargazers().local
+        let firstRepoStargazers = uniqueUseCaseStargazers().local
         let firstRepo = uniqueLocalRepository()
         insert(stargazers: firstRepoStargazers, for: firstRepo, to: sut)
         
@@ -143,7 +143,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
             expectation(description: "Second insertion completion")
         ]
         
-        sut.insert(uniqueStargazers().local, for: uniqueLocalRepository()) { _ in
+        sut.insert(uniqueUseCaseStargazers().local, for: uniqueLocalRepository()) { _ in
             expectations[0].fulfill()
         }
         
@@ -151,7 +151,7 @@ class CodableStargazersStoreTests: XCTestCase, FailableStargazersStoreSpecs {
             expectations[1].fulfill()
         }
         
-        sut.insert(uniqueStargazers().local, for: uniqueLocalRepository()) { _ in
+        sut.insert(uniqueUseCaseStargazers().local, for: uniqueLocalRepository()) { _ in
             expectations[2].fulfill()
         }
         

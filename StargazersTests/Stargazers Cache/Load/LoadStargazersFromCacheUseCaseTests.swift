@@ -38,7 +38,7 @@ class LoadStargazersFromCacheUseCaseTests: XCTestCase {
     
     func test_load_deliversStargazersOnStoreRetrievalCompletionWithLocalStargazers() {
         let (sut, store) = makeSUT()
-        let stargazers = uniqueStargazers()
+        let stargazers = uniqueUseCaseStargazers()
         
         assert(sut, completesWith: .success(stargazers.model), on: {
             store.completeRetrievalSuccessfully(with: stargazers.local)
@@ -52,7 +52,7 @@ class LoadStargazersFromCacheUseCaseTests: XCTestCase {
         sut?.load(from: useCaseRepository().model) { capturedResults.append($0) }
         
         sut = nil
-        store.completeRetrievalSuccessfully(with: uniqueStargazers().local)
+        store.completeRetrievalSuccessfully(with: uniqueUseCaseStargazers().local)
         store.completeRetrievalWithError(anyNSError())
         
         XCTAssert(capturedResults.isEmpty, "Expected no results, got \(capturedResults) instead.")
