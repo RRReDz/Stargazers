@@ -14,23 +14,18 @@ internal func useCaseRepository() -> (model: Repository, local: LocalRepository)
     return (model, local)
 }
 
-internal func uniqueUseCaseStargazer() -> (model: Stargazer, local: LocalStargazer) {
-    let model = Stargazer(
-        id: UUID().uuidString,
-        username: "any username",
-        avatarURL: anyURL(),
-        detailURL: anyURL())
-    
-    let local = LocalStargazer(
-        id: model.id,
-        username: model.username,
-        avatarURL: model.avatarURL,
-        detailURL: model.detailURL)
-    
-    return (model, local)
-}
-
 internal func uniqueUseCaseStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
+    let uniqueUseCaseStargazer: () -> (model: Stargazer, local: LocalStargazer) = {
+        let model = uniqueStargazer()
+        let local = LocalStargazer(
+            id: model.id,
+            username: model.username,
+            avatarURL: model.avatarURL,
+            detailURL: model.detailURL)
+        
+        return (model, local)
+    }
+    
     let stargazers = [
         uniqueUseCaseStargazer(),
         uniqueUseCaseStargazer()
