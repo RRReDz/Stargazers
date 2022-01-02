@@ -9,7 +9,7 @@ import Foundation
 import Stargazers
 
 internal func anyRepository() -> Repository {
-    return Repository(name: "any repository name", owner: "any repository owner")
+    Repository(name: "any repository name", owner: "any repository owner")
 }
 
 internal func anyNSError() -> NSError {
