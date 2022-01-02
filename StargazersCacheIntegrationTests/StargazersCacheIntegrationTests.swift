@@ -18,10 +18,9 @@ class StargazersCacheIntegrationTests: XCTestCase {
     
     func test_load_deliversNoStargazersOnEmtpyCache() throws {
         let sut = makeSUT()
-        let repository = Repository(name: "Any repository", owner: "Any owner")
         
         let exp = expectation(description: "Wait for load completion")
-        sut.load(from: repository) { result in
+        sut.load(from: anyRepository()) { result in
             switch result {
             case let .success(stargazers):
                 XCTAssertEqual([], stargazers)
@@ -38,21 +37,8 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let saveSut = makeSUT()
         let loadSut = makeSUT()
         
-        let repository = Repository(name: "Any repository", owner: "Any owner")
-        let insertedStargazers = [
-            Stargazer(
-                id: UUID().uuidString,
-                username: "Any username",
-                avatarURL: URL(string: "any-avatar-url.com")!,
-                detailURL: URL(string: "any-detail-url.com")!
-            ),
-            Stargazer(
-                id: UUID().uuidString,
-                username: "Another username",
-                avatarURL: URL(string: "another-avatar-url.com")!,
-                detailURL: URL(string: "another-detail-url.com")!
-            )
-        ]
+        let repository = anyRepository()
+        let insertedStargazers = uniqueStargazers().model
         
         let saveExp = expectation(description: "Wait for save completion")
         saveSut.save(insertedStargazers, for: repository) { result in
