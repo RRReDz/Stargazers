@@ -12,6 +12,15 @@ internal func anyRepository() -> Repository {
     Repository(name: "any repository name", owner: "any repository owner")
 }
 
+internal func uniqueStargazer() -> Stargazer {
+    Stargazer(
+        id: UUID().uuidString,
+        username: "any username",
+        avatarURL: anyURL(),
+        detailURL: anyURL()
+    )
+}
+
 internal func anyNSError() -> NSError {
     NSError(domain: "any error", code: -1)
 }
