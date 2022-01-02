@@ -11,15 +11,13 @@ import Stargazers
 class StargazersCacheIntegrationTests: XCTestCase {
     
     override func setUp() {
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(String(describing: StargazersCacheIntegrationTests.self)).store")
-        try? FileManager.default.removeItem(at: url)
+        super.setUp()
+        
+        deleteStoreArtifacts()
     }
     
     func test_load_deliversNoStargazersOnEmtpyCache() throws {
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(String(describing: StargazersCacheIntegrationTests.self)).store")
-        let store = CodableStargazersStore(storeURL: url)
-        let sut = LocalStargazersLoader(store: store)
-        
+        let sut = makeSUT()
         let repository = Repository(name: "Any repository", owner: "Any owner")
         
         let exp = expectation(description: "Wait for load completion")
@@ -32,14 +30,13 @@ class StargazersCacheIntegrationTests: XCTestCase {
             }
             exp.fulfill()
         }
+        
         wait(for: [exp], timeout: 1.0)
     }
     
     func test_load_deliversStargazersSavedOnASeparateInstance() throws {
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(String(describing: StargazersCacheIntegrationTests.self)).store")
-        let store = CodableStargazersStore(storeURL: url)
-        let saveSut = LocalStargazersLoader(store: store)
-        let loadSut = LocalStargazersLoader(store: store)
+        let saveSut = makeSUT()
+        let loadSut = makeSUT()
         
         let repository = Repository(name: "Any repository", owner: "Any owner")
         let insertedStargazers = [
@@ -81,5 +78,26 @@ class StargazersCacheIntegrationTests: XCTestCase {
         }
         
         wait(for: [loadExp], timeout: 1.0)
+    }
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> LocalStargazersLoader {
+        let storeURL = testSpecificStoreURL()
+        let store = CodableStargazersStore(storeURL: storeURL)
+        let sut = LocalStargazersLoader(store: store)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(store, file: file, line: line)
+        return sut
+    }
+    
+    private func cachesDirectoryURL() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectoryURL().appendingPathComponent("\(String(describing: self)).store")
+    }
+    
+    private func deleteStoreArtifacts() {
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
     }
 }
