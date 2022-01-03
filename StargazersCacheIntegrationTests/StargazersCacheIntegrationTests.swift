@@ -28,7 +28,7 @@ class StargazersCacheIntegrationTests: XCTestCase {
         
         let stargazers = [anyStargazer()]
         
-        expect(saveSut, toSave: stargazers)
+        save(stargazers, with: saveSut)
         expect(loadSut, toLoad: stargazers)
     }
     
@@ -42,12 +42,12 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let firstRepoStargazers = uniqueStargazers()
         let secondRepoStargazers = uniqueStargazers()
         
-        expect(firstRepoSaveSut, toSave: firstRepoStargazers, for: firstRepo)
+        save(firstRepoStargazers, for: firstRepo, with: firstRepoSaveSut)
         
         expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
         expect(loadSut, toLoad: [], for: secondRepo)
         
-        expect(secondRepoSaveSut, toSave: secondRepoStargazers, for: secondRepo)
+        save(secondRepoStargazers, for: secondRepo, with: secondRepoSaveSut)
         
         expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
         expect(loadSut, toLoad: secondRepoStargazers, for: secondRepo)
@@ -63,22 +63,22 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let firstStargazers = uniqueStargazers()
         let latestStargazers = uniqueStargazers()
         
-        expect(firstRepoSaveSut, toSave: firstStargazers, for: firstRepo)
+        save(firstStargazers, for: firstRepo, with: firstRepoSaveSut)
         
         expect(loadSut, toLoad: firstStargazers, for: firstRepo)
         expect(loadSut, toLoad: [], for: secondRepo)
         
-        expect(secondRepoSaveSut, toSave: firstStargazers, for: secondRepo)
+        save(firstStargazers, for: secondRepo, with: secondRepoSaveSut)
         
         expect(loadSut, toLoad: firstStargazers, for: firstRepo)
         expect(loadSut, toLoad: firstStargazers, for: secondRepo)
         
-        expect(firstRepoSaveSut, toSave: latestStargazers, for: firstRepo)
+        save(latestStargazers, for: firstRepo, with: firstRepoSaveSut)
         
         expect(loadSut, toLoad: latestStargazers, for: firstRepo)
         expect(loadSut, toLoad: firstStargazers, for: secondRepo)
         
-        expect(secondRepoSaveSut, toSave: latestStargazers, for: secondRepo)
+        save(latestStargazers, for: secondRepo, with: secondRepoSaveSut)
         
         expect(loadSut, toLoad: latestStargazers, for: firstRepo)
         expect(loadSut, toLoad: latestStargazers, for: secondRepo)
@@ -116,10 +116,10 @@ class StargazersCacheIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func expect(
-        _ sut: LocalStargazersLoader,
-        toSave stargazers: [Stargazer],
+    private func save(
+        _ stargazers: [Stargazer],
         for repository: Repository? = nil,
+        with sut: LocalStargazersLoader,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
