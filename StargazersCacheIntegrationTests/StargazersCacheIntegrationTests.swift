@@ -19,52 +19,20 @@ class StargazersCacheIntegrationTests: XCTestCase {
     func test_load_deliversNoStargazersOnEmtpyCache() throws {
         let sut = makeSUT()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load(from: anyRepository()) { result in
-            switch result {
-            case let .success(stargazers):
-                XCTAssertEqual([], stargazers)
-            default:
-                XCTFail("Expected success with empty stargazers, got \(result) instead")
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toLoad: [])
     }
     
     func test_load_deliversStargazersSavedOnASeparateInstance() throws {
         let saveSut = makeSUT()
         let loadSut = makeSUT()
         
-        let repository = anyRepository()
         let stargazers = [anyStargazer()]
         
-        let saveExp = expectation(description: "Wait for save completion")
-        saveSut.save(stargazers, for: repository) { result in
-            switch result {
-            case .success:
-                break
-            default:
-                XCTFail("Expected saving successfully, got \(result) instead")
-            }
-            saveExp.fulfill()
-        }
-        wait(for: [saveExp], timeout: 1.0)
-        
-        let loadExp = expectation(description: "Wait for load completion")
-        loadSut.load(from: repository) { result in
-            switch result {
-            case let .success(receivedStargazers):
-                XCTAssertEqual(stargazers, receivedStargazers)
-            default:
-                XCTFail("Expected success with empty stargazers, got \(result) instead")
-            }
-            loadExp.fulfill()
-        }
-        
-        wait(for: [loadExp], timeout: 1.0)
+        expect(saveSut, toSave: stargazers)
+        expect(loadSut, toLoad: stargazers)
     }
+    
+    // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> LocalStargazersLoader {
         let storeURL = testSpecificStoreURL()
@@ -73,6 +41,42 @@ class StargazersCacheIntegrationTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(store, file: file, line: line)
         return sut
+    }
+    
+    private func expect(
+        _ sut: LocalStargazersLoader,
+        toLoad expectedStargazers: [Stargazer],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let exp = expectation(description: "Wait for load completion")
+        sut.load(from: anyRepository()) { result in
+            switch result {
+            case let .success(receivedStargazers):
+                XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
+            default:
+                XCTFail("Expected success with empty stargazers, got \(result) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func expect(
+        _ sut: LocalStargazersLoader,
+        toSave stargazers: [Stargazer],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let saveExp = expectation(description: "Wait for save completion")
+        sut.save(stargazers, for: anyRepository()) { result in
+            if case .failure = result {
+                XCTFail("Expected saving successfully, got \(result) instead", file: file, line: line)
+            }
+            saveExp.fulfill()
+        }
+        wait(for: [saveExp], timeout: 1.0)
     }
     
     private func cachesDirectoryURL() -> URL {
