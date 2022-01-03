@@ -32,7 +32,7 @@ class StargazersCacheIntegrationTests: XCTestCase {
         expect(loadSut, toLoad: stargazers)
     }
     
-    func test_load_deliversStargazersForRepositorySavedOnASeparateInstance() throws {
+    func test_load_deliversStargazersForRepositorySavedOnSeparateInstances() throws {
         let firstRepoSaveSut = makeSUT()
         let secondRepoSaveSut = makeSUT()
         let loadSut = makeSUT()
@@ -51,6 +51,37 @@ class StargazersCacheIntegrationTests: XCTestCase {
         
         expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
         expect(loadSut, toLoad: secondRepoStargazers, for: secondRepo)
+    }
+    
+    func test_save_overridesStargazersForRepositorySavedOnSeparateInstances() throws {
+        let firstRepoSaveSut = makeSUT()
+        let secondRepoSaveSut = makeSUT()
+        let loadSut = makeSUT()
+        
+        let firstRepo = uniqueRepository()
+        let secondRepo = uniqueRepository()
+        let firstStargazers = uniqueStargazers()
+        let latestStargazers = uniqueStargazers()
+        
+        expect(firstRepoSaveSut, toSave: firstStargazers, for: firstRepo)
+        
+        expect(loadSut, toLoad: firstStargazers, for: firstRepo)
+        expect(loadSut, toLoad: [], for: secondRepo)
+        
+        expect(secondRepoSaveSut, toSave: firstStargazers, for: secondRepo)
+        
+        expect(loadSut, toLoad: firstStargazers, for: firstRepo)
+        expect(loadSut, toLoad: firstStargazers, for: secondRepo)
+        
+        expect(firstRepoSaveSut, toSave: latestStargazers, for: firstRepo)
+        
+        expect(loadSut, toLoad: latestStargazers, for: firstRepo)
+        expect(loadSut, toLoad: firstStargazers, for: secondRepo)
+        
+        expect(secondRepoSaveSut, toSave: latestStargazers, for: secondRepo)
+        
+        expect(loadSut, toLoad: latestStargazers, for: firstRepo)
+        expect(loadSut, toLoad: latestStargazers, for: secondRepo)
     }
     
     // MARK: - Helpers
