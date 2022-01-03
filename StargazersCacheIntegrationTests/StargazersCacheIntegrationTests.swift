@@ -38,10 +38,10 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let loadSut = makeSUT()
         
         let repository = anyRepository()
-        let insertedStargazers = [anyStargazer()]
+        let stargazers = [anyStargazer()]
         
         let saveExp = expectation(description: "Wait for save completion")
-        saveSut.save(insertedStargazers, for: repository) { result in
+        saveSut.save(stargazers, for: repository) { result in
             switch result {
             case .success:
                 break
@@ -56,7 +56,7 @@ class StargazersCacheIntegrationTests: XCTestCase {
         loadSut.load(from: repository) { result in
             switch result {
             case let .success(receivedStargazers):
-                XCTAssertEqual(insertedStargazers, receivedStargazers)
+                XCTAssertEqual(stargazers, receivedStargazers)
             default:
                 XCTFail("Expected success with empty stargazers, got \(result) instead")
             }
