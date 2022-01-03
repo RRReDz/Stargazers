@@ -43,13 +43,9 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let secondRepoStargazers = uniqueStargazers()
         
         save(firstRepoStargazers, for: firstRepo, with: firstRepoSaveSut)
-        
         expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
-        expect(loadSut, toLoad: [], for: secondRepo)
         
         save(secondRepoStargazers, for: secondRepo, with: secondRepoSaveSut)
-        
-        expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
         expect(loadSut, toLoad: secondRepoStargazers, for: secondRepo)
     }
     
@@ -64,23 +60,15 @@ class StargazersCacheIntegrationTests: XCTestCase {
         let latestStargazers = uniqueStargazers()
         
         save(firstStargazers, for: firstRepo, with: firstRepoSaveSut)
-        
         expect(loadSut, toLoad: firstStargazers, for: firstRepo)
-        expect(loadSut, toLoad: [], for: secondRepo)
         
         save(firstStargazers, for: secondRepo, with: secondRepoSaveSut)
-        
-        expect(loadSut, toLoad: firstStargazers, for: firstRepo)
         expect(loadSut, toLoad: firstStargazers, for: secondRepo)
         
         save(latestStargazers, for: firstRepo, with: firstRepoSaveSut)
-        
         expect(loadSut, toLoad: latestStargazers, for: firstRepo)
-        expect(loadSut, toLoad: firstStargazers, for: secondRepo)
         
         save(latestStargazers, for: secondRepo, with: secondRepoSaveSut)
-        
-        expect(loadSut, toLoad: latestStargazers, for: firstRepo)
         expect(loadSut, toLoad: latestStargazers, for: secondRepo)
     }
     
