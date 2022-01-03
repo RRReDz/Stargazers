@@ -19,8 +19,9 @@ class CacheStargazersUseCaseTests: XCTestCase {
     func test_save_sendStoreDeleteRepositoryStargazersMessage() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
+        let stargazers = [anyStargazer()]
         
-        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
+        sut.save(stargazers, for: repository.model) { _ in }
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
     }
@@ -28,8 +29,9 @@ class CacheStargazersUseCaseTests: XCTestCase {
     func test_save_sendOnlyDeleteMessageAfterDeletionError() {
         let (sut, store) = makeSUT()
         let repository = useCaseRepository()
+        let stargazers = [anyStargazer()]
         
-        sut.save(uniqueUseCaseStargazers().model, for: repository.model) { _ in }
+        sut.save(stargazers, for: repository.model) { _ in }
         store.completeDeletionWithError(anyNSError())
         
         XCTAssertEqual(store.messages, [.deleteStargazers(for: repository.local)])
@@ -116,7 +118,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
     }
     
     func test_save_doesNotSendStoreInsertMessageWhenInstanceHasBeenDeallocatedAndCompleteDeletionSuccessfully() {
-        let stargazers = uniqueUseCaseStargazers().model
+        let stargazers = [anyStargazer()]
         let repository = useCaseRepository()
         var (sut, store) = makeOptionalSUT()
         
@@ -169,8 +171,9 @@ class CacheStargazersUseCaseTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
+        let stargazers = [anyStargazer()]
         let exp = expectation(description: "Wait for save completion")
-        sut.save(uniqueUseCaseStargazers().model, for: anyRepository()) { receivedResult in
+        sut.save(stargazers, for: anyRepository()) { receivedResult in
             switch (expectedResult, receivedResult) {
             case (.success, .success):
                 break
@@ -193,7 +196,7 @@ class CacheStargazersUseCaseTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let stargazers = uniqueUseCaseStargazers().model
+        let stargazers = [anyStargazer()]
         let repository = useCaseRepository()
         var capturedResults = [Any]()
         sut.save(stargazers, for: repository.model) { capturedResults.append($0) }
