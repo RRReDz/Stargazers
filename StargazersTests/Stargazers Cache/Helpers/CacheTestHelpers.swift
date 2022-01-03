@@ -15,7 +15,19 @@ internal func useCaseRepository() -> (model: Repository, local: LocalRepository)
 }
 
 internal func uniqueUseCaseStargazers() -> (model: [Stargazer], local: [LocalStargazer]) {
-    let stargazers = uniqueStargazers()
+    let uniqueStargazer = {
+        Stargazer(
+            id: UUID().uuidString,
+            username: "any username",
+            avatarURL: anyURL(),
+            detailURL: anyURL()
+        )
+    }
+    
+    let stargazers = [
+        uniqueStargazer(),
+        uniqueStargazer()
+    ]
     
     return (
         stargazers,
