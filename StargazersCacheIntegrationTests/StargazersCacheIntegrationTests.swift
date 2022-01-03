@@ -32,6 +32,27 @@ class StargazersCacheIntegrationTests: XCTestCase {
         expect(loadSut, toLoad: stargazers)
     }
     
+    func test_load_deliversStargazersForRepositorySavedOnASeparateInstance() throws {
+        let firstRepoSaveSut = makeSUT()
+        let secondRepoSaveSut = makeSUT()
+        let loadSut = makeSUT()
+        
+        let firstRepo = uniqueRepository()
+        let secondRepo = uniqueRepository()
+        let firstRepoStargazers = uniqueStargazers()
+        let secondRepoStargazers = uniqueStargazers()
+        
+        expect(firstRepoSaveSut, toSave: firstRepoStargazers, for: firstRepo)
+        
+        expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
+        expect(loadSut, toLoad: [], for: secondRepo)
+        
+        expect(secondRepoSaveSut, toSave: secondRepoStargazers, for: secondRepo)
+        
+        expect(loadSut, toLoad: firstRepoStargazers, for: firstRepo)
+        expect(loadSut, toLoad: secondRepoStargazers, for: secondRepo)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> LocalStargazersLoader {
@@ -46,11 +67,12 @@ class StargazersCacheIntegrationTests: XCTestCase {
     private func expect(
         _ sut: LocalStargazersLoader,
         toLoad expectedStargazers: [Stargazer],
+        for repository: Repository? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for load completion")
-        sut.load(from: anyRepository()) { result in
+        sut.load(from: repository ?? anyRepository()) { result in
             switch result {
             case let .success(receivedStargazers):
                 XCTAssertEqual(expectedStargazers, receivedStargazers, file: file, line: line)
@@ -66,11 +88,12 @@ class StargazersCacheIntegrationTests: XCTestCase {
     private func expect(
         _ sut: LocalStargazersLoader,
         toSave stargazers: [Stargazer],
+        for repository: Repository? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let saveExp = expectation(description: "Wait for save completion")
-        sut.save(stargazers, for: anyRepository()) { result in
+        sut.save(stargazers, for: repository ?? anyRepository()) { result in
             if case .failure = result {
                 XCTFail("Expected saving successfully, got \(result) instead", file: file, line: line)
             }
