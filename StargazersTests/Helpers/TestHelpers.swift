@@ -9,23 +9,17 @@ import Foundation
 import Stargazers
 
 internal func anyRepository() -> Repository {
-    Repository(name: "any repository name", owner: "any repository owner")
+    Repository(
+        name: "any repository name",
+        owner: "any repository owner")
 }
 
-internal func uniqueStargazers() -> [Stargazer] {
-    let uniqueStargazer = {
-        Stargazer(
-            id: UUID().uuidString,
-            username: "any username",
-            avatarURL: anyURL(),
-            detailURL: anyURL()
-        )
-    }
-    
-    return [
-        uniqueStargazer(),
-        uniqueStargazer()
-    ]
+internal func anyStargazer() -> Stargazer {
+    Stargazer(
+        id: "any id",
+        username: "any username",
+        avatarURL: anyURL(),
+        detailURL: anyURL())
 }
 
 internal func anyNSError() -> NSError {
