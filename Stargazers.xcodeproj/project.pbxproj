@@ -228,6 +228,36 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		7311EDC8278F8CA4000606BA /* Loader */ = {
+			isa = PBXGroup;
+			children = (
+				7311EDCA278F8D9A000606BA /* Helpers */,
+				733EC20326D981A00097DFA0 /* LocalStargazersLoader.swift */,
+			);
+			path = Loader;
+			sourceTree = "<group>";
+		};
+		7311EDC9278F8D2F000606BA /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				733EC20526D981D50097DFA0 /* StargazersStore.swift */,
+				73AE8527274179A800B4698E /* CodableStargazersStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		7311EDCA278F8D9A000606BA /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				733EC20B26D982C90097DFA0 /* StargazersArray+toLocal.swift */,
+				733EC20D26D982FC0097DFA0 /* Stargazer+toLocal.swift */,
+				733EC20F26D9835E0097DFA0 /* LocalStargazersArray+toModel.swift */,
+				733EC21126D983960097DFA0 /* LocalStargazer+toModel.swift */,
+				733EC21326D983B60097DFA0 /* Repository+toModel.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		7316209C26C1DF3200EAA0E2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,26 +269,12 @@
 		733EC20226D980FD0097DFA0 /* Stargazers Cache */ = {
 			isa = PBXGroup;
 			children = (
-				733EC21526D984B60097DFA0 /* Extensions */,
-				733EC20326D981A00097DFA0 /* LocalStargazersLoader.swift */,
-				733EC20526D981D50097DFA0 /* StargazersStore.swift */,
 				733EC20726D982280097DFA0 /* LocalStargazer.swift */,
 				733EC20926D982920097DFA0 /* LocalRepository.swift */,
-				73AE8527274179A800B4698E /* CodableStargazersStore.swift */,
+				7311EDC9278F8D2F000606BA /* Store */,
+				7311EDC8278F8CA4000606BA /* Loader */,
 			);
 			path = "Stargazers Cache";
-			sourceTree = "<group>";
-		};
-		733EC21526D984B60097DFA0 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				733EC20B26D982C90097DFA0 /* StargazersArray+toLocal.swift */,
-				733EC20D26D982FC0097DFA0 /* Stargazer+toLocal.swift */,
-				733EC20F26D9835E0097DFA0 /* LocalStargazersArray+toModel.swift */,
-				733EC21126D983960097DFA0 /* LocalStargazer+toModel.swift */,
-				733EC21326D983B60097DFA0 /* Repository+toModel.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		7399298A2776748800180E02 /* StargazersCacheIntegrationTests */ = {
