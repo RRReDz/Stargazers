@@ -210,11 +210,8 @@
 			isa = PBXGroup;
 			children = (
 				73E0D83C26DED3D0001FF825 /* Helpers */,
-				73E5BB0F26E3D26F00D85231 /* Load */,
-				73E5BB1126E3D3C800D85231 /* Cache */,
-				7310F6032727566F00C81843 /* CodableStargazersStoreTests.swift */,
-				733C469F2755793C00EE4223 /* StargazersStoreSpecs.swift */,
-				733C46A127557A8600EE4223 /* StargazersStoreSpecs+Helpers.swift */,
+				7311EDCD278F8F98000606BA /* Store */,
+				7311EDCC278F8F82000606BA /* UseCase */,
 			);
 			path = "Stargazers Cache";
 			sourceTree = "<group>";
@@ -254,6 +251,33 @@
 				733EC20F26D9835E0097DFA0 /* LocalStargazersArray+toModel.swift */,
 				733EC21126D983960097DFA0 /* LocalStargazer+toModel.swift */,
 				733EC21326D983B60097DFA0 /* Repository+toModel.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		7311EDCC278F8F82000606BA /* UseCase */ = {
+			isa = PBXGroup;
+			children = (
+				73E5BB0F26E3D26F00D85231 /* Load */,
+				73E5BB1126E3D3C800D85231 /* Cache */,
+			);
+			path = UseCase;
+			sourceTree = "<group>";
+		};
+		7311EDCD278F8F98000606BA /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				7311EDCE278F8FF0000606BA /* Helpers */,
+				7310F6032727566F00C81843 /* CodableStargazersStoreTests.swift */,
+				733C469F2755793C00EE4223 /* StargazersStoreSpecs.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		7311EDCE278F8FF0000606BA /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				733C46A127557A8600EE4223 /* StargazersStoreSpecs+Helpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
