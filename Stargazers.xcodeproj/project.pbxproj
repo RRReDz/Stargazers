@@ -80,9 +80,7 @@
 
 /* Begin PBXFileReference section */
 		7301226D26BF258F0007B086 /* Stargazers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stargazers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7301227126BF258F0007B086 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7301227626BF258F0007B086 /* StargazersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StargazersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7301227D26BF258F0007B086 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		730122A326BF3EB20007B086 /* StargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersLoader.swift; sourceTree = "<group>"; };
 		730122A526BF3F0B0007B086 /* Stargazer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stargazer.swift; sourceTree = "<group>"; };
 		730122A726BF4FB30007B086 /* LoadStargazersFromRemoteUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadStargazersFromRemoteUseCaseTests.swift; sourceTree = "<group>"; };
@@ -108,7 +106,6 @@
 		73AE8527274179A800B4698E /* CodableStargazersStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableStargazersStore.swift; sourceTree = "<group>"; };
 		73D4E9FC26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StargazersAPIEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73D4E9FE26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersAPIEndToEndTests.swift; sourceTree = "<group>"; };
-		73D4EA0026C4801C00C2B9F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		73D7630F26C0133C005CCEC2 /* RemoteStargazersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersLoader.swift; sourceTree = "<group>"; };
 		73D7631126C0135A005CCEC2 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		73D7631426C09E05005CCEC2 /* RemoteStargazersMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStargazersMapper.swift; sourceTree = "<group>"; };
@@ -190,7 +187,6 @@
 				73D7630E26C01301005CCEC2 /* Stargazers API */,
 				733EC20226D980FD0097DFA0 /* Stargazers Cache */,
 				73D7631326C016F1005CCEC2 /* Stargazers Feature */,
-				7301227126BF258F0007B086 /* Info.plist */,
 			);
 			path = Stargazers;
 			sourceTree = "<group>";
@@ -201,7 +197,6 @@
 				730E682226C88C6000481C11 /* Helpers */,
 				73D7631A26C1484A005CCEC2 /* Stargazers API */,
 				730E681F26C880DB00481C11 /* Stargazers Cache */,
-				7301227D26BF258F0007B086 /* Info.plist */,
 			);
 			path = StargazersTests;
 			sourceTree = "<group>";
@@ -313,7 +308,6 @@
 			isa = PBXGroup;
 			children = (
 				73D4E9FE26C4801C00C2B9F1 /* StargazersAPIEndToEndTests.swift */,
-				73D4EA0026C4801C00C2B9F1 /* Info.plist */,
 			);
 			path = StargazersAPIEndToEndTests;
 			sourceTree = "<group>";
@@ -808,7 +802,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Stargazers/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -835,7 +830,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Stargazers/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -858,7 +854,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6JHQ8LLMGS;
-				INFOPLIST_FILE = StargazersTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -880,7 +877,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6JHQ8LLMGS;
-				INFOPLIST_FILE = StargazersTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -945,7 +943,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6JHQ8LLMGS;
-				INFOPLIST_FILE = StargazersAPIEndToEndTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -964,7 +963,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6JHQ8LLMGS;
-				INFOPLIST_FILE = StargazersAPIEndToEndTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
