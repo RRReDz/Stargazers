@@ -7,17 +7,27 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Table View Controller-->
+        <!--Repository's Stargazers-->
         <scene sceneID="xd7-W9-XD9">
             <objects>
-                <tableViewController id="DOs-Zk-hMf" sceneMemberID="viewController">
+                <tableViewController id="DOs-Zk-hMf" customClass="StargazersViewController" customModule="Prototype" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="o9G-R1-exh">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="zDL-Ro-oKK">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="16"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="W3t-7D-cQc">
+                            <rect key="frame" x="0.0" y="126.5" width="414" height="16"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="ezD-cB-zM8" style="IBUITableViewCellStyleDefault" id="Cpb-Kx-5dx">
-                                <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="StargazerCell" textLabel="ezD-cB-zM8" style="IBUITableViewCellStyleDefault" id="Cpb-Kx-5dx">
+                                <rect key="frame" x="0.0" y="60.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Cpb-Kx-5dx" id="Gk8-mX-JC2">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -41,7 +51,7 @@
                             <outlet property="delegate" destination="DOs-Zk-hMf" id="SaW-OZ-t6J"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="6bX-Np-gNX"/>
+                    <navigationItem key="navigationItem" title="Repository's Stargazers" id="6bX-Np-gNX"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5eY-G1-lWm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
