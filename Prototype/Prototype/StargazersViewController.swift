@@ -14,7 +14,7 @@ class StargazersViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.dequeueReusableCell(withIdentifier: "StargazerCell", for: indexPath)
+        return tableView.dequeueReusableCell(withIdentifier: "StargazerCellWithImage", for: indexPath)
     }
     
 }

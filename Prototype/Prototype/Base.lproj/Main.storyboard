@@ -21,28 +21,62 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="W3t-7D-cQc">
-                            <rect key="frame" x="0.0" y="126.5" width="414" height="16"/>
+                            <rect key="frame" x="0.0" y="172" width="414" height="16"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="StargazerCell" textLabel="ezD-cB-zM8" style="IBUITableViewCellStyleDefault" id="Cpb-Kx-5dx">
-                                <rect key="frame" x="0.0" y="60.5" width="414" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="StargazerCellWithImage" rowHeight="89" id="pgr-bQ-0DA">
+                                <rect key="frame" x="0.0" y="60.5" width="414" height="89"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Cpb-Kx-5dx" id="Gk8-mX-JC2">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pgr-bQ-0DA" id="v4n-ps-jcb">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="89"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ezD-cB-zM8">
-                                            <rect key="frame" x="20" y="0.0" width="374" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <string key="text">A very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name</string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Q09-Re-lSF">
+                                            <rect key="frame" x="20" y="10" width="374" height="69"/>
+                                            <subviews>
+                                                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qeT-mK-EPF" userLabel="Image Container">
+                                                    <rect key="frame" x="0.0" y="0.0" width="69" height="69"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="THM-PF-tg0">
+                                                            <rect key="frame" x="0.0" y="0.0" width="69" height="69"/>
+                                                        </imageView>
+                                                    </subviews>
+                                                    <color key="backgroundColor" red="0.8901960784313725" green="0.8901960784313725" blue="0.8901960784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" secondItem="qeT-mK-EPF" secondAttribute="width" multiplier="1:1" id="1Pu-q3-1dh"/>
+                                                        <constraint firstItem="THM-PF-tg0" firstAttribute="top" secondItem="qeT-mK-EPF" secondAttribute="top" id="NXb-sY-Qsb"/>
+                                                        <constraint firstAttribute="bottom" secondItem="THM-PF-tg0" secondAttribute="bottom" id="eGa-1M-rMq"/>
+                                                        <constraint firstItem="THM-PF-tg0" firstAttribute="leading" secondItem="qeT-mK-EPF" secondAttribute="leading" id="k4q-V7-JzM"/>
+                                                        <constraint firstAttribute="trailing" secondItem="THM-PF-tg0" secondAttribute="trailing" id="wG2-KJ-1Lg"/>
+                                                    </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="20"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0So-UT-6bA">
+                                                    <rect key="frame" x="85" y="0.0" width="289" height="69"/>
+                                                    <string key="text">Stargazer name Stargazer name Stargazer name Stargazer name Stargazer name Stargazer name Stargazer name Stargazer name Stargazer name</string>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </stackView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="qeT-mK-EPF" firstAttribute="width" secondItem="v4n-ps-jcb" secondAttribute="width" multiplier="1:6" id="A6G-cG-Lr3"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="Q09-Re-lSF" secondAttribute="trailing" id="VzQ-59-oVo"/>
+                                        <constraint firstAttribute="bottom" secondItem="Q09-Re-lSF" secondAttribute="bottom" priority="999" constant="10" id="gpw-8A-Pzm"/>
+                                        <constraint firstItem="Q09-Re-lSF" firstAttribute="top" secondItem="v4n-ps-jcb" secondAttribute="top" priority="999" constant="10" id="tUk-30-M0c"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <constraints>
+                                    <constraint firstItem="Q09-Re-lSF" firstAttribute="leading" secondItem="v4n-ps-jcb" secondAttribute="leadingMargin" id="Owv-n4-QsQ"/>
+                                </constraints>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
