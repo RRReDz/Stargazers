@@ -12,6 +12,8 @@
 		7311EDE3278F99F5000606BA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7311EDE1278F99F5000606BA /* Main.storyboard */; };
 		7311EDE5278F99F8000606BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7311EDE4278F99F8000606BA /* Assets.xcassets */; };
 		7311EDE8278F99F8000606BA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7311EDE6278F99F8000606BA /* LaunchScreen.storyboard */; };
+		73772D462798CC290096C6CB /* StargazerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73772D452798CC290096C6CB /* StargazerCell.swift */; };
+		73772D482798D1A40096C6CB /* StargazersViewModel+Prototypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73772D472798D1A40096C6CB /* StargazersViewModel+Prototypes.swift */; };
 		7389AB332794AB28002D633C /* StargazersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7389AB322794AB28002D633C /* StargazersViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +25,8 @@
 		7311EDE4278F99F8000606BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7311EDE7278F99F8000606BA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7311EDE9278F99F8000606BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		73772D452798CC290096C6CB /* StargazerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazerCell.swift; sourceTree = "<group>"; };
+		73772D472798D1A40096C6CB /* StargazersViewModel+Prototypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StargazersViewModel+Prototypes.swift"; sourceTree = "<group>"; };
 		7389AB322794AB28002D633C /* StargazersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StargazersViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -58,11 +62,13 @@
 			children = (
 				7311EDDB278F99F5000606BA /* AppDelegate.swift */,
 				7311EDDD278F99F5000606BA /* SceneDelegate.swift */,
+				7389AB322794AB28002D633C /* StargazersViewController.swift */,
+				73772D452798CC290096C6CB /* StargazerCell.swift */,
+				73772D472798D1A40096C6CB /* StargazersViewModel+Prototypes.swift */,
 				7311EDE1278F99F5000606BA /* Main.storyboard */,
 				7311EDE4278F99F8000606BA /* Assets.xcassets */,
 				7311EDE6278F99F8000606BA /* LaunchScreen.storyboard */,
 				7311EDE9278F99F8000606BA /* Info.plist */,
-				7389AB322794AB28002D633C /* StargazersViewController.swift */,
 			);
 			path = Prototype;
 			sourceTree = "<group>";
@@ -139,6 +145,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7311EDDC278F99F5000606BA /* AppDelegate.swift in Sources */,
+				73772D482798D1A40096C6CB /* StargazersViewModel+Prototypes.swift in Sources */,
+				73772D462798CC290096C6CB /* StargazerCell.swift in Sources */,
 				7311EDDE278F99F5000606BA /* SceneDelegate.swift in Sources */,
 				7389AB332794AB28002D633C /* StargazersViewController.swift in Sources */,
 			);

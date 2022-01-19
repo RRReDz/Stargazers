@@ -10,11 +10,20 @@ import UIKit
 class StargazersViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+        return StargazerViewModel.prototypes.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.dequeueReusableCell(withIdentifier: "StargazerCellWithImage", for: indexPath)
+        let stargazerViewModel = StargazerViewModel.prototypes[indexPath.row]
+        
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "StargazerCellWithImage",
+            for: indexPath
+        ) as! StargazerCell
+        
+        cell.config(with: stargazerViewModel)
+        
+        return cell
     }
     
 }
