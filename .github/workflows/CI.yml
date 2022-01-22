@@ -8,20 +8,24 @@ on:
 
 jobs:
     build-and-test:
-        runs-on: macos-latest
+        runs-on: macos-11
         environment:
             name: stargazers_prod_env
         env:
-            DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+            DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Git - Checkout
+              uses: actions/checkout@v2
 
-            - name: Build and test
-              run: xcodebuild clean build test -project Stargazers.xcodeproj -scheme "CI" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+            - name: Build and test (macOS)
+              run: xcodebuild clean build test -project Stargazers.xcodeproj -scheme "CI_macOS" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk macosx -destination "platform=macOS" ONLY_ACTIVE_ARCH=YES
+
+            - name: Build and test (iOS)
+              run: xcodebuild clean build test -project Stargazers.xcodeproj -scheme "CI_iOS" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk iphonesimulator -destination "platform=iOS Simulator,OS=15.0,name=iPhone 12" ONLY_ACTIVE_ARCH=YES
 
             - name: Install Slather & Create report
-              run: sudo gem install slather && slather coverage -x --output-directory ./ --scheme "CI" Stargazers.xcodeproj
+              run: sudo gem install slather && slather coverage -x --output-directory ./ --scheme "CI_macOS" Stargazers.xcodeproj
             
             - name: Codacy Coverage Reporter
               uses: codacy/codacy-coverage-reporter-action@v1
