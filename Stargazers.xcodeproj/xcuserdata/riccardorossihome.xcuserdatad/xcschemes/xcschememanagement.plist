@@ -17,9 +17,14 @@
 		<key>StargazersAPIEndToEndTests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<key>StargazersCacheIntegrationTests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>StargazersiOS.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>3</integer>
@@ -33,6 +38,16 @@
 			<true/>
 		</dict>
 		<key>7301227526BF258F0007B086</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7336959F279C17A50066A6C1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>733695A8279C17A60066A6C1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
