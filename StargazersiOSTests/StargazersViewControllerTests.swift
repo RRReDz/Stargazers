@@ -18,6 +18,10 @@ class StargazersViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func viewDidLoad() {
+        loader.loadCallCount += 1
+    }
 }
 
 class LoaderSpy {
@@ -31,6 +35,15 @@ class StargazersViewControllerTests: XCTestCase {
         _ = StargazersViewController(loader: spy)
         
         XCTAssertEqual(spy.loadCallCount, 0)
+    }
+    
+    func test_viewControllerLoads_loadsStargazers () {
+        let spy = LoaderSpy()
+        let sut = StargazersViewController(loader: spy)
+
+        sut.loadViewIfNeeded()
+
+        XCTAssertEqual(spy.loadCallCount, 1)
     }
 
 }
