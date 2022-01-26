@@ -6,11 +6,12 @@
 //
 
 import XCTest
+import Stargazers
 
 class StargazersViewController: UIViewController {
-    private let loader: LoaderSpy
+    private let loader: StargazersLoader
     
-    init(loader: LoaderSpy) {
+    init(loader: StargazersLoader) {
         self.loader = loader
         super.init(nibName: nil, bundle: nil)
     }
@@ -20,12 +21,17 @@ class StargazersViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        loader.loadCallCount += 1
+        let repository = Repository(name: "Any name", owner: "Any owner")
+        loader.load(from: repository) { _ in }
     }
 }
 
-class LoaderSpy {
+class LoaderSpy: StargazersLoader {
     var loadCallCount: Int = 0
+    
+    func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
+        loadCallCount += 1
+    }
 }
 
 class StargazersViewControllerTests: XCTestCase {

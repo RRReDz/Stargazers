@@ -78,6 +78,13 @@
 			remoteGlobalIDString = 7301226C26BF258F0007B086;
 			remoteInfo = Stargazers;
 		};
+		73D3B20827A20660009BEAA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7301226426BF258F0007B086 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7301226C26BF258F0007B086;
+			remoteInfo = Stargazers;
+		};
 		73D4EA0226C4801C00C2B9F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7301226426BF258F0007B086 /* Project object */;
@@ -547,6 +554,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				73D3B20927A20660009BEAA2 /* PBXTargetDependency */,
 				733695AC279C17A70066A6C1 /* PBXTargetDependency */,
 			);
 			name = StargazersiOSTests;
@@ -793,6 +801,11 @@
 			isa = PBXTargetDependency;
 			target = 7301226C26BF258F0007B086 /* Stargazers */;
 			targetProxy = 7399298E2776748800180E02 /* PBXContainerItemProxy */;
+		};
+		73D3B20927A20660009BEAA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7301226C26BF258F0007B086 /* Stargazers */;
+			targetProxy = 73D3B20827A20660009BEAA2 /* PBXContainerItemProxy */;
 		};
 		73D4EA0326C4801C00C2B9F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
