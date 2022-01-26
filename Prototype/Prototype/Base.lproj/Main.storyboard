@@ -79,6 +79,7 @@
                                 </constraints>
                                 <connections>
                                     <outlet property="userImage" destination="THM-PF-tg0" id="kf3-dn-A4d"/>
+                                    <outlet property="userImageContainer" destination="qeT-mK-EPF" id="9Go-61-CTi"/>
                                     <outlet property="username" destination="0So-UT-6bA" id="zpw-qt-yVg"/>
                                 </connections>
                             </tableViewCell>
