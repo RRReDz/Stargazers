@@ -90,6 +90,12 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Repository's Stargazers" id="6bX-Np-gNX"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="vQy-te-UKw">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <action selector="refresh" destination="DOs-Zk-hMf" eventType="valueChanged" id="qqe-HX-qQM"/>
+                        </connections>
+                    </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5eY-G1-lWm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

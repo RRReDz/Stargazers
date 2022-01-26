@@ -8,7 +8,24 @@
 import UIKit
 
 class StargazersViewController: UITableViewController {
-    private let stargazers = StargazerViewModel.prototypes
+    private var stargazers = [StargazerViewModel]()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        refresh()
+    }
+    
+    @IBAction func refresh() {
+        refreshControl?.beginRefreshing()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if self.stargazers.isEmpty {
+                self.stargazers = StargazerViewModel.prototypes
+                self.tableView.reloadData()
+            }
+            self.refreshControl?.endRefreshing()
+        }
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return stargazers.count
