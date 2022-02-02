@@ -21,6 +21,8 @@ class StargazersViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        
         let repository = Repository(name: "Any name", owner: "Any owner")
         loader.load(from: repository) { _ in }
     }
@@ -36,14 +38,14 @@ class LoaderSpy: StargazersLoader {
 
 class StargazersViewControllerTests: XCTestCase {
 
-    func test_init_doesNotLoadStargazers () {
+    func test_init_doesNotLoadStargazers() {
         let spy = LoaderSpy()
         _ = StargazersViewController(loader: spy)
         
         XCTAssertEqual(spy.loadCallCount, 0)
     }
     
-    func test_viewControllerLoads_loadsStargazers () {
+    func test_viewController_loadsStargazersWhenLoaded() {
         let spy = LoaderSpy()
         let sut = StargazersViewController(loader: spy)
 
