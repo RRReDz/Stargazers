@@ -39,19 +39,27 @@ class LoaderSpy: StargazersLoader {
 class StargazersViewControllerTests: XCTestCase {
 
     func test_init_doesNotLoadStargazers() {
-        let spy = LoaderSpy()
-        _ = StargazersViewController(loader: spy)
+        let (_, spy) = makeSUT()
         
         XCTAssertEqual(spy.loadCallCount, 0)
     }
     
     func test_viewController_loadsStargazersWhenLoaded() {
-        let spy = LoaderSpy()
-        let sut = StargazersViewController(loader: spy)
+        let (sut, spy) = makeSUT()
 
         sut.loadViewIfNeeded()
 
         XCTAssertEqual(spy.loadCallCount, 1)
     }
-
+    
+    // MARK: Utils
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (StargazersViewController, LoaderSpy) {
+        let spy = LoaderSpy()
+        let sut = StargazersViewController(loader: spy)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(spy, file: file, line: line)
+        return (sut, spy)
+    }
+    
 }
