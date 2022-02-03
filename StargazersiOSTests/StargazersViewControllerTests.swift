@@ -72,20 +72,16 @@ class StargazersViewControllerTests: XCTestCase {
         let (sut, spy) = makeSUT()
 
         sut.loadViewIfNeeded()
+        XCTAssertTrue(sut.loadingIndicatorEnabled)
         
-        XCTAssertEqual(sut.loadingIndicatorEnabled, true)
-        
-        spy.completeLoading()
-        
-        XCTAssertEqual(sut.loadingIndicatorEnabled, false)
+        spy.completeLoading(at: 0)
+        XCTAssertFalse(sut.loadingIndicatorEnabled)
         
         sut.simulatePullToRefresh()
-        
-        XCTAssertEqual(sut.loadingIndicatorEnabled, true)
+        XCTAssertTrue(sut.loadingIndicatorEnabled)
         
         spy.completeLoading(at: 1)
-        
-        XCTAssertEqual(sut.loadingIndicatorEnabled, false)
+        XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
     // MARK: Utils
