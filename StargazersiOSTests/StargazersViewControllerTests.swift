@@ -8,7 +8,7 @@
 import XCTest
 import Stargazers
 
-class StargazersViewController: UIViewController {
+class StargazersViewController: UITableViewController {
     private let loader: StargazersLoader
     
     init(loader: StargazersLoader) {
@@ -23,6 +23,14 @@ class StargazersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let repository = Repository(name: "Any name", owner: "Any owner")
+        loader.load(from: repository) { _ in }
+        
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
+    }
+    
+    @objc private func onRefresh() {
         let repository = Repository(name: "Any name", owner: "Any owner")
         loader.load(from: repository) { _ in }
     }
@@ -52,6 +60,18 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(spy.loadCallCount, 1)
     }
     
+    func test_viewController_loadsStargazersWhenPullToRefreshRequested() {
+        let (sut, spy) = makeSUT()
+
+        sut.loadViewIfNeeded()
+
+        XCTAssertEqual(spy.loadCallCount, 1)
+        
+        sut.simulatePullToRefresh()
+        
+        XCTAssertEqual(spy.loadCallCount, 2)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (StargazersViewController, LoaderSpy) {
@@ -62,4 +82,11 @@ class StargazersViewControllerTests: XCTestCase {
         return (sut, spy)
     }
     
+}
+
+private extension StargazersViewController {
+    func simulatePullToRefresh() {
+        let action = refreshControl?.actions(forTarget: self, forControlEvent: .valueChanged)?.first ?? ""
+        self.performSelector(onMainThread: Selector(action), with: nil, waitUntilDone: true)
+    }
 }
