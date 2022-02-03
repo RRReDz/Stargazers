@@ -46,8 +46,10 @@ class StargazersViewControllerTests: XCTestCase {
         let (sut, spy) = makeSUT(for: selectedRepository)
 
         sut.loadViewIfNeeded()
-
-        XCTAssertEqual(spy.repositoryRequestForLoad(), selectedRepository)
+        XCTAssertEqual(spy.repositoryRequestForLoad(at: 0), selectedRepository)
+        
+        sut.simulatePullToRefresh()
+        XCTAssertEqual(spy.repositoryRequestForLoad(at: 1), selectedRepository)
     }
     
     func test_viewController_loadsStargazersWhenLoadedOrOnPullToRefresh() {
