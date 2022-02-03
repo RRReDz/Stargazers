@@ -23,8 +23,7 @@ class StargazersViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let repository = Repository(name: "Any name", owner: "Any owner")
-        loader.load(from: repository) { _ in }
+        onRefresh()
         
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
