@@ -93,11 +93,12 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     private class LoaderSpy: StargazersLoader {
-        var loadCallCount: Int = 0
+        var loadCallCount: Int {
+            return messages.count
+        }
         private var messages = [(StargazersLoader.Result) -> Void]()
         
         func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-            loadCallCount += 1
             messages.append(completion)
         }
         
