@@ -90,6 +90,14 @@ class StargazersViewControllerTests: XCTestCase {
         spy.completeLoading()
         
         XCTAssertEqual(sut.loadingIndicatorEnabled, false)
+        
+        sut.simulatePullToRefresh()
+        
+        XCTAssertEqual(sut.loadingIndicatorEnabled, true)
+        
+        spy.completeLoading(at: 1)
+        
+        XCTAssertEqual(sut.loadingIndicatorEnabled, false)
     }
     
     // MARK: Utils
