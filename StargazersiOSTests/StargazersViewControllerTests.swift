@@ -52,19 +52,15 @@ class StargazersViewControllerTests: XCTestCase {
     
     func test_viewController_loadsStargazersWhenLoadedOrOnPullToRefresh() {
         let (sut, spy) = makeSUT()
-        
         XCTAssertEqual(spy.loadCallCount, 0)
 
         sut.loadViewIfNeeded()
-
         XCTAssertEqual(spy.loadCallCount, 1)
         
         sut.simulatePullToRefresh()
-        
         XCTAssertEqual(spy.loadCallCount, 2)
         
         sut.simulatePullToRefresh()
-        
         XCTAssertEqual(spy.loadCallCount, 3)
     }
     
