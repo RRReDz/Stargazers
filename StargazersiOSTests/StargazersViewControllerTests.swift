@@ -69,6 +69,10 @@ class StargazersViewControllerTests: XCTestCase {
         sut.simulatePullToRefresh()
         
         XCTAssertEqual(spy.loadCallCount, 2)
+        
+        sut.simulatePullToRefresh()
+        
+        XCTAssertEqual(spy.loadCallCount, 3)
     }
     
     // MARK: Utils
