@@ -23,13 +23,14 @@ class StargazersViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadStargazers()
-        
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(loadStargazers), for: .valueChanged)
+        
+        loadStargazers()
     }
     
     @objc private func loadStargazers() {
+        refreshControl?.beginRefreshing()
         let repository = Repository(name: "Any name", owner: "Any owner")
         loader.load(from: repository) { _ in }
     }
@@ -75,6 +76,14 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(spy.loadCallCount, 3)
     }
     
+    func test_viewController_showsLoadingIndicatorWhileLoading() {
+        let (sut, _) = makeSUT()
+
+        sut.loadViewIfNeeded()
+        
+        XCTAssertEqual(sut.loadingIndicatorEnabled, true)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (StargazersViewController, LoaderSpy) {
@@ -92,4 +101,6 @@ private extension StargazersViewController {
         let action = refreshControl?.actions(forTarget: self, forControlEvent: .valueChanged)?.first ?? ""
         self.performSelector(onMainThread: Selector(action), with: nil, waitUntilDone: true)
     }
+    
+    var loadingIndicatorEnabled: Bool { self.refreshControl?.isRefreshing ?? false }
 }
