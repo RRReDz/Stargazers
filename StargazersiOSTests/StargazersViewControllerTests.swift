@@ -40,20 +40,6 @@ class StargazersViewController: UITableViewController {
 }
 
 class StargazersViewControllerTests: XCTestCase {
-
-    func test_init_doesNotLoadStargazers() {
-        let (_, spy) = makeSUT()
-        
-        XCTAssertEqual(spy.loadCallCount, 0)
-    }
-    
-    func test_viewController_loadsStargazersWhenLoaded() {
-        let (sut, spy) = makeSUT()
-
-        sut.loadViewIfNeeded()
-
-        XCTAssertEqual(spy.loadCallCount, 1)
-    }
     
     func test_viewController_loadsStargazersForSelectedRepository() {
         let selectedRepository = uniqueRepository()
@@ -64,8 +50,10 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(spy.repositoryRequestForLoad(), selectedRepository)
     }
     
-    func test_viewController_loadsStargazersWhenPullToRefreshRequested() {
+    func test_viewController_loadsStargazersWhenLoadedOrOnPullToRefresh() {
         let (sut, spy) = makeSUT()
+        
+        XCTAssertEqual(spy.loadCallCount, 0)
 
         sut.loadViewIfNeeded()
 
@@ -144,3 +132,4 @@ private extension StargazersViewController {
     
     var loadingIndicatorEnabled: Bool { self.refreshControl?.isRefreshing ?? false }
 }
+
