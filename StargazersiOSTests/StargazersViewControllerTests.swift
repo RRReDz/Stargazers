@@ -32,15 +32,9 @@ class StargazersViewController: UITableViewController {
     @objc private func loadStargazers() {
         refreshControl?.beginRefreshing()
         let repository = Repository(name: "Any name", owner: "Any owner")
-        loader.load(from: repository) { _ in }
-    }
-}
-
-class LoaderSpy: StargazersLoader {
-    var loadCallCount: Int = 0
-    
-    func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        loadCallCount += 1
+        loader.load(from: repository) { [weak refreshControl] _ in
+            refreshControl?.endRefreshing()
+        }
     }
 }
 
@@ -77,11 +71,15 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     func test_viewController_showsLoadingIndicatorWhileLoading() {
-        let (sut, _) = makeSUT()
+        let (sut, spy) = makeSUT()
 
         sut.loadViewIfNeeded()
         
         XCTAssertEqual(sut.loadingIndicatorEnabled, true)
+        
+        spy.completeLoading()
+        
+        XCTAssertEqual(sut.loadingIndicatorEnabled, false)
     }
     
     // MARK: Utils
@@ -92,6 +90,20 @@ class StargazersViewControllerTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
         return (sut, spy)
+    }
+    
+    private class LoaderSpy: StargazersLoader {
+        var loadCallCount: Int = 0
+        private var messages = [(StargazersLoader.Result) -> Void]()
+        
+        func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
+            loadCallCount += 1
+            messages.append(completion)
+        }
+        
+        func completeLoading(at index: Int = 0) {
+            messages[index](.success([]))
+        }
     }
     
 }
