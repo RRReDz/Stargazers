@@ -14,6 +14,7 @@
 		730E681E26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E681D26C880D700481C11 /* LoadStargazersFromCacheUseCaseTests.swift */; };
 		730E682426C88C7E00481C11 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E682326C88C7E00481C11 /* TestHelpers.swift */; };
 		7310F6042727566F00C81843 /* CodableStargazersStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7310F6032727566F00C81843 /* CodableStargazersStoreTests.swift */; };
+		731450B227AC956A002AC688 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730E682326C88C7E00481C11 /* TestHelpers.swift */; };
 		7316209926C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209826C1AF3E00EAA0E2 /* URLSessionHTTPClient.swift */; };
 		7316209B26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7316209A26C1DF2B00EAA0E2 /* XCTestCase+MemoryLeaksTracking.swift */; };
 		733C46A02755793C00EE4223 /* StargazersStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733C469F2755793C00EE4223 /* StargazersStoreSpecs.swift */; };
@@ -790,6 +791,7 @@
 			files = (
 				73D3B20727A1FECB009BEAA2 /* StargazersViewControllerTests.swift in Sources */,
 				737DDB7427AB41B600F362C6 /* XCTestCase+MemoryLeaksTracking.swift in Sources */,
+				731450B227AC956A002AC688 /* TestHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
