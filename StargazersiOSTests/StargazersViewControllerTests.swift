@@ -10,9 +10,11 @@ import Stargazers
 
 class StargazersViewController: UITableViewController {
     private let loader: StargazersLoader
+    private let repository: Repository
     
-    init(loader: StargazersLoader) {
+    init(loader: StargazersLoader, repository: Repository) {
         self.loader = loader
+        self.repository = repository
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,7 +33,6 @@ class StargazersViewController: UITableViewController {
     
     @objc private func loadStargazers() {
         refreshControl?.beginRefreshing()
-        let repository = Repository(name: "Any name", owner: "Any owner")
         loader.load(from: repository) { [weak refreshControl] _ in
             refreshControl?.endRefreshing()
         }
@@ -52,6 +53,15 @@ class StargazersViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
 
         XCTAssertEqual(spy.loadCallCount, 1)
+    }
+    
+    func test_viewController_loadsStargazersForSelectedRepository() {
+        let selectedRepository = uniqueRepository()
+        let (sut, spy) = makeSUT(for: selectedRepository)
+
+        sut.loadViewIfNeeded()
+
+        XCTAssertEqual(spy.repositoryRequestForLoad(), selectedRepository)
     }
     
     func test_viewController_loadsStargazersWhenPullToRefreshRequested() {
@@ -84,9 +94,14 @@ class StargazersViewControllerTests: XCTestCase {
     
     // MARK: Utils
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (StargazersViewController, LoaderSpy) {
+    private func makeSUT(
+        for repository: Repository? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (StargazersViewController, LoaderSpy) {
+        let repository = repository ?? anyRepository()
         let spy = LoaderSpy()
-        let sut = StargazersViewController(loader: spy)
+        let sut = StargazersViewController(loader: spy, repository: repository)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
         return (sut, spy)
@@ -96,14 +111,18 @@ class StargazersViewControllerTests: XCTestCase {
         var loadCallCount: Int {
             return messages.count
         }
-        private var messages = [(StargazersLoader.Result) -> Void]()
+        private var messages = [(repository: Repository, completion: (StargazersLoader.Result) -> Void)]()
         
         func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-            messages.append(completion)
+            messages.append((repository, completion))
         }
         
         func completeLoading(at index: Int = 0) {
-            messages[index](.success([]))
+            messages[index].completion(.success([]))
+        }
+        
+        func repositoryRequestForLoad(at index: Int = 0) -> Repository {
+            return messages[index].repository
         }
     }
     
