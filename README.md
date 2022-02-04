@@ -105,7 +105,7 @@ TODO
 
 ## Architecture
 
-![Architecture image](./Documents/ark-v4/image.png)
+![Architecture image](./Documents/ark/image.png)
 
 ## Model Specs
 
