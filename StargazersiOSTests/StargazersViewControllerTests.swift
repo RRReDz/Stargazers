@@ -6,38 +6,8 @@
 //
 
 import XCTest
+import StargazersiOS
 import Stargazers
-
-class StargazersViewController: UITableViewController {
-    private let loader: StargazersLoader
-    private let repository: Repository
-    
-    init(loader: StargazersLoader, repository: Repository) {
-        self.loader = loader
-        self.repository = repository
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(loadStargazers), for: .valueChanged)
-        
-        loadStargazers()
-    }
-    
-    @objc private func loadStargazers() {
-        refreshControl?.beginRefreshing()
-        loader.load(from: repository) { [weak refreshControl] _ in
-            refreshControl?.endRefreshing()
-        }
-    }
-}
 
 class StargazersViewControllerTests: XCTestCase {
     
