@@ -124,6 +124,8 @@ private extension StargazersViewController {
         self.performSelector(onMainThread: Selector(action), with: nil, waitUntilDone: true)
     }
     
-    var loadingIndicatorEnabled: Bool { self.refreshControl?.isRefreshing ?? false }
+    var loadingIndicatorEnabled: Bool {
+        refreshControl?.isRefreshing ?? false
+    }
 }
 
