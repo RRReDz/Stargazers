@@ -60,8 +60,8 @@ class StargazersViewControllerTests: XCTestCase {
         
         spy.completeLoading(with: [stargazer])
         
-        XCTAssertEqual(sut.stargazerRows, 1)
-        let stargazerCell = sut.cellAt(row: 0) as? StargazerCell
+        XCTAssertEqual(sut.renderedStargazerViews, 1)
+        let stargazerCell = sut.stargazerViewAt(0) as? StargazerCell
         XCTAssertEqual(stargazerCell?.usernameText, stargazer.username)
     }
     
@@ -111,15 +111,15 @@ private extension StargazersViewController {
         refreshControl?.isRefreshing ?? false
     }
     
-    func cellAt(row: Int) -> UITableViewCell? {
-        let indexPath = IndexPath(row: row, section: stargazersSection)
+    func stargazerViewAt(_ position: Int) -> UIView? {
+        let indexPath = IndexPath(row: position, section: stargazersSection)
         return tableView.dataSource?.tableView(
             tableView,
             cellForRowAt: indexPath
         )
     }
     
-    var stargazerRows: Int {
+    var renderedStargazerViews: Int {
         tableView.numberOfRows(inSection: stargazersSection)
     }
     
