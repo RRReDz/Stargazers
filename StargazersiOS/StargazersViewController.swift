@@ -51,6 +51,9 @@ extension StargazersViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let model = stargazers[indexPath.row]
+        let cell = StargazerCell()
+        cell.usernameLabel.text = model.username
+        return cell
     }
 }

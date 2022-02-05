@@ -53,16 +53,16 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     func test_viewController_successfullyRendersLoadedStargazers() {
-        let stargazers = [anyStargazer(), anyStargazer()]
+        let stargazer = anyStargazer()
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
         
-        spy.completeLoading(with: stargazers)
+        spy.completeLoading(with: [stargazer])
         
-        XCTAssertEqual(sut.stargazerRows, 2)
-        XCTAssertNotNil(sut.cellAt(row: 0))
-        XCTAssertNotNil(sut.cellAt(row: 1))
+        XCTAssertEqual(sut.stargazerRows, 1)
+        let stargazerCell = sut.cellAt(row: 0) as? StargazerCell
+        XCTAssertEqual(stargazerCell?.usernameText, stargazer.username)
     }
     
     // MARK: Utils
@@ -124,5 +124,11 @@ private extension StargazersViewController {
     }
     
     private var stargazersSection: Int { 0 }
+}
+
+private extension StargazerCell {
+    var usernameText: String? {
+        usernameLabel.text
+    }
 }
 
