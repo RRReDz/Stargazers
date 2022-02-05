@@ -114,6 +114,10 @@ class StargazersViewControllerTests: XCTestCase {
             line: line
         )
         
+        guard sut.renderedStargazerViews == stargazers.count else {
+            return XCTFail("Expected \(stargazers.count) rendered views but got \(sut.renderedStargazerViews) instead", file: file, line: line)
+        }
+        
         stargazers.enumerated().forEach { index, stargazer in
             assertThat(
                 sut,
