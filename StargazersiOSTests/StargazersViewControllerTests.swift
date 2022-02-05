@@ -53,16 +53,41 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     func test_viewController_successfullyRendersLoadedStargazers() {
-        let stargazer = anyStargazer()
+        let stargazer0 = uniqueStargazer()
+        let stargazer1 = uniqueStargazer()
+        let stargazer2 = uniqueStargazer()
+        let stargazer3 = uniqueStargazer()
+        
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
-        
-        spy.completeLoading(with: [stargazer])
+        spy.completeLoading(with: [stargazer0], at: 0)
         
         XCTAssertEqual(sut.renderedStargazerViews, 1)
         let stargazerCell = sut.stargazerViewAt(0) as? StargazerCell
-        XCTAssertEqual(stargazerCell?.usernameText, stargazer.username)
+        XCTAssertEqual(stargazerCell?.usernameText, stargazer0.username)
+        
+        sut.simulatePullToRefresh()
+        spy.completeLoading(
+            with: [
+                stargazer0,
+                stargazer1,
+                stargazer2,
+                stargazer3
+            ],
+            at: 1
+        )
+        
+        XCTAssertEqual(sut.renderedStargazerViews, 4)
+        let stargazerCell0 = sut.stargazerViewAt(0) as? StargazerCell
+        let stargazerCell1 = sut.stargazerViewAt(1) as? StargazerCell
+        let stargazerCell2 = sut.stargazerViewAt(2) as? StargazerCell
+        let stargazerCell3 = sut.stargazerViewAt(3) as? StargazerCell
+        
+        XCTAssertEqual(stargazerCell0?.usernameText, stargazer0.username)
+        XCTAssertEqual(stargazerCell1?.usernameText, stargazer1.username)
+        XCTAssertEqual(stargazerCell2?.usernameText, stargazer2.username)
+        XCTAssertEqual(stargazerCell3?.usernameText, stargazer3.username)
     }
     
     // MARK: Utils
