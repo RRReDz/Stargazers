@@ -24,16 +24,16 @@ class StargazersViewControllerTests: XCTestCase {
     
     func test_viewController_loadsStargazersWhenLoadedOrOnPullToRefresh() {
         let (sut, spy) = makeSUT()
-        XCTAssertEqual(spy.loadCallCount, 0)
+        XCTAssertEqual(spy.stargazersLoadCallCount, 0)
 
         sut.loadViewIfNeeded()
-        XCTAssertEqual(spy.loadCallCount, 1)
+        XCTAssertEqual(spy.stargazersLoadCallCount, 1)
         
         sut.simulatePullToRefresh()
-        XCTAssertEqual(spy.loadCallCount, 2)
+        XCTAssertEqual(spy.stargazersLoadCallCount, 2)
         
         sut.simulatePullToRefresh()
-        XCTAssertEqual(spy.loadCallCount, 3)
+        XCTAssertEqual(spy.stargazersLoadCallCount, 3)
     }
     
     func test_viewController_showsLoadingIndicatorWhileLoading() {
@@ -88,6 +88,20 @@ class StargazersViewControllerTests: XCTestCase {
         assertThat(sut, hasRendered: [stargazer0])
     }
     
+    func test_stargazerImageView_loadsUserImageURLWhenVisible() {
+        let stargazer0 = makeStargazer(
+            avatarURL: URL(string: "http://avatar0-image.com")!)
+        let (sut, spy) = makeSUT()
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0], at: 0)
+        
+        XCTAssertEqual(spy.loadedImageURLs, [], "Expected no image URL requests until view become visible")
+        
+        sut.simulateStargazerViewVisible(at: 0)
+        
+        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL], "Expected no image URL requests until view become visible")
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
@@ -97,10 +111,20 @@ class StargazersViewControllerTests: XCTestCase {
     ) -> (StargazersViewController, LoaderSpy) {
         let repository = repository ?? anyRepository()
         let spy = LoaderSpy()
-        let sut = StargazersViewController(loader: spy, repository: repository)
+        let sut = StargazersViewController(loader: spy, imageLoader: spy, repository: repository)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
         return (sut, spy)
+    }
+    
+    private func makeStargazer(avatarURL: URL) -> Stargazer {
+        let anyStargazer = anyStargazer()
+        return Stargazer(
+            id: anyStargazer.id,
+            username: anyStargazer.username,
+            avatarURL: avatarURL,
+            detailURL: anyStargazer.detailURL
+        )
     }
     
     private func assertThat(
@@ -147,26 +171,38 @@ class StargazersViewControllerTests: XCTestCase {
         }
     }
     
-    private class LoaderSpy: StargazersLoader {
-        var loadCallCount: Int {
-            return messages.count
+    private class LoaderSpy: StargazersLoader, StargazerImageLoader {
+        
+        // MARK: - Stargazers Loader
+        
+        var stargazersLoadCallCount: Int {
+            return stargazersRequests.count
         }
-        private var messages = [(repository: Repository, completion: (StargazersLoader.Result) -> Void)]()
+        
+        private var stargazersRequests = [(repository: Repository, completion: (StargazersLoader.Result) -> Void)]()
         
         func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-            messages.append((repository, completion))
+            stargazersRequests.append((repository, completion))
         }
         
         func completeLoading(with stargazers: [Stargazer] = [], at index: Int = 0) {
-            messages[index].completion(.success(stargazers))
+            stargazersRequests[index].completion(.success(stargazers))
         }
         
         func completeLoadingWithError(at index: Int = 0) {
-            messages[index].completion(.failure(anyNSError()))
+            stargazersRequests[index].completion(.failure(anyNSError()))
         }
         
         func repositoryForLoad(at index: Int = 0) -> Repository {
-            return messages[index].repository
+            return stargazersRequests[index].repository
+        }
+        
+        // MARK: - Image Loader
+        
+        var loadedImageURLs: [URL] = []
+        
+        func loadImageData(from url: URL) {
+            loadedImageURLs.append(url)
         }
     }
     
@@ -182,12 +218,17 @@ private extension StargazersViewController {
         refreshControl?.isRefreshing ?? false
     }
     
+    @discardableResult
     func stargazerViewAt(_ position: Int) -> UIView? {
         let indexPath = IndexPath(row: position, section: stargazersSection)
         return tableView.dataSource?.tableView(
             tableView,
             cellForRowAt: indexPath
         )
+    }
+    
+    func simulateStargazerViewVisible(at index: Int) {
+        stargazerViewAt(0)
     }
     
     var renderedStargazerViews: Int {

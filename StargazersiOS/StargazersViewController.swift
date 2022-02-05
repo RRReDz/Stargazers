@@ -8,13 +8,23 @@
 import UIKit
 import Stargazers
 
+public protocol StargazerImageLoader {
+    func loadImageData(from url: URL)
+}
+
 public class StargazersViewController: UITableViewController {
     private let loader: StargazersLoader
+    private let imageLoader: StargazerImageLoader
     private let repository: Repository
     private var stargazers: [Stargazer] = []
     
-    public init(loader: StargazersLoader, repository: Repository) {
+    public init(
+        loader: StargazersLoader,
+        imageLoader: StargazerImageLoader,
+        repository: Repository
+    ) {
         self.loader = loader
+        self.imageLoader = imageLoader
         self.repository = repository
         super.init(nibName: nil, bundle: nil)
     }
@@ -57,6 +67,7 @@ extension StargazersViewController {
         let model = stargazers[indexPath.row]
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
+        imageLoader.loadImageData(from: model.avatarURL)
         return cell
     }
 }
