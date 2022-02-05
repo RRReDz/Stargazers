@@ -28,16 +28,16 @@ internal func anyStargazer() -> Stargazer {
         detailURL: anyURL())
 }
 
+internal func uniqueStargazer() -> Stargazer {
+    Stargazer(
+        id: UUID().uuidString,
+        username: UUID().uuidString,
+        avatarURL: anyURL(),
+        detailURL: anyURL()
+    )
+}
+
 internal func uniqueStargazers() -> [Stargazer] {
-    let uniqueStargazer = {
-        Stargazer(
-            id: UUID().uuidString,
-            username: UUID().uuidString,
-            avatarURL: anyURL(),
-            detailURL: anyURL()
-        )
-    }
-    
     return [
         uniqueStargazer(),
         uniqueStargazer()
