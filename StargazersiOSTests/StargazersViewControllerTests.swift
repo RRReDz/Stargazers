@@ -61,6 +61,8 @@ class StargazersViewControllerTests: XCTestCase {
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
+        XCTAssertEqual(sut.renderedStargazerViews, 0)
+        
         spy.completeLoading(with: [stargazer0], at: 0)
         
         XCTAssertEqual(sut.renderedStargazerViews, 1)
