@@ -60,28 +60,14 @@ class StargazersViewControllerTests: XCTestCase {
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
-        XCTAssertEqual(sut.renderedStargazerViews, 0)
+        assertThat(sut, hasRendered: [])
         
         spy.completeLoading(with: [stargazer0], at: 0)
-        XCTAssertEqual(sut.renderedStargazerViews, 1)
-        assertThat(sut, hasViewConfiguredFor: stargazer0, at: 0)
+        assertThat(sut, hasRendered: [stargazer0])
         
         sut.simulatePullToRefresh()
-        spy.completeLoading(
-            with: [
-                stargazer0,
-                stargazer1,
-                stargazer2,
-                stargazer3
-            ],
-            at: 1
-        )
-        
-        XCTAssertEqual(sut.renderedStargazerViews, 4)
-        assertThat(sut, hasViewConfiguredFor: stargazer0, at: 0)
-        assertThat(sut, hasViewConfiguredFor: stargazer1, at: 1)
-        assertThat(sut, hasViewConfiguredFor: stargazer2, at: 2)
-        assertThat(sut, hasViewConfiguredFor: stargazer3, at: 3)
+        spy.completeLoading(with: [stargazer0, stargazer1, stargazer2, stargazer3], at: 1)
+        assertThat(sut, hasRendered: [stargazer0, stargazer1, stargazer2, stargazer3])
     }
     
     // MARK: Utils
@@ -113,6 +99,30 @@ class StargazersViewControllerTests: XCTestCase {
             file: file,
             line: line
         )
+    }
+    
+    private func assertThat(
+        _ sut: StargazersViewController,
+        hasRendered stargazers: [Stargazer],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertEqual(
+            sut.renderedStargazerViews,
+            stargazers.count,
+            file: file,
+            line: line
+        )
+        
+        stargazers.enumerated().forEach { index, stargazer in
+            assertThat(
+                sut,
+                hasViewConfiguredFor: stargazer,
+                at: index,
+                file: file,
+                line: line
+            )
+        }
     }
     
     private class LoaderSpy: StargazersLoader {
