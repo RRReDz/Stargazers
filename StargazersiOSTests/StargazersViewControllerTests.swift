@@ -52,6 +52,19 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
+    func test_viewController_numberOfRowsWillBeTheSameAsTheNumberOfStargazers() {
+        let stargazers = uniqueStargazers()
+        let (sut, spy) = makeSUT()
+        sut.loadViewIfNeeded()
+        
+        spy.completeLoading(with: stargazers)
+        
+        XCTAssertEqual(
+            sut.tableView.numberOfRows(inSection: 0),
+            stargazers.count
+        )
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
@@ -77,8 +90,8 @@ class StargazersViewControllerTests: XCTestCase {
             messages.append((repository, completion))
         }
         
-        func completeLoading(at index: Int = 0) {
-            messages[index].completion(.success([]))
+        func completeLoading(with stargazers: [Stargazer] = [], at index: Int = 0) {
+            messages[index].completion(.success(stargazers))
         }
         
         func repositoryForLoad(at index: Int = 0) -> Repository {

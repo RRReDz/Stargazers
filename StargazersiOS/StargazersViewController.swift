@@ -11,6 +11,7 @@ import Stargazers
 public class StargazersViewController: UITableViewController {
     private let loader: StargazersLoader
     private let repository: Repository
+    private var stargazers: [Stargazer] = []
     
     public init(loader: StargazersLoader, repository: Repository) {
         self.loader = loader
@@ -33,8 +34,19 @@ public class StargazersViewController: UITableViewController {
     
     @objc private func loadStargazers() {
         refreshControl?.beginRefreshing()
-        loader.load(from: repository) { [weak refreshControl] _ in
-            refreshControl?.endRefreshing()
+        loader.load(from: repository) { [unowned self] result in
+            self.stargazers = (try? result.get()) ?? []
+            self.refreshControl?.endRefreshing()
         }
+    }
+}
+
+extension StargazersViewController {
+    public override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return stargazers.count
     }
 }
