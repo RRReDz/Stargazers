@@ -48,7 +48,7 @@ Then the app should display an error message
 ## Load Stargazers From Remote Use Case
 
 #### Data
-  - `URL` (for certain `UserRepository`)
+  - `URL` (for certain `Repository`)
 
 #### Primary course (happy path)
   1. Execute "Load Stargazers" command with above data.
@@ -66,7 +66,7 @@ Then the app should display an error message
 ## Load Stargazers From Cache Use Case
 
 #### Data
-  - `UserRepository`
+  - `Repository`
 
 #### Primary course
   1. Execute "Load Stargazers" command with above data.
@@ -83,12 +83,12 @@ Then the app should display an error message
 ## Cache Stargazers Use Case
 
 #### Data
-  - `Stargazers`
-  - `UserRepository`
+  - `Stargazer`s
+  - `Repository`
 
 #### Primary course (happy path)
   1. Execute "Save Stargazers" command with above data.
-  2. System deletes old cache data.
+  2. System deletes old cache data for repository.
   3. System encodes stargazers for the repository as data.
   4. System saves new cache data.
   5. System delivers success message.
@@ -117,6 +117,13 @@ TODO
 | `username`    | `String`            |
 | `avatarURL`   | `URL`               |
 | `detailURL`   | `URL`               |
+
+### Repository
+
+| Property      | Type                |
+|---------------|---------------------|
+| `name`        | `String`            |
+| `owner`       | `String`            |
 
 ### Payload contract
 
