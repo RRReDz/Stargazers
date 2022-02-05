@@ -54,7 +54,7 @@ class StargazersViewControllerTests: XCTestCase {
         sut.simulatePullToRefresh()
         XCTAssertTrue(sut.loadingIndicatorEnabled)
         
-        spy.completeLoading(with: anyNSError(), at: 2)
+        spy.completeLoadingWithError(at: 2)
         XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
@@ -83,7 +83,7 @@ class StargazersViewControllerTests: XCTestCase {
         spy.completeLoading(with: [stargazer0], at: 0)
         
         sut.simulatePullToRefresh()
-        spy.completeLoading(with: anyNSError(), at: 1)
+        spy.completeLoadingWithError(at: 1)
         
         assertThat(sut, hasRendered: [stargazer0])
     }
@@ -161,8 +161,8 @@ class StargazersViewControllerTests: XCTestCase {
             messages[index].completion(.success(stargazers))
         }
         
-        func completeLoading(with error: Error, at index: Int = 0) {
-            messages[index].completion(.failure(error))
+        func completeLoadingWithError(at index: Int = 0) {
+            messages[index].completion(.failure(anyNSError()))
         }
         
         func repositoryForLoad(at index: Int = 0) -> Repository {
