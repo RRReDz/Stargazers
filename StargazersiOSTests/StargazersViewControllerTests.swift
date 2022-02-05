@@ -57,17 +57,14 @@ class StargazersViewControllerTests: XCTestCase {
         let stargazer1 = uniqueStargazer()
         let stargazer2 = uniqueStargazer()
         let stargazer3 = uniqueStargazer()
-        
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
         XCTAssertEqual(sut.renderedStargazerViews, 0)
         
         spy.completeLoading(with: [stargazer0], at: 0)
-        
         XCTAssertEqual(sut.renderedStargazerViews, 1)
-        let stargazerCell = sut.stargazerViewAt(0) as? StargazerCell
-        XCTAssertEqual(stargazerCell?.usernameText, stargazer0.username)
+        assertThat(sut, hasViewConfiguredFor: stargazer0, at: 0)
         
         sut.simulatePullToRefresh()
         spy.completeLoading(
@@ -81,15 +78,10 @@ class StargazersViewControllerTests: XCTestCase {
         )
         
         XCTAssertEqual(sut.renderedStargazerViews, 4)
-        let stargazerCell0 = sut.stargazerViewAt(0) as? StargazerCell
-        let stargazerCell1 = sut.stargazerViewAt(1) as? StargazerCell
-        let stargazerCell2 = sut.stargazerViewAt(2) as? StargazerCell
-        let stargazerCell3 = sut.stargazerViewAt(3) as? StargazerCell
-        
-        XCTAssertEqual(stargazerCell0?.usernameText, stargazer0.username)
-        XCTAssertEqual(stargazerCell1?.usernameText, stargazer1.username)
-        XCTAssertEqual(stargazerCell2?.usernameText, stargazer2.username)
-        XCTAssertEqual(stargazerCell3?.usernameText, stargazer3.username)
+        assertThat(sut, hasViewConfiguredFor: stargazer0, at: 0)
+        assertThat(sut, hasViewConfiguredFor: stargazer1, at: 1)
+        assertThat(sut, hasViewConfiguredFor: stargazer2, at: 2)
+        assertThat(sut, hasViewConfiguredFor: stargazer3, at: 3)
     }
     
     // MARK: Utils
@@ -105,6 +97,22 @@ class StargazersViewControllerTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
         return (sut, spy)
+    }
+    
+    private func assertThat(
+        _ sut: StargazersViewController,
+        hasViewConfiguredFor stargazer: Stargazer,
+        at index: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let stargazerCell = sut.stargazerViewAt(index) as? StargazerCell
+        XCTAssertEqual(
+            stargazerCell?.usernameText,
+            stargazer.username,
+            file: file,
+            line: line
+        )
     }
     
     private class LoaderSpy: StargazersLoader {
