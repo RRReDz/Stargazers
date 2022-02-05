@@ -50,6 +50,12 @@ class StargazersViewControllerTests: XCTestCase {
         
         spy.completeLoading(at: 1)
         XCTAssertFalse(sut.loadingIndicatorEnabled)
+        
+        sut.simulatePullToRefresh()
+        XCTAssertTrue(sut.loadingIndicatorEnabled)
+        
+        spy.completeLoading(with: anyNSError(), at: 2)
+        XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
     func test_viewController_successfullyRendersLoadedStargazers() {

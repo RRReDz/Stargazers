@@ -38,8 +38,8 @@ public class StargazersViewController: UITableViewController {
             if let stargazers = try? result.get() {
                 self.stargazers = stargazers
                 self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
             }
+            self.refreshControl?.endRefreshing()
         }
     }
 }
