@@ -70,6 +70,18 @@ class StargazersViewControllerTests: XCTestCase {
         assertThat(sut, hasRendered: [stargazer0, stargazer1, stargazer2, stargazer3])
     }
     
+    func test_viewController_doesNotAlterCurrentRenderingStateOnLoadingError() {
+        let stargazer0 = uniqueStargazer()
+        let (sut, spy) = makeSUT()
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0], at: 0)
+        
+        sut.simulatePullToRefresh()
+        spy.completeLoading(with: anyNSError(), at: 1)
+        
+        assertThat(sut, hasRendered: [stargazer0])
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
@@ -141,6 +153,10 @@ class StargazersViewControllerTests: XCTestCase {
         
         func completeLoading(with stargazers: [Stargazer] = [], at index: Int = 0) {
             messages[index].completion(.success(stargazers))
+        }
+        
+        func completeLoading(with error: Error, at index: Int = 0) {
+            messages[index].completion(.failure(error))
         }
         
         func repositoryForLoad(at index: Int = 0) -> Repository {

@@ -35,9 +35,11 @@ public class StargazersViewController: UITableViewController {
     @objc private func loadStargazers() {
         refreshControl?.beginRefreshing()
         loader.load(from: repository) { [unowned self] result in
-            self.stargazers = (try? result.get()) ?? []
-            self.tableView.reloadData()
-            self.refreshControl?.endRefreshing()
+            if let stargazers = try? result.get() {
+                self.stargazers = stargazers
+                self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
+            }
         }
     }
 }
