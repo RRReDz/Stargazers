@@ -52,9 +52,10 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
-    func test_viewController_numberOfRowsWillBeTheSameAsTheNumberOfStargazers() {
-        let stargazers = uniqueStargazers()
+    func test_viewController_successfullyRendersLoadedStargazers() {
+        let stargazers = [anyStargazer(), anyStargazer()]
         let (sut, spy) = makeSUT()
+        
         sut.loadViewIfNeeded()
         
         spy.completeLoading(with: stargazers)
@@ -63,6 +64,9 @@ class StargazersViewControllerTests: XCTestCase {
             sut.tableView.numberOfRows(inSection: 0),
             stargazers.count
         )
+        
+        XCTAssertNotNil(sut.tableView.dataSource?.tableView(sut.tableView, cellForRowAt: IndexPath(row: 0, section: 0)))
+        XCTAssertNotNil(sut.tableView.dataSource?.tableView(sut.tableView, cellForRowAt: IndexPath(row: 1, section: 0)))
     }
     
     // MARK: Utils
@@ -110,5 +114,7 @@ private extension StargazersViewController {
     var loadingIndicatorEnabled: Bool {
         refreshControl?.isRefreshing ?? false
     }
+    
+    
 }
 
