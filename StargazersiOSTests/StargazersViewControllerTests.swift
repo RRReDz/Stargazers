@@ -148,11 +148,11 @@ class StargazersViewControllerTests: XCTestCase {
     private func assertThat(
         _ sut: StargazersViewController,
         hasViewConfiguredFor stargazer: Stargazer,
-        at index: Int,
+        at row: Int,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let stargazerCell = sut.stargazerViewAt(index) as? StargazerCell
+        let stargazerCell = sut.stargazerView(at: row) as? StargazerCell
         XCTAssertEqual(
             stargazerCell?.usernameText,
             stargazer.username,
@@ -203,16 +203,16 @@ class StargazersViewControllerTests: XCTestCase {
             stargazersRequests.append((repository, completion))
         }
         
-        func completeLoading(with stargazers: [Stargazer] = [], at index: Int = 0) {
-            stargazersRequests[index].completion(.success(stargazers))
+        func completeLoading(with stargazers: [Stargazer] = [], at row: Int = 0) {
+            stargazersRequests[row].completion(.success(stargazers))
         }
         
-        func completeLoadingWithError(at index: Int = 0) {
-            stargazersRequests[index].completion(.failure(anyNSError()))
+        func completeLoadingWithError(at row: Int = 0) {
+            stargazersRequests[row].completion(.failure(anyNSError()))
         }
         
-        func repositoryForLoad(at index: Int = 0) -> Repository {
-            return stargazersRequests[index].repository
+        func repositoryForLoad(at row: Int = 0) -> Repository {
+            return stargazersRequests[row].repository
         }
         
         // MARK: - Image Loader
@@ -252,8 +252,8 @@ private extension StargazersViewController {
         refreshControl?.isRefreshing ?? false
     }
     
-    func stargazerViewAt(_ position: Int) -> UIView? {
-        let indexPath = IndexPath(row: position, section: stargazersSection)
+    func stargazerView(at row: Int) -> UIView? {
+        let indexPath = IndexPath(row: row, section: stargazersSection)
         return tableView.dataSource?.tableView(
             tableView,
             cellForRowAt: indexPath
@@ -261,14 +261,14 @@ private extension StargazersViewController {
     }
     
     @discardableResult
-    func simulateStargazerViewVisible(at index: Int) -> StargazerCell? {
-        return stargazerViewAt(index) as? StargazerCell
+    func simulateStargazerViewVisible(at row: Int) -> StargazerCell? {
+        return stargazerView(at: row) as? StargazerCell
     }
     
-    func simulateStargazerViewVisibleAndThenNotVisible(at index: Int) {
-        let view = simulateStargazerViewVisible(at: index)
+    func simulateStargazerViewVisibleAndThenNotVisible(at row: Int) {
+        let view = simulateStargazerViewVisible(at: row)
         
-        let indexPath = IndexPath(row: index, section: stargazersSection)
+        let indexPath = IndexPath(row: row, section: stargazersSection)
         return tableView(
             tableView,
             didEndDisplaying: view!,
