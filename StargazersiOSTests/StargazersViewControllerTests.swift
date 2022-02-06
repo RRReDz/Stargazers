@@ -89,24 +89,24 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     func test_stargazerImageView_loadsUserImageURLWhenVisible() {
-        let stargazer0 = makeStargazer(
-            avatarURL: URL(string: "http://avatar0-image.com")!)
+        let stargazer0 = makeStargazer(avatarURL: URL(string: "http://avatar0-image.com")!)
+        let stargazer1 = makeStargazer(avatarURL: URL(string: "http://avatar1-image.com")!)
         let (sut, spy) = makeSUT()
-        sut.loadViewIfNeeded()
-        spy.completeLoading(with: [stargazer0], at: 0)
         
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0, stargazer1], at: 0)
         XCTAssertEqual(spy.loadedImageURLs, [], "Expected no image URL requests until view become visible")
         
         sut.simulateStargazerViewVisible(at: 0)
-        
         XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
+        
+        sut.simulateStargazerViewVisible(at: 1)
+        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL, stargazer1.avatarURL])
     }
     
     func test_stargazerImageView_cancelsUserImageURLWhenRemovedFromScreen() {
-        let stargazer0 = makeStargazer(
-            avatarURL: URL(string: "http://avatar0-image.com")!)
-        let stargazer1 = makeStargazer(
-            avatarURL: URL(string: "http://avatar1-image.com")!)
+        let stargazer0 = makeStargazer(avatarURL: URL(string: "http://avatar0-image.com")!)
+        let stargazer1 = makeStargazer(avatarURL: URL(string: "http://avatar1-image.com")!)
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
