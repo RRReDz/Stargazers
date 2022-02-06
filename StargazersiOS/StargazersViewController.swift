@@ -9,7 +9,11 @@ import UIKit
 import Stargazers
 
 public protocol StargazerImageLoader {
-    func loadImageData(from url: URL)
+    func loadImageData(from url: URL) -> StargazerImageLoaderTask
+}
+
+public protocol StargazerImageLoaderTask {
+    func cancel()
 }
 
 public class StargazersViewController: UITableViewController {
@@ -17,6 +21,7 @@ public class StargazersViewController: UITableViewController {
     private let imageLoader: StargazerImageLoader
     private let repository: Repository
     private var stargazers: [Stargazer] = []
+    private var activeTasks: [IndexPath: StargazerImageLoaderTask] = [:]
     
     public init(
         loader: StargazersLoader,
@@ -67,7 +72,13 @@ extension StargazersViewController {
         let model = stargazers[indexPath.row]
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
-        imageLoader.loadImageData(from: model.avatarURL)
+        let task = imageLoader.loadImageData(from: model.avatarURL)
+        activeTasks[indexPath] = task
         return cell
+    }
+    
+    public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        activeTasks[indexPath]?.cancel()
+        activeTasks[indexPath] = nil
     }
 }

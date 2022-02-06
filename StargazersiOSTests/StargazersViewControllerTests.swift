@@ -99,7 +99,28 @@ class StargazersViewControllerTests: XCTestCase {
         
         sut.simulateStargazerViewVisible(at: 0)
         
-        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL], "Expected no image URL requests until view become visible")
+        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
+    }
+    
+    func test_stargazerImageView_cancelsUserImageURLWhenRemovedFromScreen() {
+        let stargazer0 = makeStargazer(
+            avatarURL: URL(string: "http://avatar0-image.com")!)
+        let (sut, spy) = makeSUT()
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0], at: 0)
+        
+        XCTAssertEqual(spy.loadedImageURLs, [], "Expected no image URL requests until view become visible")
+        XCTAssertEqual(spy.loadCanceledImageURLs, [], "Expected no image URL canceled until view become invisible")
+        
+        sut.simulateStargazerViewVisible(at: 0)
+        
+        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
+        XCTAssertEqual(spy.loadCanceledImageURLs, [], "Expected no image URL canceled when view become visible")
+        
+        sut.simulateStargazerViewRemovedFromScreen(at: 0)
+        
+        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
+        XCTAssertEqual(spy.loadCanceledImageURLs, [stargazer0.avatarURL])
     }
     
     // MARK: Utils
@@ -200,9 +221,25 @@ class StargazersViewControllerTests: XCTestCase {
         // MARK: - Image Loader
         
         var loadedImageURLs: [URL] = []
+        var loadCanceledImageURLs: [URL] = []
         
-        func loadImageData(from url: URL) {
+        func loadImageData(from url: URL) -> StargazerImageLoaderTask {
             loadedImageURLs.append(url)
+            return LoaderSpyTask(onCancel: { [weak self] in
+                self?.loadCanceledImageURLs.append(url)
+            })
+        }
+    }
+    
+    private class LoaderSpyTask: StargazerImageLoaderTask {
+        private let onCancel: () -> Void
+        
+        init(onCancel: @escaping () -> Void) {
+            self.onCancel = onCancel
+        }
+        
+        func cancel() {
+            onCancel()
         }
     }
     
@@ -229,6 +266,15 @@ private extension StargazersViewController {
     
     func simulateStargazerViewVisible(at index: Int) {
         stargazerViewAt(0)
+    }
+    
+    func simulateStargazerViewRemovedFromScreen(at index: Int) {
+        let indexPath = IndexPath(row: index, section: stargazersSection)
+        return tableView(
+            tableView,
+            didEndDisplaying: UITableViewCell(),
+            forRowAt: indexPath
+        )
     }
     
     var renderedStargazerViews: Int {
