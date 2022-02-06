@@ -105,22 +105,19 @@ class StargazersViewControllerTests: XCTestCase {
     func test_stargazerImageView_cancelsUserImageURLWhenRemovedFromScreen() {
         let stargazer0 = makeStargazer(
             avatarURL: URL(string: "http://avatar0-image.com")!)
+        let stargazer1 = makeStargazer(
+            avatarURL: URL(string: "http://avatar1-image.com")!)
         let (sut, spy) = makeSUT()
-        sut.loadViewIfNeeded()
-        spy.completeLoading(with: [stargazer0], at: 0)
         
-        XCTAssertEqual(spy.loadedImageURLs, [], "Expected no image URL requests until view become visible")
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0, stargazer1], at: 0)
         XCTAssertEqual(spy.loadCanceledImageURLs, [], "Expected no image URL canceled until view become invisible")
         
-        sut.simulateStargazerViewVisible(at: 0)
-        
-        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
-        XCTAssertEqual(spy.loadCanceledImageURLs, [], "Expected no image URL canceled when view become visible")
-        
-        sut.simulateStargazerViewRemovedFromScreen(at: 0)
-        
-        XCTAssertEqual(spy.loadedImageURLs, [stargazer0.avatarURL])
+        sut.simulateStargazerViewVisibleAndThenNotVisible(at: 0)
         XCTAssertEqual(spy.loadCanceledImageURLs, [stargazer0.avatarURL])
+        
+        sut.simulateStargazerViewVisibleAndThenNotVisible(at: 1)
+        XCTAssertEqual(spy.loadCanceledImageURLs, [stargazer0.avatarURL, stargazer1.avatarURL])
     }
     
     // MARK: Utils
@@ -255,7 +252,6 @@ private extension StargazersViewController {
         refreshControl?.isRefreshing ?? false
     }
     
-    @discardableResult
     func stargazerViewAt(_ position: Int) -> UIView? {
         let indexPath = IndexPath(row: position, section: stargazersSection)
         return tableView.dataSource?.tableView(
@@ -264,15 +260,18 @@ private extension StargazersViewController {
         )
     }
     
-    func simulateStargazerViewVisible(at index: Int) {
-        stargazerViewAt(0)
+    @discardableResult
+    func simulateStargazerViewVisible(at index: Int) -> StargazerCell? {
+        return stargazerViewAt(index) as? StargazerCell
     }
     
-    func simulateStargazerViewRemovedFromScreen(at index: Int) {
+    func simulateStargazerViewVisibleAndThenNotVisible(at index: Int) {
+        let view = simulateStargazerViewVisible(at: index)
+        
         let indexPath = IndexPath(row: index, section: stargazersSection)
         return tableView(
             tableView,
-            didEndDisplaying: UITableViewCell(),
+            didEndDisplaying: view!,
             forRowAt: indexPath
         )
     }
