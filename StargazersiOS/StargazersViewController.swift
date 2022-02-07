@@ -72,6 +72,7 @@ extension StargazersViewController {
         let model = stargazers[indexPath.row]
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
+        cell.isUserImageLoading = true
         let task = imageLoader.loadImageData(from: model.avatarURL)
         activeTasks[indexPath] = task
         return cell

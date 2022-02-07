@@ -58,6 +58,20 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertFalse(sut.loadingIndicatorEnabled)
     }
     
+    func test_viewController_showsLoadingIndicatorWhileUserImageIsLoading() {
+        let (sut, spy) = makeSUT()
+        let stargazer0 = uniqueStargazer()
+        let stargazer1 = uniqueStargazer()
+
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0, stargazer1])
+        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
+        let stargazerCell1 = sut.simulateStargazerViewVisible(at: 1)
+        
+        XCTAssertTrue(stargazerCell0!.imageIsLoading)
+        XCTAssertTrue(stargazerCell1!.imageIsLoading)
+    }
+    
     func test_viewController_successfullyRendersLoadedStargazers() {
         let stargazer0 = uniqueStargazer()
         let stargazer1 = uniqueStargazer()
@@ -282,6 +296,10 @@ private extension StargazersViewController {
 private extension StargazerCell {
     var usernameText: String? {
         usernameLabel.text
+    }
+    
+    var imageIsLoading: Bool {
+        isUserImageLoading
     }
 }
 
