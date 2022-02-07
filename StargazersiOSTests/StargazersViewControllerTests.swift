@@ -217,6 +217,14 @@ class StargazersViewControllerTests: XCTestCase {
         
         // MARK: - Image Loader
         
+        private struct LoaderSpyTask: StargazerImageLoaderTask {
+            let onCancel: () -> Void
+            
+            func cancel() {
+                onCancel()
+            }
+        }
+        
         var loadedImageURLs: [URL] = []
         var loadCanceledImageURLs: [URL] = []
         
@@ -225,18 +233,6 @@ class StargazersViewControllerTests: XCTestCase {
             return LoaderSpyTask(onCancel: { [weak self] in
                 self?.loadCanceledImageURLs.append(url)
             })
-        }
-    }
-    
-    private class LoaderSpyTask: StargazerImageLoaderTask {
-        private let onCancel: () -> Void
-        
-        init(onCancel: @escaping () -> Void) {
-            self.onCancel = onCancel
-        }
-        
-        func cancel() {
-            onCancel()
         }
     }
     
