@@ -70,6 +70,16 @@ class StargazersViewControllerTests: XCTestCase {
         
         XCTAssertTrue(stargazerCell0!.imageIsLoading)
         XCTAssertTrue(stargazerCell1!.imageIsLoading)
+        
+        spy.completeImageLoading(at: 1)
+        
+        XCTAssertTrue(stargazerCell0!.imageIsLoading)
+        XCTAssertFalse(stargazerCell1!.imageIsLoading)
+        
+        spy.completeImageLoading(at: 0)
+        
+        XCTAssertFalse(stargazerCell0!.imageIsLoading)
+        XCTAssertFalse(stargazerCell1!.imageIsLoading)
     }
     
     func test_viewController_successfullyRendersLoadedStargazers() {
@@ -239,14 +249,20 @@ class StargazersViewControllerTests: XCTestCase {
             }
         }
         
-        var loadedImageURLs: [URL] = []
-        var loadCanceledImageURLs: [URL] = []
+        var loadedImageURLs = [URL]()
+        var loadCanceledImageURLs = [URL]()
+        private var completions = [() -> Void]()
         
-        func loadImageData(from url: URL) -> StargazerImageLoaderTask {
+        func loadImageData(from url: URL, completion: @escaping () -> Void) -> StargazerImageLoaderTask {
             loadedImageURLs.append(url)
+            completions.append(completion)
             return LoaderSpyTask(onCancel: { [weak self] in
                 self?.loadCanceledImageURLs.append(url)
             })
+        }
+        
+        func completeImageLoading(at index: Int = 0) {
+            completions[index]()
         }
     }
     
