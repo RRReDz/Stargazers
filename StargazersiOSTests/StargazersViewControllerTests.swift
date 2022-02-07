@@ -68,18 +68,18 @@ class StargazersViewControllerTests: XCTestCase {
         let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
         let stargazerCell1 = sut.simulateStargazerViewVisible(at: 1)
         
-        XCTAssertTrue(stargazerCell0!.imageIsLoading)
-        XCTAssertTrue(stargazerCell1!.imageIsLoading)
+        XCTAssertEqual(stargazerCell0?.imageIsLoading, true)
+        XCTAssertEqual(stargazerCell1?.imageIsLoading, true)
         
         spy.completeImageLoading(at: 1)
         
-        XCTAssertTrue(stargazerCell0!.imageIsLoading)
-        XCTAssertFalse(stargazerCell1!.imageIsLoading)
+        XCTAssertEqual(stargazerCell0?.imageIsLoading, true)
+        XCTAssertEqual(stargazerCell1?.imageIsLoading, false)
         
         spy.completeImageLoading(at: 0)
         
-        XCTAssertFalse(stargazerCell0!.imageIsLoading)
-        XCTAssertFalse(stargazerCell1!.imageIsLoading)
+        XCTAssertEqual(stargazerCell0?.imageIsLoading, false)
+        XCTAssertEqual(stargazerCell1?.imageIsLoading, false)
     }
     
     func test_viewController_successfullyRendersLoadedStargazers() {
