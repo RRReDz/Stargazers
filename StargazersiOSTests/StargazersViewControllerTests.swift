@@ -71,12 +71,12 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.imageLoadingIndicatorEnabled, true)
         XCTAssertEqual(stargazerCell1?.imageLoadingIndicatorEnabled, true)
         
-        spy.completeImageLoading(at: 1)
+        spy.completeImageLoadingWithSuccess(at: 1)
         
         XCTAssertEqual(stargazerCell0?.imageLoadingIndicatorEnabled, true)
         XCTAssertEqual(stargazerCell1?.imageLoadingIndicatorEnabled, false)
         
-        spy.completeImageLoading(at: 0)
+        spy.completeImageLoadingWithError(at: 0)
         
         XCTAssertEqual(stargazerCell0?.imageLoadingIndicatorEnabled, false)
         XCTAssertEqual(stargazerCell1?.imageLoadingIndicatorEnabled, false)
@@ -261,7 +261,11 @@ class StargazersViewControllerTests: XCTestCase {
             })
         }
         
-        func completeImageLoading(at index: Int = 0) {
+        func completeImageLoadingWithSuccess(at index: Int = 0) {
+            completions[index]()
+        }
+        
+        func completeImageLoadingWithError(at index: Int = 0) {
             completions[index]()
         }
     }
