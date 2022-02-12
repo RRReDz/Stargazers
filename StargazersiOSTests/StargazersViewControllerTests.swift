@@ -18,7 +18,7 @@ class StargazersViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertEqual(spy.repositoryForLoad(at: 0), selectedRepository)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         XCTAssertEqual(spy.repositoryForLoad(at: 1), selectedRepository)
     }
     
@@ -29,10 +29,10 @@ class StargazersViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertEqual(spy.stargazersLoadCallCount, 1)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         XCTAssertEqual(spy.stargazersLoadCallCount, 2)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         XCTAssertEqual(spy.stargazersLoadCallCount, 3)
     }
     
@@ -45,13 +45,13 @@ class StargazersViewControllerTests: XCTestCase {
         spy.completeLoading(at: 0)
         XCTAssertFalse(sut.loadingIndicatorEnabled)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         XCTAssertTrue(sut.loadingIndicatorEnabled)
         
         spy.completeLoading(at: 1)
         XCTAssertFalse(sut.loadingIndicatorEnabled)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         XCTAssertTrue(sut.loadingIndicatorEnabled)
         
         spy.completeLoadingWithError(at: 2)
@@ -95,7 +95,7 @@ class StargazersViewControllerTests: XCTestCase {
         spy.completeLoading(with: [stargazer0], at: 0)
         assertThat(sut, hasRendered: [stargazer0])
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         spy.completeLoading(with: [stargazer0, stargazer1, stargazer2, stargazer3], at: 1)
         assertThat(sut, hasRendered: [stargazer0, stargazer1, stargazer2, stargazer3])
     }
@@ -106,7 +106,7 @@ class StargazersViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         spy.completeLoading(with: [stargazer0], at: 0)
         
-        sut.simulatePullToRefresh()
+        sut.simulateUserInitiatedPullToRefresh()
         spy.completeLoadingWithError(at: 1)
         
         assertThat(sut, hasRendered: [stargazer0])
@@ -312,10 +312,20 @@ class StargazersViewControllerTests: XCTestCase {
     
 }
 
-private extension StargazersViewController {
+private extension UIRefreshControl {
     func simulatePullToRefresh() {
-        let action = refreshControl?.actions(forTarget: self, forControlEvent: .valueChanged)?.first ?? ""
-        self.performSelector(onMainThread: Selector(action), with: nil, waitUntilDone: true)
+        allTargets.forEach { target in
+            actions(forTarget: target, forControlEvent: .valueChanged)?.forEach { action in
+                (target as NSObject).performSelector(onMainThread: Selector(action), with: nil, waitUntilDone: true)
+            }
+        }
+        
+    }
+}
+
+private extension StargazersViewController {
+    func simulateUserInitiatedPullToRefresh() {
+        refreshControl?.simulatePullToRefresh()
     }
     
     var loadingIndicatorEnabled: Bool {
