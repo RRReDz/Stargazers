@@ -9,7 +9,9 @@ import UIKit
 import Stargazers
 
 public protocol StargazerImageLoader {
-    func loadImageData(from url: URL, completion: @escaping () -> Void) -> StargazerImageLoaderTask
+    typealias Result = Swift.Result<Data, Error>
+    
+    func loadImageData(from url: URL, completion: @escaping (Result) -> Void) -> StargazerImageLoaderTask
 }
 
 public protocol StargazerImageLoaderTask {
@@ -73,8 +75,10 @@ extension StargazersViewController {
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
         cell.isUserImageLoading = true
-        let task = imageLoader.loadImageData(from: model.avatarURL) {
+        let task = imageLoader.loadImageData(from: model.avatarURL) { result in
+            let imageData = try? result.get()
             cell.isUserImageLoading = false
+            cell.userImageView.image = imageData.map(UIImage.init) ?? nil
         }
         activeTasks[indexPath] = task
         return cell

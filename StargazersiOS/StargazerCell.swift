@@ -10,4 +10,5 @@ import UIKit
 public class StargazerCell: UITableViewCell {
     public let usernameLabel = UILabel()
     public var isUserImageLoading: Bool = false
+    public let userImageView = UIImageView()
 }

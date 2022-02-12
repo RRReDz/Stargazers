@@ -144,6 +144,22 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(spy.loadCanceledImageURLs, [stargazer0.avatarURL, stargazer1.avatarURL])
     }
     
+    func test_stargazerImageView_showsUserImageAfterCompleteImageLoadingWithSuccess() {
+        let (sut, spy) = makeSUT()
+        let stargazer0 = uniqueStargazer()
+        let fakeUserImageData = UIImage.make(withColor: .red).pngData()!
+
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0])
+        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, .none)
+        
+        spy.completeImageLoadingWithSuccess(with: fakeUserImageData, at: 0)
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, fakeUserImageData)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
@@ -251,9 +267,9 @@ class StargazersViewControllerTests: XCTestCase {
         
         var loadedImageURLs = [URL]()
         var loadCanceledImageURLs = [URL]()
-        private var completions = [() -> Void]()
+        private var completions = [(StargazerImageLoader.Result) -> Void]()
         
-        func loadImageData(from url: URL, completion: @escaping () -> Void) -> StargazerImageLoaderTask {
+        func loadImageData(from url: URL, completion: @escaping (StargazerImageLoader.Result) -> Void) -> StargazerImageLoaderTask {
             loadedImageURLs.append(url)
             completions.append(completion)
             return LoaderSpyTask(onCancel: { [weak self] in
@@ -261,12 +277,13 @@ class StargazersViewControllerTests: XCTestCase {
             })
         }
         
-        func completeImageLoadingWithSuccess(at index: Int = 0) {
-            completions[index]()
+        func completeImageLoadingWithSuccess(with data: Data = Data(), at index: Int = 0) {
+            completions[index](.success(data))
         }
         
         func completeImageLoadingWithError(at index: Int = 0) {
-            completions[index]()
+            let error = anyNSError()
+            completions[index](.failure(error))
         }
     }
     
@@ -320,6 +337,23 @@ private extension StargazerCell {
     
     var imageLoadingIndicatorEnabled: Bool {
         isUserImageLoading
+    }
+    
+    var userImageData: Data? {
+        userImageView.image?.pngData()
+    }
+}
+
+private extension UIImage {
+    static func make(withColor color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()!
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
     }
 }
 
