@@ -160,16 +160,39 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.userImageData, fakeUserImageData)
     }
     
+    func test_stargazerImageView_showsFallbackUserImageAfterCompleteImageLoadingWithError() {
+        let fakeFallbackUserImage = UIImage.make(withColor: .blue)
+        let (sut, spy) = makeSUT(fallbackUserImage: fakeFallbackUserImage)
+        let stargazer0 = uniqueStargazer()
+
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0])
+        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, .none)
+        
+        spy.completeImageLoadingWithError(at: 0)
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, fakeFallbackUserImage.pngData()!)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
         for repository: Repository? = nil,
+        fallbackUserImage: UIImage? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (StargazersViewController, LoaderSpy) {
         let repository = repository ?? anyRepository()
+        let fallbackUserImage = fallbackUserImage ?? UIImage()
         let spy = LoaderSpy()
-        let sut = StargazersViewController(loader: spy, imageLoader: spy, repository: repository)
+        let sut = StargazersViewController(
+            loader: spy,
+            imageLoader: spy,
+            repository: repository,
+            fallbackUserImage: fallbackUserImage
+        )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
         return (sut, spy)

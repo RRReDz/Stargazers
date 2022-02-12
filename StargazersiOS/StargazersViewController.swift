@@ -24,15 +24,18 @@ public class StargazersViewController: UITableViewController {
     private let repository: Repository
     private var stargazers: [Stargazer] = []
     private var activeTasks: [IndexPath: StargazerImageLoaderTask] = [:]
+    private var fallbackUserImage: UIImage
     
     public init(
         loader: StargazersLoader,
         imageLoader: StargazerImageLoader,
-        repository: Repository
+        repository: Repository,
+        fallbackUserImage: UIImage
     ) {
         self.loader = loader
         self.imageLoader = imageLoader
         self.repository = repository
+        self.fallbackUserImage = fallbackUserImage
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -75,10 +78,10 @@ extension StargazersViewController {
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
         cell.isUserImageLoading = true
-        let task = imageLoader.loadImageData(from: model.avatarURL) { result in
+        let task = imageLoader.loadImageData(from: model.avatarURL) { [unowned self] result in
             let imageData = try? result.get()
+            cell.userImageView.image = imageData.map(UIImage.init) ?? self.fallbackUserImage
             cell.isUserImageLoading = false
-            cell.userImageView.image = imageData.map(UIImage.init) ?? nil
         }
         activeTasks[indexPath] = task
         return cell
