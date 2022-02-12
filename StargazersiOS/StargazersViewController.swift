@@ -8,11 +8,41 @@
 import UIKit
 import Stargazers
 
-public class StargazersViewController: UITableViewController {
+final class StargazersRefreshViewController: NSObject {
+    private(set) lazy var view: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        return refreshControl
+    }()
     private let loader: StargazersLoader
-    private let imageLoader: StargazerImageLoader
     private let repository: Repository
-    private var stargazers: [Stargazer] = []
+    
+    var onRefresh: (([Stargazer]) -> Void)?
+    
+    init(loader: StargazersLoader, repository: Repository) {
+        self.loader = loader
+        self.repository = repository
+    }
+    
+    @objc func refresh() {
+        view.beginRefreshing()
+        loader.load(from: repository) { [weak self] result in
+            if let stargazers = try? result.get() {
+                self?.onRefresh?(stargazers)
+            }
+            self?.view.endRefreshing()
+        }
+    }
+}
+
+public class StargazersViewController: UITableViewController {
+    private let refreshController: StargazersRefreshViewController
+    private let imageLoader: StargazerImageLoader
+    private var tableModel = [Stargazer]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     private var activeTasks: [IndexPath: StargazerImageLoaderTask] = [:]
     private var fallbackUserImage: UIImage
     
@@ -22,9 +52,8 @@ public class StargazersViewController: UITableViewController {
         repository: Repository,
         fallbackUserImage: UIImage
     ) {
-        self.loader = loader
+        self.refreshController = StargazersRefreshViewController(loader: loader, repository: repository)
         self.imageLoader = imageLoader
-        self.repository = repository
         self.fallbackUserImage = fallbackUserImage
         super.init(nibName: nil, bundle: nil)
     }
@@ -36,21 +65,11 @@ public class StargazersViewController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(loadStargazers), for: .valueChanged)
-        
-        loadStargazers()
-    }
-    
-    @objc private func loadStargazers() {
-        refreshControl?.beginRefreshing()
-        loader.load(from: repository) { [unowned self] result in
-            if let stargazers = try? result.get() {
-                self.stargazers = stargazers
-                self.tableView.reloadData()
-            }
-            self.refreshControl?.endRefreshing()
+        refreshControl = refreshController.view
+        refreshController.onRefresh = { [weak self] stargazers in
+            self?.tableModel = stargazers
         }
+        refreshController.refresh()
     }
 }
 
@@ -60,11 +79,11 @@ extension StargazersViewController {
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return stargazers.count
+        return tableModel.count
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = stargazers[indexPath.row]
+        let model = tableModel[indexPath.row]
         let cell = StargazerCell()
         cell.usernameLabel.text = model.username
         cell.isUserImageLoading = true
