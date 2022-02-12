@@ -8,16 +8,6 @@
 import UIKit
 import Stargazers
 
-public protocol StargazerImageLoader {
-    typealias Result = Swift.Result<Data, Error>
-    
-    func loadImageData(from url: URL, completion: @escaping (Result) -> Void) -> StargazerImageLoaderTask
-}
-
-public protocol StargazerImageLoaderTask {
-    func cancel()
-}
-
 public class StargazersViewController: UITableViewController {
     private let loader: StargazersLoader
     private let imageLoader: StargazerImageLoader
