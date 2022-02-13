@@ -209,6 +209,21 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.userImageData, fakeFallbackUserImage.pngData()!)
     }
     
+    func test_stargazerImageView_showsNoImageOnFailureAndNoFallbackImageProvided() {
+        let (sut, spy) = makeSUT(fallbackUserImage: nil)
+        let stargazer0 = uniqueStargazer()
+
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [stargazer0])
+        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, .none)
+        
+        spy.completeLoadingWithError()
+        
+        XCTAssertEqual(stargazerCell0?.userImageData, .none)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
