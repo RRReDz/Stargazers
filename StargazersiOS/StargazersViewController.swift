@@ -54,7 +54,7 @@ final class StargazerCellController {
         return cell
     }
     
-    func cancel() {
+    func cancelImageLoad() {
         imageLoaderTask?.cancel()
     }
 }
@@ -98,7 +98,7 @@ extension StargazersViewController {
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(at: indexPath).cancel()
+        cellController(at: indexPath).cancelImageLoad()
     }
     
     private func cellController(at indexPath: IndexPath) -> StargazerCellController {
