@@ -14,7 +14,7 @@ final class StargazerViewModel<Image> {
     private var imageLoaderTask: StargazerImageLoaderTask?
     private let userImage: (UserImage) -> Image?
     
-    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, userImage: @escaping (UserImage) -> Image) {
+    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, userImage: @escaping (UserImage) -> Image?) {
         self.stargazer = stargazer
         self.imageLoader = imageLoader
         self.userImage = userImage
@@ -39,7 +39,11 @@ final class StargazerViewModel<Image> {
             
             switch result {
             case let .success(imageData):
-                self.onUserImageLoad?(self.userImage(.retrieved(imageData))!)
+                if let image = self.userImage(.retrieved(imageData)) {
+                    self.onUserImageLoad?(image)
+                } else {
+                    self.onUserImageLoad?(self.userImage(.fallback)!)
+                }
             case .failure:
                 self.onUserImageLoad?(self.userImage(.fallback)!)
             }
@@ -54,9 +58,9 @@ final class StargazerViewModel<Image> {
 }
 
 final class StargazerCellController {
-    private let viewModel: StargazerViewModel<UIImage?>
+    private let viewModel: StargazerViewModel<UIImage>
     
-    init(viewModel: StargazerViewModel<UIImage?>) {
+    init(viewModel: StargazerViewModel<UIImage>) {
         self.viewModel = viewModel
     }
     
