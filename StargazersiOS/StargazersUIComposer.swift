@@ -17,7 +17,8 @@ public final class StargazersUIComposer {
         repository: Repository,
         fallbackUserImage: UIImage
     ) -> StargazersViewController {
-        let refreshController = StargazersRefreshController(loader: loader, repository: repository)
+        let loadViewModel = StargazersLoadViewModel(loader: loader, repository: repository)
+        let refreshController = StargazersRefreshController(viewModel: loadViewModel)
         let stargazersController = StargazersViewController(refreshController: refreshController)
         refreshController.onRefresh = { [weak stargazersController] stargazers in
             stargazersController?.tableModel = stargazers.map { stargazer in

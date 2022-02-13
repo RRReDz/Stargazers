@@ -9,28 +9,31 @@ import Stargazers
 import UIKit
 
 final class StargazersRefreshController: NSObject {
-    private(set) lazy var view: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        return refreshControl
-    }()
-    private let loader: StargazersLoader
-    private let repository: Repository
-    
+    private(set) lazy var view = binded(UIRefreshControl())
+    private let viewModel: StargazersLoadViewModel
     var onRefresh: (([Stargazer]) -> Void)?
     
-    init(loader: StargazersLoader, repository: Repository) {
-        self.loader = loader
-        self.repository = repository
+    init(viewModel: StargazersLoadViewModel) {
+        self.viewModel = viewModel
     }
     
     @objc func refresh() {
-        view.beginRefreshing()
-        loader.load(from: repository) { [weak self] result in
-            if let stargazers = try? result.get() {
+        viewModel.loadStargazers()
+    }
+    
+    private func binded(_ view: UIRefreshControl) -> UIRefreshControl {
+        viewModel.onChange = { [weak self] viewModel in
+            if viewModel.isLoading {
+                view.beginRefreshing()
+            } else {
+                view.endRefreshing()
+            }
+            
+            if let stargazers = viewModel.stargazers {
                 self?.onRefresh?(stargazers)
             }
-            self?.view.endRefreshing()
         }
+        view.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        return view
     }
 }
