@@ -9,6 +9,8 @@ import UIKit
 import Stargazers
 
 public final class StargazersUIComposer {
+    private init() {}
+    
     public static func composedWith(
         loader: StargazersLoader,
         imageLoader: StargazerImageLoader,
