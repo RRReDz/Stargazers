@@ -8,15 +8,43 @@
 import UIKit
 import Stargazers
 
+final class StargazersCellController {
+    private let stargazer: Stargazer
+    private let imageLoader: StargazerImageLoader
+    private var imageLoaderTask: StargazerImageLoaderTask?
+    private let fallbackUserImage: UIImage
+    
+    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, fallbackUserImage: UIImage) {
+        self.stargazer = stargazer
+        self.imageLoader = imageLoader
+        self.fallbackUserImage = fallbackUserImage
+    }
+    
+    func view() -> StargazerCell {
+        let cell = StargazerCell()
+        cell.usernameLabel.text = stargazer.username
+        cell.isUserImageLoading = true
+        imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [unowned self] result in
+            let imageData = try? result.get()
+            cell.userImageView.image = imageData.map(UIImage.init) ?? self.fallbackUserImage
+            cell.isUserImageLoading = false
+        }
+        return cell
+    }
+    
+    func cancel() {
+        imageLoaderTask?.cancel()
+    }
+}
+
 public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController
     private let imageLoader: StargazerImageLoader
-    private var tableModel = [Stargazer]() {
+    private var tableModel = [StargazersCellController]() {
         didSet {
             tableView.reloadData()
         }
     }
-    private var activeTasks: [IndexPath: StargazerImageLoaderTask] = [:]
     private var fallbackUserImage: UIImage
     
     public init(
@@ -40,7 +68,15 @@ public class StargazersViewController: UITableViewController {
         
         refreshControl = refreshController.view
         refreshController.onRefresh = { [weak self] stargazers in
-            self?.tableModel = stargazers
+            guard let self = self else { return }
+            
+            self.tableModel = stargazers.map { stargazer in
+                StargazersCellController(
+                    stargazer: stargazer,
+                    imageLoader: self.imageLoader,
+                    fallbackUserImage: self.fallbackUserImage
+                )
+            }
         }
         refreshController.refresh()
     }
@@ -56,21 +92,12 @@ extension StargazersViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = tableModel[indexPath.row]
-        let cell = StargazerCell()
-        cell.usernameLabel.text = model.username
-        cell.isUserImageLoading = true
-        let task = imageLoader.loadImageData(from: model.avatarURL) { [unowned self] result in
-            let imageData = try? result.get()
-            cell.userImageView.image = imageData.map(UIImage.init) ?? self.fallbackUserImage
-            cell.isUserImageLoading = false
-        }
-        activeTasks[indexPath] = task
-        return cell
+        let cellController = tableModel[indexPath.row]
+        return cellController.view()
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        activeTasks[indexPath]?.cancel()
-        activeTasks[indexPath] = nil
+        let cellController = tableModel[indexPath.row]
+        cellController.cancel()
     }
 }
