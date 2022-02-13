@@ -16,8 +16,8 @@ class StargazersLoadViewModel {
         self.repository = repository
     }
 
-    var onLoadingStateChanged: ((Bool) -> Void)?
-    var onStargazersLoad: (([Stargazer]) -> Void)?
+    var onLoadingStateChanged: Observer<Bool>?
+    var onStargazersLoad: Observer<[Stargazer]>?
     
     func loadStargazers() {
         onLoadingStateChanged?(true)

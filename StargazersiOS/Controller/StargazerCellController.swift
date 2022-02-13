@@ -24,8 +24,8 @@ final class StargazerViewModel {
         stargazer.username
     }
     
-    var onUserImageLoadingStateChange: ((Bool) -> Void)?
-    var onUserImageLoad: ((UIImage) -> Void)?
+    var onUserImageLoadingStateChange: Observer<Bool>?
+    var onUserImageLoad: Observer<UIImage>?
     
     func loadImage() {
         onUserImageLoadingStateChange?(true)
