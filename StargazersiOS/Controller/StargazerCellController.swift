@@ -8,16 +8,16 @@
 import UIKit
 import Stargazers
 
-final class StargazerViewModel {
+final class StargazerViewModel<Image> {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
     private var imageLoaderTask: StargazerImageLoaderTask?
-    private let fallbackUserImage: UIImage
+    private let userImage: (UserImage) -> Image?
     
-    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, fallbackUserImage: UIImage) {
+    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, userImage: @escaping (UserImage) -> Image) {
         self.stargazer = stargazer
         self.imageLoader = imageLoader
-        self.fallbackUserImage = fallbackUserImage
+        self.userImage = userImage
     }
     
     var username: String {
@@ -25,7 +25,12 @@ final class StargazerViewModel {
     }
     
     var onUserImageLoadingStateChange: Observer<Bool>?
-    var onUserImageLoad: Observer<UIImage>?
+    var onUserImageLoad: Observer<Image>?
+    
+    enum UserImage {
+        case retrieved(Data)
+        case fallback
+    }
     
     func loadImage() {
         onUserImageLoadingStateChange?(true)
@@ -34,11 +39,9 @@ final class StargazerViewModel {
             
             switch result {
             case let .success(imageData):
-                if let image = UIImage(data: imageData) {
-                    self.onUserImageLoad?(image)
-                }
+                self.onUserImageLoad?(self.userImage(.retrieved(imageData))!)
             case .failure:
-                self.onUserImageLoad?(self.fallbackUserImage)
+                self.onUserImageLoad?(self.userImage(.fallback)!)
             }
             
             self.onUserImageLoadingStateChange?(false)
@@ -51,9 +54,9 @@ final class StargazerViewModel {
 }
 
 final class StargazerCellController {
-    private let viewModel: StargazerViewModel
+    private let viewModel: StargazerViewModel<UIImage?>
     
-    init(viewModel: StargazerViewModel) {
+    init(viewModel: StargazerViewModel<UIImage?>) {
         self.viewModel = viewModel
     }
     

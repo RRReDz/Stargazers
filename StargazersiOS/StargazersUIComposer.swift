@@ -38,7 +38,14 @@ public final class StargazersUIComposer {
                 let stargazerViewModel = StargazerViewModel(
                     stargazer: stargazer,
                     imageLoader: imageLoader,
-                    fallbackUserImage: fallbackUserImage
+                    userImage: { type -> UIImage? in
+                        switch type {
+                        case let .retrieved(data):
+                            return UIImage(data: data)
+                        case .fallback:
+                            return fallbackUserImage
+                        }
+                    }
                 )
                 return StargazerCellController(viewModel: stargazerViewModel)
             }
