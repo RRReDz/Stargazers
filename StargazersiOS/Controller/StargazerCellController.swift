@@ -25,7 +25,7 @@ final class StargazerViewModel<Image> {
     }
     
     var onUserImageLoadingStateChange: Observer<Bool>?
-    var onUserImageLoad: Observer<Image>?
+    var onUserImageLoad: Observer<Image?>?
     
     enum UserImage {
         case retrieved(Data)
@@ -42,10 +42,10 @@ final class StargazerViewModel<Image> {
                 if let image = self.userImage(.retrieved(imageData)) {
                     self.onUserImageLoad?(image)
                 } else {
-                    self.onUserImageLoad?(self.userImage(.fallback)!)
+                    self.onUserImageLoad?(self.userImage(.fallback))
                 }
             case .failure:
-                self.onUserImageLoad?(self.userImage(.fallback)!)
+                self.onUserImageLoad?(self.userImage(.fallback))
             }
             
             self.onUserImageLoadingStateChange?(false)
