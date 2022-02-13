@@ -35,20 +35,14 @@ final class StargazerViewModel<Image> {
     func loadImage() {
         onUserImageLoadingStateChange?(true)
         imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case let .success(imageData):
-                if let image = self.userImage(.retrieved(imageData)) {
-                    self.onUserImageLoad?(image)
-                } else {
-                    self.onUserImageLoad?(self.userImage(.fallback))
-                }
-            case .failure:
-                self.onUserImageLoad?(self.userImage(.fallback))
+            if  let imageData = try? result.get(),
+                let image = self?.userImage(.retrieved(imageData)) {
+                self?.onUserImageLoad?(image)
+            } else {
+                self?.onUserImageLoad?(self?.userImage(.fallback))
             }
             
-            self.onUserImageLoadingStateChange?(false)
+            self?.onUserImageLoadingStateChange?(false)
         }
     }
     
