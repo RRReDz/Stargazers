@@ -22,17 +22,18 @@ final class StargazersRefreshController: NSObject {
     }
     
     private func binded(_ view: UIRefreshControl) -> UIRefreshControl {
-        viewModel.onChange = { [weak self] viewModel in
-            if viewModel.isLoading {
+        viewModel.loadingStateChanged = { isLoading in
+            if isLoading {
                 view.beginRefreshing()
             } else {
                 view.endRefreshing()
             }
-            
-            if let stargazers = viewModel.stargazers {
-                self?.onRefresh?(stargazers)
-            }
         }
+        
+        viewModel.stargazersStateChanged = { [weak self] stargazers in
+            self?.onRefresh?(stargazers)
+        }
+        
         view.addTarget(self, action: #selector(refresh), for: .valueChanged)
         return view
     }
