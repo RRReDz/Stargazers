@@ -8,7 +8,7 @@
 import Stargazers
 import UIKit
 
-final class StargazersRefreshController: NSObject {
+public final class StargazersRefreshController: NSObject {
     private(set) lazy var view: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)

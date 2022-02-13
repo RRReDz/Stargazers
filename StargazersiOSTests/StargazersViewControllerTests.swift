@@ -187,7 +187,7 @@ class StargazersViewControllerTests: XCTestCase {
         let repository = repository ?? anyRepository()
         let fallbackUserImage = fallbackUserImage ?? UIImage()
         let spy = LoaderSpy()
-        let sut = StargazersViewController(
+        let sut = StargazersUIComposer.composedWith(
             loader: spy,
             imageLoader: spy,
             repository: repository,

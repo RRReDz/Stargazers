@@ -8,6 +8,23 @@
 import UIKit
 import Stargazers
 
+public final class StargazersUIComposer {
+    public static func composedWith(
+        loader: StargazersLoader,
+        imageLoader: StargazerImageLoader,
+        repository: Repository,
+        fallbackUserImage: UIImage
+    ) -> StargazersViewController {
+        let refreshController = StargazersRefreshController(loader: loader, repository: repository)
+        let stargazersController = StargazersViewController(
+            refreshController: refreshController,
+            imageLoader: imageLoader,
+            fallbackUserImage: fallbackUserImage
+        )
+        return stargazersController
+    }
+}
+
 final class StargazersCellController {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
@@ -40,20 +57,19 @@ final class StargazersCellController {
 public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController
     private let imageLoader: StargazerImageLoader
+    private var fallbackUserImage: UIImage
     private var tableModel = [StargazersCellController]() {
         didSet {
             tableView.reloadData()
         }
     }
-    private var fallbackUserImage: UIImage
     
     public init(
-        loader: StargazersLoader,
+        refreshController: StargazersRefreshController,
         imageLoader: StargazerImageLoader,
-        repository: Repository,
         fallbackUserImage: UIImage
     ) {
-        self.refreshController = StargazersRefreshController(loader: loader, repository: repository)
+        self.refreshController = refreshController
         self.imageLoader = imageLoader
         self.fallbackUserImage = fallbackUserImage
         super.init(nibName: nil, bundle: nil)
