@@ -359,11 +359,9 @@
 			isa = PBXGroup;
 			children = (
 				7361DC4627B9299D005B7DDE /* StargazersUIComposer.swift */,
-				73CD699B27ADE44E00C992FA /* StargazersViewController.swift */,
-				7361DC4227B918E9005B7DDE /* StargazersRefreshController.swift */,
-				7361DC4427B9293A005B7DDE /* StargazerCellController.swift */,
-				7352C65327AEE34C00D6F9B1 /* StargazerCell.swift */,
 				73A979A127B86DE800853B39 /* StargazersImageLoader.swift */,
+				7361DC4827B92A09005B7DDE /* Controller */,
+				7361DC4927B92A17005B7DDE /* View */,
 			);
 			path = StargazersiOS;
 			sourceTree = "<group>";
@@ -385,6 +383,24 @@
 				7311EDC8278F8CA4000606BA /* Loader */,
 			);
 			path = "Stargazers Cache";
+			sourceTree = "<group>";
+		};
+		7361DC4827B92A09005B7DDE /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				73CD699B27ADE44E00C992FA /* StargazersViewController.swift */,
+				7361DC4227B918E9005B7DDE /* StargazersRefreshController.swift */,
+				7361DC4427B9293A005B7DDE /* StargazerCellController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		7361DC4927B92A17005B7DDE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7352C65327AEE34C00D6F9B1 /* StargazerCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		737DDB6D27AB3F8800F362C6 /* Frameworks */ = {
