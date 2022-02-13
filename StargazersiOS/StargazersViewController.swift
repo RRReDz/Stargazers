@@ -16,16 +16,21 @@ public final class StargazersUIComposer {
         fallbackUserImage: UIImage
     ) -> StargazersViewController {
         let refreshController = StargazersRefreshController(loader: loader, repository: repository)
-        let stargazersController = StargazersViewController(
-            refreshController: refreshController,
-            imageLoader: imageLoader,
-            fallbackUserImage: fallbackUserImage
-        )
+        let stargazersController = StargazersViewController(refreshController: refreshController)
+        refreshController.onRefresh = { [weak stargazersController] stargazers in
+            stargazersController?.tableModel = stargazers.map { stargazer in
+                StargazerCellController(
+                    stargazer: stargazer,
+                    imageLoader: imageLoader,
+                    fallbackUserImage: fallbackUserImage
+                )
+            }
+        }
         return stargazersController
     }
 }
 
-final class StargazersCellController {
+final class StargazerCellController {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
     private var imageLoaderTask: StargazerImageLoaderTask?
@@ -56,22 +61,14 @@ final class StargazersCellController {
 
 public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController
-    private let imageLoader: StargazerImageLoader
-    private var fallbackUserImage: UIImage
-    private var tableModel = [StargazersCellController]() {
+    var tableModel = [StargazerCellController]() {
         didSet {
             tableView.reloadData()
         }
     }
     
-    public init(
-        refreshController: StargazersRefreshController,
-        imageLoader: StargazerImageLoader,
-        fallbackUserImage: UIImage
-    ) {
+    public init(refreshController: StargazersRefreshController) {
         self.refreshController = refreshController
-        self.imageLoader = imageLoader
-        self.fallbackUserImage = fallbackUserImage
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -83,17 +80,6 @@ public class StargazersViewController: UITableViewController {
         super.viewDidLoad()
         
         refreshControl = refreshController.view
-        refreshController.onRefresh = { [weak self] stargazers in
-            guard let self = self else { return }
-            
-            self.tableModel = stargazers.map { stargazer in
-                StargazersCellController(
-                    stargazer: stargazer,
-                    imageLoader: self.imageLoader,
-                    fallbackUserImage: self.fallbackUserImage
-                )
-            }
-        }
         refreshController.refresh()
     }
 }
@@ -108,12 +94,14 @@ extension StargazersViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellController = tableModel[indexPath.row]
-        return cellController.view()
+        cellController(at: indexPath).view()
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let cellController = tableModel[indexPath.row]
-        cellController.cancel()
+        cellController(at: indexPath).cancel()
+    }
+    
+    private func cellController(at indexPath: IndexPath) -> StargazerCellController {
+        return tableModel[indexPath.row]
     }
 }
