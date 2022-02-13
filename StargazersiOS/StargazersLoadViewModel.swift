@@ -16,16 +16,16 @@ class StargazersLoadViewModel {
         self.repository = repository
     }
 
-    var loadingStateChanged: ((Bool) -> Void)?
-    var stargazersStateChanged: (([Stargazer]) -> Void)?
+    var onLoadingStateChanged: ((Bool) -> Void)?
+    var onStargazersLoad: (([Stargazer]) -> Void)?
     
     func loadStargazers() {
-        loadingStateChanged?(true)
+        onLoadingStateChanged?(true)
         loader.load(from: repository) { [weak self] result in
             if let stargazers = try? result.get() {
-                self?.stargazersStateChanged?(stargazers)
+                self?.onStargazersLoad?(stargazers)
             }
-            self?.loadingStateChanged?(false)
+            self?.onLoadingStateChanged?(false)
         }
     }
 }

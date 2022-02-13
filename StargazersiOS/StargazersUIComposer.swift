@@ -20,7 +20,7 @@ public final class StargazersUIComposer {
         let loadViewModel = StargazersLoadViewModel(loader: loader, repository: repository)
         let refreshController = StargazersRefreshController(viewModel: loadViewModel)
         let stargazersController = StargazersViewController(refreshController: refreshController)
-        refreshController.onRefresh = { [weak stargazersController] stargazers in
+        loadViewModel.onStargazersLoad = { [weak stargazersController] stargazers in
             stargazersController?.tableModel = stargazers.map { stargazer in
                 StargazerCellController(
                     stargazer: stargazer,
