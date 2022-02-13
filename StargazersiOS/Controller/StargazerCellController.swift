@@ -7,27 +7,36 @@
 
 import UIKit
 
+protocol StargazerCellControllerDelegate {
+    func loadImage()
+    func cancelLoadImage()
+}
+
 final class StargazerCellController {
-    private let viewModel: StargazerViewModel<UIImage>
+    let username: String
+    let delegate: StargazerCellControllerDelegate
+    let cell = StargazerCell()
     
-    init(viewModel: StargazerViewModel<UIImage>) {
-        self.viewModel = viewModel
+    init(username: String, delegate: StargazerCellControllerDelegate) {
+        self.username = username
+        self.delegate = delegate
     }
     
     func view() -> StargazerCell {
-        let cell = StargazerCell()
-        cell.usernameLabel.text = viewModel.username
-        viewModel.onUserImageLoadingStateChange = { [weak cell] isLoading in
-            cell?.isUserImageLoading = isLoading
-        }
-        viewModel.onUserImageLoad = { [weak cell] image in
-            cell?.userImageView.image = image
-        }
-        viewModel.loadImage()
+        cell.usernameLabel.text = username
+        delegate.loadImage()
         return cell
     }
     
+    func onUserImageLoadingStateChange(isLoading: Bool) {
+        cell.isUserImageLoading = isLoading
+    }
+    
+    func onUserImageLoad(image: UIImage?) {
+        cell.userImageView.image = image
+    }
+    
     func cancelImageLoad() {
-        viewModel.cancelImageLoad()
+        delegate.cancelLoadImage()
     }
 }

@@ -47,8 +47,43 @@ public final class StargazersUIComposer {
                         }
                     }
                 )
-                return StargazerCellController(viewModel: stargazerViewModel)
+                
+                let cellController = StargazerCellController(
+                    username: stargazerViewModel.username,
+                    delegate: CellControllerToViewModelAdapter(viewModel: stargazerViewModel))
+                
+                stargazerViewModel.bind(with: cellController)
+                
+                return cellController
             }
         }
+    }
+}
+
+private extension StargazerViewModel where Image == UIImage {
+    func bind(with cellController: StargazerCellController) {
+        onUserImageLoad = { [weak cellController] image in
+            cellController?.onUserImageLoad(image: image)
+        }
+        onUserImageLoadingStateChange = { [weak cellController] isLoading in
+            cellController?.onUserImageLoadingStateChange(isLoading: isLoading)
+        }
+    }
+}
+
+private class CellControllerToViewModelAdapter: StargazerCellControllerDelegate {
+    private let viewModel: StargazerViewModel<UIImage>
+    weak var cellController: StargazerCellController?
+    
+    init(viewModel: StargazerViewModel<UIImage>) {
+        self.viewModel = viewModel
+    }
+    
+    func loadImage() {
+        viewModel.loadImage()
+    }
+    
+    func cancelLoadImage() {
+        viewModel.cancelImageLoad()
     }
 }
