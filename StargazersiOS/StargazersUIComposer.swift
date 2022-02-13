@@ -35,11 +35,12 @@ public final class StargazersUIComposer {
     ) -> ([Stargazer]) -> Void {
         return { [weak stargazersController] stargazers in
             stargazersController?.tableModel = stargazers.map { stargazer in
-                StargazerCellController(
+                let stargazerViewModel = StargazerViewModel(
                     stargazer: stargazer,
                     imageLoader: imageLoader,
                     fallbackUserImage: fallbackUserImage
                 )
+                return StargazerCellController(viewModel: stargazerViewModel)
             }
         }
     }

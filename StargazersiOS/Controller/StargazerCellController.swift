@@ -8,7 +8,7 @@
 import UIKit
 import Stargazers
 
-final class StargazerCellController {
+final class StargazerViewModel {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
     private var imageLoaderTask: StargazerImageLoaderTask?
@@ -20,19 +20,57 @@ final class StargazerCellController {
         self.fallbackUserImage = fallbackUserImage
     }
     
-    func view() -> StargazerCell {
-        let cell = StargazerCell()
-        cell.usernameLabel.text = stargazer.username
-        cell.isUserImageLoading = true
-        imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [unowned self] result in
-            let imageData = try? result.get()
-            cell.userImageView.image = imageData.map(UIImage.init) ?? self.fallbackUserImage
-            cell.isUserImageLoading = false
+    var username: String {
+        stargazer.username
+    }
+    
+    var onUserImageLoadingStateChange: ((Bool) -> Void)?
+    var onUserImageLoad: ((UIImage) -> Void)?
+    
+    func loadImage() {
+        onUserImageLoadingStateChange?(true)
+        imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case let .success(imageData):
+                if let image = UIImage(data: imageData) {
+                    self.onUserImageLoad?(image)
+                }
+            case .failure:
+                self.onUserImageLoad?(self.fallbackUserImage)
+            }
+            
+            self.onUserImageLoadingStateChange?(false)
         }
-        return cell
     }
     
     func cancelImageLoad() {
         imageLoaderTask?.cancel()
+    }
+}
+
+final class StargazerCellController {
+    private let viewModel: StargazerViewModel
+    
+    init(viewModel: StargazerViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    func view() -> StargazerCell {
+        let cell = StargazerCell()
+        cell.usernameLabel.text = viewModel.username
+        viewModel.onUserImageLoadingStateChange = { [weak cell] isLoading in
+            cell?.isUserImageLoading = isLoading
+        }
+        viewModel.onUserImageLoad = { [weak cell] image in
+            cell?.userImageView.image = image
+        }
+        viewModel.loadImage()
+        return cell
+    }
+    
+    func cancelImageLoad() {
+        viewModel.cancelImageLoad()
     }
 }
