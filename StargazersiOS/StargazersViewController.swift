@@ -8,35 +8,8 @@
 import UIKit
 import Stargazers
 
-final class StargazersRefreshViewController: NSObject {
-    private(set) lazy var view: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        return refreshControl
-    }()
-    private let loader: StargazersLoader
-    private let repository: Repository
-    
-    var onRefresh: (([Stargazer]) -> Void)?
-    
-    init(loader: StargazersLoader, repository: Repository) {
-        self.loader = loader
-        self.repository = repository
-    }
-    
-    @objc func refresh() {
-        view.beginRefreshing()
-        loader.load(from: repository) { [weak self] result in
-            if let stargazers = try? result.get() {
-                self?.onRefresh?(stargazers)
-            }
-            self?.view.endRefreshing()
-        }
-    }
-}
-
 public class StargazersViewController: UITableViewController {
-    private let refreshController: StargazersRefreshViewController
+    private let refreshController: StargazersRefreshController
     private let imageLoader: StargazerImageLoader
     private var tableModel = [Stargazer]() {
         didSet {
@@ -52,7 +25,7 @@ public class StargazersViewController: UITableViewController {
         repository: Repository,
         fallbackUserImage: UIImage
     ) {
-        self.refreshController = StargazersRefreshViewController(loader: loader, repository: repository)
+        self.refreshController = StargazersRefreshController(loader: loader, repository: repository)
         self.imageLoader = imageLoader
         self.fallbackUserImage = fallbackUserImage
         super.init(nibName: nil, bundle: nil)
