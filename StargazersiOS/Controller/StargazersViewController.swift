@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Stargazers
 
 public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController

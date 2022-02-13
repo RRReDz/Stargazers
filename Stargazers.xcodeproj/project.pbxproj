@@ -362,9 +362,9 @@
 			children = (
 				7361DC4627B9299D005B7DDE /* StargazersUIComposer.swift */,
 				73A979A127B86DE800853B39 /* StargazersImageLoader.swift */,
+				7361DC4A27B94DF6005B7DDE /* StargazersLoadViewModel.swift */,
 				7361DC4827B92A09005B7DDE /* Controller */,
 				7361DC4927B92A17005B7DDE /* View */,
-				7361DC4A27B94DF6005B7DDE /* StargazersLoadViewModel.swift */,
 			);
 			path = StargazersiOS;
 			sourceTree = "<group>";
