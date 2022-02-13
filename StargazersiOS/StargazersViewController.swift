@@ -67,7 +67,7 @@ public class StargazersViewController: UITableViewController {
         }
     }
     
-    public init(refreshController: StargazersRefreshController) {
+    init(refreshController: StargazersRefreshController) {
         self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
