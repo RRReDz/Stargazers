@@ -38,7 +38,7 @@ public final class StargazersUIComposer {
                 let stargazerViewModel = StargazerViewModel(
                     stargazer: stargazer,
                     imageLoader: imageLoader,
-                    imageDataConverter: UIImage.init
+                    imageConverter: UIImage.init
                 )
                 return StargazerCellController(viewModel: stargazerViewModel)
             }

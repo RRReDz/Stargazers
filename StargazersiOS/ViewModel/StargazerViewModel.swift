@@ -12,12 +12,12 @@ final class StargazerViewModel<Image> {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
     private var imageLoaderTask: StargazerImageLoaderTask?
-    private let imageDataConverter: (Data) -> Image?
+    private let imageConverter: (Data) -> Image?
     
-    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, imageDataConverter: @escaping (Data) -> Image?) {
+    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, imageConverter: @escaping (Data) -> Image?) {
         self.stargazer = stargazer
         self.imageLoader = imageLoader
-        self.imageDataConverter = imageDataConverter
+        self.imageConverter = imageConverter
     }
     
     var username: String {
@@ -32,10 +32,7 @@ final class StargazerViewModel<Image> {
         imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [weak self] result in
             guard let self = self else { return }
             
-            if
-                let imageData = try? result.get(),
-                let image = self.imageDataConverter(imageData)
-            {
+            if let image = (try? result.get()).flatMap(self.imageConverter) {
                 self.onUserImageLoad?(image)
             }
             
