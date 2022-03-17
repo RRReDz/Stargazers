@@ -1,0 +1,27 @@
+Stargazers Store assumptions
+
+- Retrieve for repository
+    - empty cache ✅
+    - empty cache twice still empty (no side-effects) ✅
+    - non-empty cache returns data ✅
+    - non-empty cache twice returns same data (no side-effects) ✅
+    - error (if applicable, e.g. no valid data) ✅
+    - error twice returns same error (if applicable, e.g. no valid data) ✅
+
+- Insert for repository
+    - to empty cache stores data ✅
+    - to non-empty cache overrides previous data with new data ✅
+    - Error (if applicable, e.g. no write permission) ✅
+
+- Delete for repository
+
+    - Empty cache does nothing (cache stays empty and does not fail) ✅
+    - Non-empty cache leaves cache empty ✅
+    - Error (if applicable, e.g. no write permission) ✅
+
+- Test commands with different repositories
+
+    - insert to non-empty cache, but other repository, does not override previous repository cache data ✅
+    - delete non-empty cache, but other repository, does not leave cache data empty of previous repository ✅
+
+- Side-effects must run serially
