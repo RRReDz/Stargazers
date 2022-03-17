@@ -160,7 +160,7 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.userImageData, fakeUserImageData)
     }
     
-    func test_stargazerImageView_showsFallbackImageWhenImageDataIsNotValid() {
+    func test_stargazerImageView_showsNoImageWhenImageDataIsNotValid() {
         let fakeFallbackUserImage = UIImage.make(withColor: .blue)
         let (sut, spy) = makeSUT(fallbackUserImage: fakeFallbackUserImage)
         let stargazer0 = uniqueStargazer()
@@ -173,53 +173,6 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.userImageData, .none)
         
         spy.completeImageLoadingWithSuccess(with: nonValidUserImageData, at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, fakeFallbackUserImage.pngData()!)
-    }
-    
-    func test_stargazerImageView_showsNoImageWhenImageDataIsNotValidAndNoFallbackImageProvided() {
-        let (sut, spy) = makeSUT(fallbackUserImage: nil)
-        let stargazer0 = uniqueStargazer()
-        let nonValidUserImageData = "Any non related image data".data(using: .utf8)!
-
-        sut.loadViewIfNeeded()
-        spy.completeLoading(with: [stargazer0])
-        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, .none)
-        
-        spy.completeImageLoadingWithSuccess(with: nonValidUserImageData, at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, .none)
-    }
-    
-    func test_stargazerImageView_showsFallbackUserImageAfterCompleteImageLoadingWithError() {
-        let fakeFallbackUserImage = UIImage.make(withColor: .blue)
-        let (sut, spy) = makeSUT(fallbackUserImage: fakeFallbackUserImage)
-        let stargazer0 = uniqueStargazer()
-
-        sut.loadViewIfNeeded()
-        spy.completeLoading(with: [stargazer0])
-        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, .none)
-        
-        spy.completeImageLoadingWithError(at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, fakeFallbackUserImage.pngData()!)
-    }
-    
-    func test_stargazerImageView_showsNoImageOnFailureAndNoFallbackImageProvided() {
-        let (sut, spy) = makeSUT(fallbackUserImage: nil)
-        let stargazer0 = uniqueStargazer()
-
-        sut.loadViewIfNeeded()
-        spy.completeLoading(with: [stargazer0])
-        let stargazerCell0 = sut.simulateStargazerViewVisible(at: 0)
-        
-        XCTAssertEqual(stargazerCell0?.userImageData, .none)
-        
-        spy.completeLoadingWithError()
         
         XCTAssertEqual(stargazerCell0?.userImageData, .none)
     }

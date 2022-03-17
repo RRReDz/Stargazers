@@ -12,12 +12,12 @@ final class StargazerViewModel<Image> {
     private let stargazer: Stargazer
     private let imageLoader: StargazerImageLoader
     private var imageLoaderTask: StargazerImageLoaderTask?
-    private let userImage: (UserImage) -> Image?
+    private let imageDataConverter: (Data) -> Image?
     
-    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, userImage: @escaping (UserImage) -> Image?) {
+    init(stargazer: Stargazer, imageLoader: StargazerImageLoader, imageDataConverter: @escaping (Data) -> Image?) {
         self.stargazer = stargazer
         self.imageLoader = imageLoader
-        self.userImage = userImage
+        self.imageDataConverter = imageDataConverter
     }
     
     var username: String {
@@ -25,24 +25,21 @@ final class StargazerViewModel<Image> {
     }
     
     var onUserImageLoadingStateChange: Observer<Bool>?
-    var onUserImageLoad: Observer<Image?>?
-    
-    enum UserImage {
-        case retrieved(Data)
-        case fallback
-    }
+    var onUserImageLoad: Observer<Image>?
     
     func loadImage() {
         onUserImageLoadingStateChange?(true)
         imageLoaderTask = imageLoader.loadImageData(from: stargazer.avatarURL) { [weak self] result in
-            if  let imageData = try? result.get(),
-                let image = self?.userImage(.retrieved(imageData)) {
-                self?.onUserImageLoad?(image)
-            } else {
-                self?.onUserImageLoad?(self?.userImage(.fallback))
+            guard let self = self else { return }
+            
+            if
+                let imageData = try? result.get(),
+                let image = self.imageDataConverter(imageData)
+            {
+                self.onUserImageLoad?(image)
             }
             
-            self?.onUserImageLoadingStateChange?(false)
+            self.onUserImageLoadingStateChange?(false)
         }
     }
     
