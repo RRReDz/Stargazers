@@ -15,9 +15,7 @@ final class StargazerCellController {
     }
     
     func view(in tableView: UITableView) -> StargazerCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: StargazerCell.reuseIdentifier
-        ) as! StargazerCell
+        let cell: StargazerCell = tableView.dequeueReusableCell()
         cell.usernameLabel.text = viewModel.username
         viewModel.onUserImageLoadingStateChange = { [weak cell] isLoading in
             cell?.isUserImageLoading = isLoading

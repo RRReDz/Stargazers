@@ -29,7 +29,7 @@ public class StargazersViewController: UITableViewController {
         
         refreshControl = refreshController.view
         refreshController.refresh()
-        tableView.register(StargazerCell.self, forCellReuseIdentifier: StargazerCell.reuseIdentifier)
+        tableView.registerReusableCell(StargazerCell.self)
     }
 }
 

@@ -11,6 +11,8 @@ public class StargazerCell: UITableViewCell {
     public let usernameLabel = UILabel()
     public var isUserImageLoading: Bool = false
     public let userImageView = UIImageView()
-    
-    static let reuseIdentifier: String = "StargazerCell"
 }
+
+extension StargazerCell: ReusableTableViewCell {}
+
+
