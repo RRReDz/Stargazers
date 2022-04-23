@@ -14,24 +14,21 @@ public final class StargazersUIComposer {
     public static func composedWith(
         loader: StargazersLoader,
         imageLoader: StargazerImageLoader,
-        repository: Repository,
-        fallbackUserImage: UIImage?
+        repository: Repository
     ) -> StargazersViewController {
         let loadViewModel = StargazersLoadViewModel(loader: loader, repository: repository)
         let refreshController = StargazersRefreshController(viewModel: loadViewModel)
         let stargazersController = StargazersViewController(refreshController: refreshController)
         loadViewModel.onStargazersLoad = adaptModelToCellControllers(
             for: stargazersController,
-            imageLoader: imageLoader,
-            fallbackUserImage: fallbackUserImage
+            imageLoader: imageLoader
         )
         return stargazersController
     }
     
     private static func adaptModelToCellControllers(
         for stargazersController: StargazersViewController,
-        imageLoader: StargazerImageLoader,
-        fallbackUserImage: UIImage?
+        imageLoader: StargazerImageLoader
     ) -> ([Stargazer]) -> Void {
         return { [weak stargazersController] stargazers in
             stargazersController?.tableModel = stargazers.map { stargazer in

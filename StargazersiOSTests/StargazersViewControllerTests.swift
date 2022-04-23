@@ -161,8 +161,7 @@ class StargazersViewControllerTests: XCTestCase {
     }
     
     func test_stargazerImageView_showsNoImageWhenImageDataIsNotValid() {
-        let fakeFallbackUserImage = UIImage.make(withColor: .blue)
-        let (sut, spy) = makeSUT(fallbackUserImage: fakeFallbackUserImage)
+        let (sut, spy) = makeSUT()
         let stargazer0 = uniqueStargazer()
         let nonValidUserImageData = "Any non related image data".data(using: .utf8)!
 
@@ -181,18 +180,15 @@ class StargazersViewControllerTests: XCTestCase {
     
     private func makeSUT(
         for repository: Repository? = nil,
-        fallbackUserImage: UIImage? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (StargazersViewController, LoaderSpy) {
         let repository = repository ?? anyRepository()
-        let fallbackUserImage = fallbackUserImage
         let spy = LoaderSpy()
         let sut = StargazersUIComposer.composedWith(
             loader: spy,
             imageLoader: spy,
-            repository: repository,
-            fallbackUserImage: fallbackUserImage
+            repository: repository
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
