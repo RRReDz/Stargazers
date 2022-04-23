@@ -24,7 +24,7 @@ public final class StargazersUIComposer {
         let stargazersController = StargazersViewController(refreshController: refreshController)
         loadViewModel.onStargazersLoad = adaptModelToCellControllers(
             for: stargazersController,
-            imageLoader: imageLoader
+            imageLoader: MainQueueDispatchDecoratorStargazerImageLoader(decoratee: imageLoader)
         )
         return stargazersController
     }
@@ -55,6 +55,26 @@ final class MainQueueDispatchDecoratorStargazersLoader: StargazersLoader {
     
     func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
         decoratee.load(from: repository) { result in
+            guard !Thread.isMainThread else {
+                return completion(result)
+            }
+            
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
+}
+
+final class MainQueueDispatchDecoratorStargazerImageLoader: StargazerImageLoader {
+    private let decoratee: StargazerImageLoader
+    
+    init(decoratee: StargazerImageLoader) {
+        self.decoratee = decoratee
+    }
+    
+    func loadImageData(from url: URL, completion: @escaping (StargazerImageLoader.Result) -> Void) -> StargazerImageLoaderTask {
+        decoratee.loadImageData(from: url) { result in
             guard !Thread.isMainThread else {
                 return completion(result)
             }

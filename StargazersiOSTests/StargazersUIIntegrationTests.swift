@@ -190,7 +190,7 @@ class StargazersUIIntegrationTests: XCTestCase {
         XCTAssertEqual(stargazerCell?.userImageData, .none)
     }
     
-    func test_stargazersViewController_dispatchesFromBackgroundToMainThread() {
+    func test_stargazersViewController_dispatchesStargazersLoadingFromBackgroundToMainThread() {
         let (sut, spy) = makeSUT()
         
         sut.loadViewIfNeeded()
@@ -198,6 +198,22 @@ class StargazersUIIntegrationTests: XCTestCase {
         let exp = expectation(description: "Wait for background queue to execute loading completion")
         DispatchQueue.global().async {
             spy.completeLoading()
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
+    func test_stargazersViewController_dispatchesImageLoadingCompletionFromBackgroundToMainThread() {
+        let (sut, spy) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [uniqueStargazer()])
+        sut.simulateStargazerViewVisible(at: 0)
+        
+        let exp = expectation(description: "Wait for background queue to execute loading completion")
+        DispatchQueue.global().async {
+            spy.completeImageLoadingWithSuccess()
             exp.fulfill()
         }
         
