@@ -176,6 +176,20 @@ class StargazersViewControllerTests: XCTestCase {
         XCTAssertEqual(stargazerCell0?.userImageData, .none)
     }
     
+    func test_stargazersViewController_doesNotRenderLoadedImageWhenCellNotVisibleAnymore() {
+        let (sut, spy) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        spy.completeLoading(with: [uniqueStargazer()])
+        
+        let stargazerCell = sut.simulateStargazerViewVisible(at: 0)
+        sut.simulateStargazer(viewNotVisibleAnymore: stargazerCell!, at: 0)
+        
+        spy.completeImageLoadingWithSuccess(with: UIImage.make(withColor: .red).pngData()!, at: 0)
+        
+        XCTAssertEqual(stargazerCell?.userImageData, .none)
+    }
+    
     // MARK: Utils
     
     private func makeSUT(
@@ -342,15 +356,18 @@ private extension StargazersViewController {
         return stargazerView(at: row) as? StargazerCell
     }
     
-    func simulateStargazerViewVisibleAndThenNotVisible(at row: Int) {
-        let view = simulateStargazerViewVisible(at: row)
-        
+    func simulateStargazer(viewNotVisibleAnymore view: StargazerCell, at row: Int) {
         let indexPath = IndexPath(row: row, section: stargazersSection)
         return tableView(
             tableView,
-            didEndDisplaying: view!,
+            didEndDisplaying: view,
             forRowAt: indexPath
         )
+    }
+    
+    func simulateStargazerViewVisibleAndThenNotVisible(at row: Int) {
+        let view = simulateStargazerViewVisible(at: row)
+        simulateStargazer(viewNotVisibleAnymore: view!, at: row)
     }
     
     var renderedStargazerViews: Int {
