@@ -17,14 +17,14 @@ public final class StargazersUIComposer {
         repository: Repository
     ) -> StargazersViewController {
         let loadViewModel = StargazersLoadViewModel(
-            loader: MainQueueDispatchDecoratorStargazersLoader(decoratee: loader),
+            loader: MainQueueDispatchDecorator(decoratee: loader),
             repository: repository
         )
         let refreshController = StargazersRefreshController(viewModel: loadViewModel)
         let stargazersController = StargazersViewController(refreshController: refreshController)
         loadViewModel.onStargazersLoad = adaptModelToCellControllers(
             for: stargazersController,
-            imageLoader: MainQueueDispatchDecoratorStargazerImageLoader(decoratee: imageLoader)
+            imageLoader: MainQueueDispatchDecorator(decoratee: imageLoader)
         )
         return stargazersController
     }
@@ -46,42 +46,42 @@ public final class StargazersUIComposer {
     }
 }
 
-final class MainQueueDispatchDecoratorStargazersLoader: StargazersLoader {
-    private let decoratee: StargazersLoader
+final class MainQueueDispatchDecorator<T> {
+    private let decoratee: T
     
-    init(decoratee: StargazersLoader) {
+    init(decoratee: T) {
         self.decoratee = decoratee
     }
     
-    func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
-        decoratee.load(from: repository) { result in
-            guard !Thread.isMainThread else {
-                return completion(result)
-            }
-            
-            DispatchQueue.main.async {
-                completion(result)
-            }
+    func dispatchOnMainQueueIfNeeded<T>(result: T, completion: @escaping (T) -> Void) {
+        guard !Thread.isMainThread else {
+            return completion(result)
+        }
+        
+        DispatchQueue.main.async {
+            completion(result)
         }
     }
 }
 
-final class MainQueueDispatchDecoratorStargazerImageLoader: StargazerImageLoader {
-    private let decoratee: StargazerImageLoader
-    
-    init(decoratee: StargazerImageLoader) {
-        self.decoratee = decoratee
+extension MainQueueDispatchDecorator: StargazersLoader where T == StargazersLoader {
+    func load(from repository: Repository, completion: @escaping (StargazersLoader.Result) -> Void) {
+        decoratee.load(from: repository) { [weak self] result in
+            self?.dispatchOnMainQueueIfNeeded(
+                result: result,
+                completion: completion
+            )
+        }
     }
-    
+}
+
+extension MainQueueDispatchDecorator: StargazerImageLoader where T == StargazerImageLoader {
     func loadImageData(from url: URL, completion: @escaping (StargazerImageLoader.Result) -> Void) -> StargazerImageLoaderTask {
-        decoratee.loadImageData(from: url) { result in
-            guard !Thread.isMainThread else {
-                return completion(result)
-            }
-            
-            DispatchQueue.main.async {
-                completion(result)
-            }
+        decoratee.loadImageData(from: url) { [weak self] result in
+            self?.dispatchOnMainQueueIfNeeded(
+                result: result,
+                completion: completion
+            )
         }
     }
 }
