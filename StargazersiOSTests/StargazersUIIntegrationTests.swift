@@ -1,5 +1,5 @@
 //
-//  StargazersViewControllerTests.swift
+//  FeedUIIntegrationTests.swift
 //  StargazersiOSTests
 //
 //  Created by Riccardo Rossi - Home on 26/01/22.
@@ -9,7 +9,7 @@ import XCTest
 import StargazersiOS
 import Stargazers
 
-class StargazersViewControllerTests: XCTestCase {
+class StargazersUIIntegrationTests: XCTestCase {
     
     func test_viewController_loadsStargazersForSelectedRepository() {
         let selectedRepository = uniqueRepository()
