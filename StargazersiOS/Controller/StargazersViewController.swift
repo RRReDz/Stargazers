@@ -11,7 +11,13 @@ public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController
     var tableModel = [StargazerCellController]() {
         didSet {
-            tableView.reloadData()
+            guard !Thread.isMainThread else {
+                return tableView.reloadData()
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.tableView.reloadData()
+            }
         }
     }
     
