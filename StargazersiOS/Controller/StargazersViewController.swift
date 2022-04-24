@@ -14,6 +14,7 @@ final class StargazersErrorController {
         self.viewModel = viewModel
         viewModel.onStargazersLoadFailure = { [weak self] error in
             let alert = UIAlertController()
+            alert.title = error
             self?.onErrorView?(alert)
         }
     }

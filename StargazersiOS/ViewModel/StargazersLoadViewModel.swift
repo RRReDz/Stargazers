@@ -6,6 +6,7 @@
 //
 
 import Stargazers
+import Foundation
 
 class StargazersLoadViewModel {
     private let loader: StargazersLoader
@@ -15,6 +16,12 @@ class StargazersLoadViewModel {
         self.loader = loader
         self.repository = repository
     }
+    
+    private static let loadingErrorTitle: String = NSLocalizedString(
+        "STARGAZERS_LOADING_ERROR_TITLE",
+        tableName: "Stargazers",
+        bundle: Bundle(for: StargazersLoadViewModel.self),
+        comment: "Title string for loading error view")
 
     var onLoadingStateChanged: Observer<Bool>?
     var onStargazersLoad: Observer<[Stargazer]>?
@@ -27,7 +34,7 @@ class StargazersLoadViewModel {
             case let .success(stargazers):
                 self?.onStargazersLoad?(stargazers)
             case .failure:
-                self?.onStargazersLoadFailure?("")
+                self?.onStargazersLoadFailure?(Self.loadingErrorTitle)
             }
             self?.onLoadingStateChanged?(false)
         }

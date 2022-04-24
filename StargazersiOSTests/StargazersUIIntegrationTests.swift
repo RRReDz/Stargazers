@@ -122,14 +122,15 @@ class StargazersUIIntegrationTests: XCTestCase {
         assertThat(sut, hasRendered: [stargazer0])
     }
     
-    func test_viewController_showsAlertViewControllerOnLoadingError() {
+    func test_viewController_showsAlertViewControllerOnLoadingError() throws {
         let (sut, spy) = makeFakePresentationSUT()
         
         sut.loadViewIfNeeded()
         
         spy.completeLoadingWithError()
         
-        XCTAssertTrue(sut.viewControllerToPresent is UIAlertController)
+        let alertViewController = try XCTUnwrap(sut.viewControllerToPresent as? UIAlertController)
+        XCTAssertEqual(alertViewController.title, localized("STARGAZERS_LOADING_ERROR_TITLE"))
     }
     
     func test_stargazerImageView_loadsUserImageURLWhenVisible() {
