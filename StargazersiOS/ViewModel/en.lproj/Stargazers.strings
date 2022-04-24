@@ -9,3 +9,4 @@
 "STARGAZERS_VIEW_TITLE" = "My Stargazers";
 "STARGAZERS_LOADING_ERROR_TITLE" = "Loading Error";
 "STARGAZERS_LOADING_ERROR_MESSAGE" = "Stargazers loading failed, try again.";
+"STARGAZERS_LOADING_ERROR_OK_ACTION" = "OK";

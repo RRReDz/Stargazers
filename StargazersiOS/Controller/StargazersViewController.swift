@@ -16,6 +16,7 @@ final class StargazersErrorController {
             let alert = UIAlertController()
             alert.title = errorData.title
             alert.message = errorData.message
+            alert.addAction(UIAlertAction(title: errorData.okActionTitle, style: .default))
             self?.onErrorView?(alert)
         }
     }

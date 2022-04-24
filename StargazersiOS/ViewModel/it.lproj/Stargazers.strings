@@ -9,3 +9,4 @@
 "STARGAZERS_VIEW_TITLE" = "I miei Stargazer";
 "STARGAZERS_LOADING_ERROR_TITLE" = "Errore di caricamento";
 "STARGAZERS_LOADING_ERROR_MESSAGE" = "Il caricamento degli Stargazer è fallito, riprova di nuovo.";
+"STARGAZERS_LOADING_ERROR_OK_ACTION" = "OK";

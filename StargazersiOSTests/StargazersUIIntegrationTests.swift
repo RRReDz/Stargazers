@@ -132,6 +132,9 @@ class StargazersUIIntegrationTests: XCTestCase {
         let alertViewController = try XCTUnwrap(sut.viewControllerToPresent as? UIAlertController)
         XCTAssertEqual(alertViewController.title, localized("STARGAZERS_LOADING_ERROR_TITLE"))
         XCTAssertEqual(alertViewController.message, localized("STARGAZERS_LOADING_ERROR_MESSAGE"))
+        XCTAssertEqual(alertViewController.actions.count, 1)
+        let action = try XCTUnwrap(alertViewController.actions.first)
+        XCTAssertEqual(action.title, localized("STARGAZERS_LOADING_ERROR_OK_ACTION"))
     }
     
     func test_stargazerImageView_loadsUserImageURLWhenVisible() {

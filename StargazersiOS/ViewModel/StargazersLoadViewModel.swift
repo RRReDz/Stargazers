@@ -28,6 +28,12 @@ class StargazersLoadViewModel {
         tableName: "Stargazers",
         bundle: Bundle(for: StargazersLoadViewModel.self),
         comment: "Message string for loading error view")
+    
+    private static let loadingErrorOkActionTitle: String = NSLocalizedString(
+        "STARGAZERS_LOADING_ERROR_OK_ACTION",
+        tableName: "Stargazers",
+        bundle: Bundle(for: StargazersLoadViewModel.self),
+        comment: "Title for confirm button of the error view")
 
     var onLoadingStateChanged: Observer<Bool>?
     var onStargazersLoad: Observer<[Stargazer]>?
@@ -43,7 +49,8 @@ class StargazersLoadViewModel {
                 self?.onStargazersLoadFailure?(
                     ErrorViewData(
                         title: Self.loadingErrorTitle,
-                        message: Self.loadingErrorMessage
+                        message: Self.loadingErrorMessage,
+                        okActionTitle: Self.loadingErrorOkActionTitle
                     )
                 )
             }
@@ -55,4 +62,5 @@ class StargazersLoadViewModel {
 struct ErrorViewData {
     let title: String
     let message: String
+    let okActionTitle: String
 }
