@@ -11,6 +11,14 @@ import Stargazers
 
 class StargazersUIIntegrationTests: XCTestCase {
     
+    func test_stargazersViewController_hasRightTitle() {
+        let (sut, _) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        
+        XCTAssertEqual(sut.title, "Stargazers")
+    }
+    
     func test_viewController_loadsStargazersForSelectedRepository() {
         let selectedRepository = uniqueRepository()
         let (sut, spy) = makeSUT(for: selectedRepository)

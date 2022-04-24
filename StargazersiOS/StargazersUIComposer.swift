@@ -22,6 +22,8 @@ public final class StargazersUIComposer {
         )
         let refreshController = StargazersRefreshController(viewModel: loadViewModel)
         let stargazersController = StargazersViewController(refreshController: refreshController)
+        stargazersController.title = StargazersViewModel.title
+        
         loadViewModel.onStargazersLoad = adaptModelToCellControllers(
             for: stargazersController,
             imageLoader: MainQueueDispatchDecorator(decoratee: imageLoader)
