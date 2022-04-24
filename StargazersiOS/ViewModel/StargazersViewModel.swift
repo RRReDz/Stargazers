@@ -8,5 +8,10 @@
 import Foundation
 
 final class StargazersViewModel {
-    static let title: String = "Stargazers"
+    static let title: String = NSLocalizedString(
+        "STARGAZERS_VIEW_TITLE",
+        tableName: "Stargazers",
+        bundle: Bundle(for: StargazersViewModel.self),
+        comment: "Title for main stargazers screen"
+    )
 }

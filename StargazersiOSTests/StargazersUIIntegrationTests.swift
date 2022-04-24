@@ -15,8 +15,8 @@ class StargazersUIIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT()
         
         sut.loadViewIfNeeded()
-        
-        XCTAssertEqual(sut.title, "Stargazers")
+                
+        XCTAssertEqual(sut.title, localized("STARGAZERS_VIEW_TITLE"))
     }
     
     func test_viewController_loadsStargazersForSelectedRepository() {
@@ -440,5 +440,19 @@ private extension UIImage {
         UIGraphicsEndImageContext()
         return img!
     }
+}
+
+private func localized(_ localizedKey: String, file: StaticString = #filePath, line: UInt = #line) -> String {
+    let bundle = Bundle(for: StargazersViewController.self)
+    let table = "Stargazers"
+    let localizedTitle = bundle.localizedString(
+        forKey: localizedKey,
+        value: nil,
+        table: table
+    )
+    if localizedKey == localizedTitle {
+        XCTFail("Missing localized string for key: \(localizedKey) in table \(table)", file: file, line: line)
+    }
+    return localizedTitle
 }
 
