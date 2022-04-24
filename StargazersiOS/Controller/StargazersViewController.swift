@@ -7,16 +7,35 @@
 
 import UIKit
 
+final class StargazersErrorController {
+    private let viewModel: StargazersLoadViewModel
+    
+    init(viewModel: StargazersLoadViewModel) {
+        self.viewModel = viewModel
+        viewModel.onStargazersLoadFailure = { [weak self] error in
+            let alert = UIAlertController()
+            self?.onErrorView?(alert)
+        }
+    }
+    
+    var onErrorView: ((UIAlertController) -> Void)?
+}
+
 public class StargazersViewController: UITableViewController {
     private let refreshController: StargazersRefreshController
+    private let errorController: StargazersErrorController
     var tableModel = [StargazerCellController]() {
         didSet {
             tableView.reloadData()
         }
     }
     
-    init(refreshController: StargazersRefreshController) {
+    init(
+        refreshController: StargazersRefreshController,
+        errorController: StargazersErrorController
+    ) {
         self.refreshController = refreshController
+        self.errorController = errorController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,6 +48,9 @@ public class StargazersViewController: UITableViewController {
         
         refreshControl = refreshController.view
         refreshController.refresh()
+        errorController.onErrorView = { [weak self] errorView in
+            self?.present(errorView, animated: true)
+        }
         tableView.registerReusableCell(StargazerCell.self)
     }
 }

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import StargazersiOS
+@testable import StargazersiOS
 import Stargazers
 
 class StargazersUIIntegrationTests: XCTestCase {
@@ -111,13 +111,25 @@ class StargazersUIIntegrationTests: XCTestCase {
     func test_viewController_doesNotAlterCurrentRenderingStateOnLoadingError() {
         let stargazer0 = uniqueStargazer()
         let (sut, spy) = makeSUT()
+        
         sut.loadViewIfNeeded()
+        
         spy.completeLoading(with: [stargazer0], at: 0)
         
         sut.simulateUserInitiatedPullToRefresh()
         spy.completeLoadingWithError(at: 1)
         
         assertThat(sut, hasRendered: [stargazer0])
+    }
+    
+    func test_viewController_showsAlertViewControllerOnLoadingError() {
+        let (sut, spy) = makeFakePresentationSUT()
+        
+        sut.loadViewIfNeeded()
+        
+        spy.completeLoadingWithError()
+        
+        XCTAssertTrue(sut.viewControllerToPresent is UIAlertController)
     }
     
     func test_stargazerImageView_loadsUserImageURLWhenVisible() {
@@ -241,6 +253,25 @@ class StargazersUIIntegrationTests: XCTestCase {
             loader: spy,
             imageLoader: spy,
             repository: repository
+        )
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(spy, file: file, line: line)
+        return (sut, spy)
+    }
+    
+    private func makeFakePresentationSUT(
+        for repository: Repository? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (FakePresentationStargazersViewController, LoaderSpy) {
+        let repository = repository ?? anyRepository()
+        let spy = LoaderSpy()
+        let loadViewModel = StargazersLoadViewModel(loader: spy, repository: repository)
+        let refreshController = StargazersRefreshController(viewModel: loadViewModel)
+        let errorController = StargazersErrorController(viewModel: loadViewModel)
+        let sut = FakePresentationStargazersViewController(
+            refreshController: refreshController,
+            errorController: errorController
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(spy, file: file, line: line)
@@ -454,5 +485,13 @@ private func localized(_ localizedKey: String, file: StaticString = #filePath, l
         XCTFail("Missing localized string for key: \(localizedKey) in table \(table)", file: file, line: line)
     }
     return localizedTitle
+}
+
+private class FakePresentationStargazersViewController: StargazersViewController {
+    var viewControllerToPresent: UIViewController?
+    
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        self.viewControllerToPresent = viewControllerToPresent
+    }
 }
 

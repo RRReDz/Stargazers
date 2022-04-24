@@ -18,12 +18,16 @@ class StargazersLoadViewModel {
 
     var onLoadingStateChanged: Observer<Bool>?
     var onStargazersLoad: Observer<[Stargazer]>?
+    var onStargazersLoadFailure: Observer<String>?
     
     func loadStargazers() {
         onLoadingStateChanged?(true)
         loader.load(from: repository) { [weak self] result in
-            if let stargazers = try? result.get() {
+            switch result {
+            case let .success(stargazers):
                 self?.onStargazersLoad?(stargazers)
+            case .failure:
+                self?.onStargazersLoadFailure?("")
             }
             self?.onLoadingStateChanged?(false)
         }

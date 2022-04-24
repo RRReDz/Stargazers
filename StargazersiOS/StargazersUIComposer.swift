@@ -21,7 +21,11 @@ public final class StargazersUIComposer {
             repository: repository
         )
         let refreshController = StargazersRefreshController(viewModel: loadViewModel)
-        let stargazersController = StargazersViewController(refreshController: refreshController)
+        let errorController = StargazersErrorController(viewModel: loadViewModel)
+        let stargazersController = StargazersViewController(
+            refreshController: refreshController,
+            errorController: errorController
+        )
         stargazersController.title = StargazersViewModel.title
         
         loadViewModel.onStargazersLoad = adaptModelToCellControllers(
